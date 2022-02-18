@@ -1,1 +1,1 @@
-# Bugeting-ios-app
+# Bugeting-React-Native-app
