@@ -1,1 +1,1 @@
-# Bugeting-React-Native-app
+# Budgeting-React-Native-app
