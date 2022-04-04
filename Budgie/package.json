@@ -11,7 +11,8 @@
   },
   "dependencies": {
     "react": "17.0.2",
-    "react-native": "^0.67.4"
+    "react-native": "^0.67.4",
+    "react-native-unimodules": "^0.14.10"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
