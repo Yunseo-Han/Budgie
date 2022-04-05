@@ -7,7 +7,10 @@
  */
 
 import React, {useState} from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type {Node} from 'react';
+
 import {
   SafeAreaView,
   ScrollView,
@@ -31,19 +34,10 @@ import {
 
 import { buttonGrey, negativeSavings } from './budgieColors';
 
+const Stack = createNativeStackNavigator();
 
-const Budget = ({startDate, spending, saving}) => {
-  return (
+   
 
-    <TouchableOpacity onPress={onPress} style={styles.roundedButton}>
-      <Text style={styles.importantText}> {startDate} </Text>
-      <View style = {{alignContent: 'flex-end', maxWidth: '50%'}}>
-        <Text> {spending} </Text>
-        <Text> {saving} </Text>
-      </View>
-    </TouchableOpacity>
-  );
-}
 
 // const SetBudget = ({startDate, spending, saving}) => {
 //   const [startingDate, onChangeText] = React.useState("Useless Text");
@@ -67,21 +61,62 @@ const Budget = ({startDate, spending, saving}) => {
 //   );
 // }
 
-const App = () => {
+const App = () => {   
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen
+          name="Home"
+          component={HomeScreen}
+        />
+        <Stack.Screen 
+          name="Budget" 
+          component={BudgetScreen} 
+          options={({ route }) => ({ title: route.params.startDate })}/>
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
+
+const HomeScreen = ({ navigation }) => {
   const isDarkMode = useColorScheme() === 'dark';
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  const [budgetItems, setBudgetItems] = useState([]);
-
-  function handleSetBudgetItems() {
-    setBudgetItems([...budgetItems, <Budget/>])
+  const Budget = ({startDate, spending, saving}) => {
+    return (
+  
+      <TouchableOpacity onPress={onPress} style={styles.roundedButton}>
+        <Text style={styles.importantText}> {startDate} </Text>
+        <View style = {{alignContent: 'flex-end', maxWidth: '50%'}}>
+          <Text> {spending} </Text>
+          <Text> {saving} </Text>
+        </View>
+      </TouchableOpacity>
+    );
   }
+    const backgroundStyle = {
+      backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+    };
 
-  return (
-    <SafeAreaView style={backgroundStyle}>
+    const [budgetItems, setBudgetItems] = useState([]);
+
+    function handleSetBudgetItems() {
+      setBudgetItems([...budgetItems, <Budget/>])
+    }
+
+    function onPress() {
+      navigation.navigate('Budget', {
+        startDate : "12/24/2022",
+        spending : "$1500",
+        saving : "$30",
+      })
+    }
+
+    function addBudget() {
+      console.log("adding")
+    }    
+    
+    return (
+      <SafeAreaView style={backgroundStyle}>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
@@ -91,32 +126,77 @@ const App = () => {
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
 
           }}>
-          
-          <View style={{flexDirection:'row', justifyContent:'space-between'}}>
-            <Text style={styles.titleText}> Budgets </Text>
-            <Button title="ADD" onPress={handleSetBudgetItems} />
-          </View>
-
-          <View>
-            {/* {budgets.map((budget)=> <Budget startDate="12/24/2022" spending="$1500" saving="$30"/>)} */}
-            {
-              budgetItems.map((item) => {
-                <Budget startDate="12/24/2022" spending="$1500" saving="$30"/>
-              })
-            }
-          </View>
-          <Budget startDate="12/24/2022" spending="$1500" saving="$30"/>
-          <Budget startDate="12/24/2022" spending="$1500" saving="$30"/>
-          <Budget startDate="12/24/2022" spending="$1500" saving="$30"/>
-          <Budget startDate="12/24/2022" spending="$1500" saving="$30"/>
-          {/* <SetBudget/> */}
-
+        
+        <View style={{flexDirection:'row', justifyContent:'space-between'}}>
+          <Text style={styles.titleText}> Budgets </Text>
+          <Button title="ADD" onPress={handleSetBudgetItems} />
         </View>
-      </ScrollView>
-    </SafeAreaView>
+
+        <View>
+          {/* {budgets.map((budget)=> <Budget startDate="12/24/2022" spending="$1500" saving="$30"/>)} */}
+          {
+            budgetItems.map((item) => {
+              <Budget startDate="12/24/2022" spending="$1500" saving="$30"/>
+            })
+          }
+        </View>
+        <Budget startDate="12/24/2022" spending="$1500" saving="$30"/>
+        <Budget startDate="12/24/2022" spending="$1500" saving="$30"/>
+        <Budget startDate="12/24/2022" spending="$1500" saving="$30"/>
+        <Budget startDate="12/24/2022" spending="$1500" saving="$30"/>
+        {/* <SetBudget/> */}
+      </View>
+    </ScrollView>
+  </SafeAreaView>
   );
 };
 
+const BudgetScreen = ({ navigation, route }) => {
+  // const category = ({ title, allocated }) => {
+  //   return(
+      
+  //   );
+  // };
+
+  // const isDarkMode = useColorScheme() === 'dark';
+
+  // const backgroundStyle = {
+  //   backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  // };
+
+  // const spending = ({ title }) => {}
+  //   return( 
+  //     <View style={styles.item}>
+  //       <Text style={styles.title}>{title}</Text>
+  //     </View>
+  //     );
+  //   };
+
+
+  return(
+  //   <SafeAreaView style={backgroundStyle}>
+  //     <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+  //     <ScrollView
+  //       contentInsetAdjustmentBehavior="automatic"
+  //       style={backgroundStyle}>
+  //       <View
+  //         style={{
+  //           backgroundColor: isDarkMode ? Colors.black : Colors.white,
+  //         }}>
+  //       <SectionList
+  //         sections={DATA}
+  //         keyExtractor={(item, index) => item + index}
+  //         renderItem={({ item }) => <Item title={item} />}
+  //         renderSectionHeader={({ section: { title } }) => (
+  //       <Text style={styles.header}>{title}</Text>
+  //     )}
+  //   />
+  //     </View>
+  //   </ScrollView>
+  // </SafeAreaView>
+  <Text>Hi </Text>
+  );
+};
 
 const styles = StyleSheet.create({
   roundedButton: {
@@ -151,14 +231,8 @@ const styles = StyleSheet.create({
   }
 });
 
-function onPress() {
-  console.log("Hello")
-}
 
-function addBudget() {
-  console.log("adding")
-}
-
+export default App;
 
 
 //   SAMPLE REFERENCE
@@ -247,5 +321,3 @@ function addBudget() {
 //     fontWeight: '700',
 //   },
 // });
-
-export default App;
