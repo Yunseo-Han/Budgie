@@ -2,7 +2,7 @@
  * Main
  */
 
-import React, {useState} from 'react';
+import React, {useState, useCallback, useMemo} from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -23,8 +23,36 @@ import { BudgetScreen } from './screens/budgetScreen'
 
 const Stack = createNativeStackNavigator();
 
+//REALM
+import BudgetContext, { Budget } from "./models/Budget";
+const { useRealm, useQuery, RealmProvider } = BudgetContext;
 
 const App = () => {   
+  const realm = useRealm();
+  const result = useQuery("Budget");
+  const budgets = useMemo(() => result.sorted("createdAt"), [result]);
+
+  const handleAddBudget = useCallback(
+    (name) => {
+      if (!name) {
+        return;
+      }
+      realm.write(() => {
+        realm.create("Budget", new Budget({name}));
+      });
+    },
+    [realm],
+  );
+
+  const handleDeleteBudget = useCallback(
+    (budget) => {
+      realm.write(() => {
+        realm.delete(budget);
+      });
+    },
+    [realm],
+  );
+
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -42,7 +70,18 @@ const App = () => {
 };
 
 
-export default App;
+function AppWrapper() {
+  if (!RealmProvider) {
+    return null;
+  }
+  return (
+    <RealmProvider>
+      <App />
+    </RealmProvider>
+  );
+}
+
+export default AppWrapper;
 
 
 
