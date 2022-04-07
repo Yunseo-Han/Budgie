@@ -10,8 +10,11 @@ import {
   TouchableOpacity,
   TextInput,
   KeyboardAvoidingView,
+  Dimensions
 } from 'react-native';
 
+const deviceHeight = Dimensions.get('window').height;
+const deviceWidth = Dimensions.get('window').width;
 
 import { buttonGrey, addButtonBlue } from '../budgieColors';
 // import DateDatepicer from 'react-native-date-picker'
@@ -22,9 +25,9 @@ export const BudgetListScreen = ({ navigation }) => {
 
   // Use states
   const [budgetItems, setBudgetItems] = useState([]);
+  const [budgetContainer, startBudgetContainer] = useState(BudgetContainer)
 
   
-
 
   // Handle functions
   function pressedBudgetPreviewButton() {
@@ -37,11 +40,14 @@ export const BudgetListScreen = ({ navigation }) => {
 
   function pressedAddBudgetButton() {
     console.log("adding")
-    setBudgetItems([...budgetItems, <BudgetPreviewButton startDate="12/24/2022" spending="$1500" saving="$30"/>])
+    // setBudgetItems([...budgetItems, <BudgetPreviewButton startDate="12/24/2022" spending="$1500" saving="$30"/>])
+    startBudgetContainer(<BudgetContainer/>)
   } 
 
-  function handleSetBudget() {
+  
 
+  function handleSetBudget() {
+    
   }
 
 
@@ -58,18 +64,23 @@ export const BudgetListScreen = ({ navigation }) => {
     );
   }
 
-  const SetBudgetContainer = () => {
+  const BudgetContainer = () => {
     
     const [startingDate, setStartingDate] = React.useState("");
     const [endingDate, setEndingDate] = React.useState("")
     const [budgetLimit, setBudgetLimit] = React.useState(0);
 
+    function pressedCancelBudgetButton() {
+      console.log("canceling")
+      startBudgetContainer(null)
+    }
 
     return (
+      <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 200, justifyContent: 'center', alignItems: 'center'}}>
       <KeyboardAvoidingView style={styles.setBudgetContainer} behavior={Platform.OS === "ios" ? "padding" : "height"}>
         <View style={{flexDirection: 'row', alignSelf: 'stretch', justifyContent:'space-between', marginTop: 5}}>
           <Text style={styles.titleText}>Add Budget</Text>
-          <TouchableOpacity style={styles.cancelButton}>
+          <TouchableOpacity style={styles.cancelButton} onPress={pressedCancelBudgetButton}>
             <Text>CANCEL</Text>
           </TouchableOpacity>
         </View>
@@ -104,6 +115,7 @@ export const BudgetListScreen = ({ navigation }) => {
         </TouchableOpacity>
 
       </KeyboardAvoidingView>
+      </View>
       
     );
   }
@@ -112,23 +124,29 @@ export const BudgetListScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView>
+      <View style={{width: deviceWidth, height: deviceHeight}}>
       <StatusBar barStyle={'dark-content'}/>
-      <ScrollView contentInsetAdjustmentBehavior="automatic">
-        <View style={{flexDirection:'row', justifyContent:'space-between'}}>
-          <Text style={styles.titleText}> Budgets </Text>
-          {/* <Button title="ADD" style={styles.addButton} onPress={handleSetBudgetItems} /> */}
-          <TouchableOpacity style={styles.addButton} onPress={pressedAddBudgetButton}>
-            <Text>ADD</Text>
-          </TouchableOpacity>
-        </View>
 
-        <View>
-          {/* list of budget preview buttons go here */}
-          {budgetItems}
-        </View>
+        <ScrollView contentInsetAdjustmentBehavior="automatic">
+          <View style={{flexDirection:'row', justifyContent:'space-between'}}>
+            <Text style={styles.titleText}> Budgets </Text>
+            {/* <Button title="ADD" style={styles.addButton} onPress={handleSetBudgetItems} /> */}
+            <TouchableOpacity style={styles.addButton} onPress={pressedAddBudgetButton}>
+              <Text>ADD</Text>
+            </TouchableOpacity>
+          </View>
 
-        <SetBudgetContainer/>
-      </ScrollView>
+          <View>
+            {/* list of budget preview buttons go here */}
+            {budgetItems}
+          </View>
+
+          
+        </ScrollView>
+        {budgetContainer}
+      </View>
+      
+      
     </SafeAreaView>
   );
 };
@@ -180,6 +198,9 @@ const styles = StyleSheet.create({
 
   setBudgetContainer: {
     justifyContent: 'center',
+    backgroundColor: 'white',
+    width: 350,
+    height: 400,
     alignItems: 'center',
     borderRadius: 30,
     borderBottomColor: 'grey',
