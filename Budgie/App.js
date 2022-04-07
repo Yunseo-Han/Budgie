@@ -18,7 +18,7 @@ import {
 } from 'react-native';
 
 
-import { HomeScreen } from '../Budgie/screens/budgetListScreen';
+import { BudgetListScreen } from '../Budgie/screens/budgetListScreen';
 import { BudgetScreen } from './screens/budgetScreen'
 
 const Stack = createNativeStackNavigator();
@@ -30,7 +30,7 @@ const App = () => {
       <Stack.Navigator>
         <Stack.Screen
           name="Home"
-          component={HomeScreen}
+          component={BudgetListScreen}
         />
         <Stack.Screen 
           name="Budget" 
