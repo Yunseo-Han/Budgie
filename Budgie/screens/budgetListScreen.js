@@ -8,100 +8,204 @@ import {
   Text,
   View,
   TouchableOpacity,
-  Button,
+  TextInput,
+  KeyboardAvoidingView,
+  Dimensions
 } from 'react-native';
 
+import { buttonGrey, addButtonBlue } from '../budgieColors';
+import DatePicker from 'react-native-date-picker'
 
-import { buttonGrey } from '../budgieColors';
 
 
+const deviceHeight = Dimensions.get('window').height;
+const deviceWidth = Dimensions.get('window').width;
 
-// const SetBudget = ({startDate, spending, saving}) => {
-//   const [startingDate, onChangeText] = React.useState("Useless Text");
-//   const [number, onChangeNumber] = React.useState(null);
+var isStartingDate = false;
+var isEndingDate = false;
 
-//   return (
-//     <SafeAreaView>
-//       <TextInput
-//         style={styles.budgetInput}
-//         onChangeText={onChangeText}
-//         value={text}
-//       />
-//       <TextInput
-//         style={styles.budgetInput}
-//         onChangeText={onChangeNumber}
-//         value={number}
-//         placeholder="useless placeholder"
-//         keyboardType="numeric"
-//       />
-//     </SafeAreaView>
-//   );
-// }
 
-// Screen
-export const HomeScreen = ({ navigation }) => {
+export const BudgetListScreen = ({ navigation }) => {
 
+  // Use states
+  const [budgetItems, setBudgetItems] = useState([]);
+  const [budgetContainer, startBudgetContainer] = useState(BudgetContainer)
+
+  
+  
+
+  // Handle functions
+  function pressedBudgetPreviewButton() {
+    navigation.navigate('Budget', {
+      startDate : "12/24/2022",
+      spending : "$1500",
+      saving : "$30",
+    })
+  }
+
+  function pressedAddButton() {
+    console.log("opening add budget")
+    startBudgetContainer(<BudgetContainer/>)
+  } 
+
+  
+
+
+  // Components
   const BudgetPreviewButton = ({startDate, spending, saving}) => {
     return (
-  
-      <TouchableOpacity onPress={onPress} style={styles.roundedButton}>
-        <Text style={styles.importantText}> {startDate} </Text>
+      <TouchableOpacity onPress={pressedBudgetPreviewButton} style={styles.roundedButton}>
+        <Text style={styles.importantText}> {startDate.toLocaleDateString()} </Text>
         <View style = {{alignContent: 'flex-end', maxWidth: '50%'}}>
-          <Text> {spending} </Text>
+          <Text> {'$' + spending} </Text>
           <Text> {saving} </Text>
         </View>
       </TouchableOpacity>
     );
   }
 
-    const [budgetItems, setBudgetItems] = useState([]);
-
-    function handleSetBudgetItems() {
-      setBudgetItems([...budgetItems, <Budget/>])
-    }
-
-    function onPress() {
-      navigation.navigate('Budget', {
-        startDate : "12/24/2022",
-        spending : "$1500",
-        saving : "$30",
-      })
-    }
-
-    function addBudget() {
-      console.log("adding")
-    }    
+  const BudgetContainer = () => {
     
+    const [startingDate, setStartingDate] = React.useState(new Date());
+    const [endingDate, setEndingDate] = React.useState(new Date())
+    const [budgetLimit, setBudgetLimit] = React.useState(0);
+
+    // Date picker data
+    const [date, setDate] = useState(new Date())
+    // Open date picker
+    const [open, setOpen] = useState(false)
+    // "Are we setting starting or ending?"" flag
+    
+
+    function pressedCancelBudgetButton() {
+      console.log("canceling")
+      startBudgetContainer(null)
+    }
+
+    function addNewBudget() {
+      setBudgetItems([...budgetItems, <BudgetPreviewButton startDate={startingDate} spending={budgetLimit} saving="$0"/>])
+      setStartingDate("")
+      setEndingDate("")
+      setBudgetLimit("")
+      startBudgetContainer(null)
+    }
+
+    function addStartingDate() {
+      setOpen(true)
+      isStartingDate = true
+    }
+
+    function addEndingDate() {
+      setOpen(true)
+      isEndingDate = true
+    }
+
     return (
-      <SafeAreaView>
-        <StatusBar barStyle={'dark-content'}/>
-        <ScrollView contentInsetAdjustmentBehavior="automatic">
+      <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 300, justifyContent: 'center', alignItems: 'center'}}>
+        <KeyboardAvoidingView style={styles.setBudgetContainer} behavior={Platform.OS === "ios" ? "padding" : "height"}>
+          <View style={{flexDirection: 'row', alignSelf: 'stretch', justifyContent:'space-between', marginTop: 5}}>
+            <Text style={styles.titleText}>Add Budget</Text>
+            <TouchableOpacity style={styles.cancelButton} onPress={pressedCancelBudgetButton}>
+              <Text>CANCEL</Text>
+            </TouchableOpacity>
+          </View>
+
           <View>
+            <Text style={styles.textInputTitle}>Budget Limit</Text>
+            <TextInput
+              style={styles.textInputBox}
+              keyboardType={'decimal-pad'}
+              onChangeText={newLimit => setBudgetLimit(newLimit)}
+            />
+          </View>
+
+          <View>
+            <Text style={styles.textInputTitle} >Starting Date</Text>
+            <TouchableOpacity style={styles.textInputBox} onPress={addStartingDate}>
+              <Text>{startingDate.toLocaleDateString()}</Text>
+            </TouchableOpacity>
+          </View>
           
+          <View>
+            <Text style={styles.textInputTitle} >Ending Date</Text>
+            <TouchableOpacity style={styles.textInputBox} onPress={addEndingDate}>
+              <Text>{endingDate.toLocaleDateString()}</Text>
+            </TouchableOpacity>
+          </View>
+          
+          
+          <TouchableOpacity style={styles.addBudgetButton} onPress={addNewBudget}>
+            <Text>Add Budget</Text>
+          </TouchableOpacity>
+
+        </KeyboardAvoidingView>
+        <DatePicker
+          modal
+          open={open}
+          date={date}
+          mode={"date"}
+          textColor={"#FFFFFF"}
+          onConfirm={(date) => {
+            console.log("**"+date.toLocaleDateString())
+            console.log("starting changed:" + isStartingDate)
+            console.log("ending changed:" + isEndingDate)
+            if (isStartingDate) {
+              console.log("changing startingDate")
+              setStartingDate(date)
+              isStartingDate = false
+            } else if (isEndingDate) {
+              console.log("changing endingDate")
+              setEndingDate(date)
+              isEndingDate = false
+            } 
+            setOpen(false)
+            
+          }}
+          onCancel={() => {
+            setOpen(false)
+            isStartingDate = false
+            isEndingDate = false
+          }}
+        />
+      </View>
+      
+      
+    );
+  }
+
+    
+
+  return (
+    <SafeAreaView>
+      <View style={{width: deviceWidth, height: deviceHeight}}>
+      <StatusBar barStyle={'dark-content'}/>
+
+        <ScrollView contentInsetAdjustmentBehavior="automatic">
           <View style={{flexDirection:'row', justifyContent:'space-between'}}>
             <Text style={styles.titleText}> Budgets </Text>
-            <Button title="ADD" onPress={handleSetBudgetItems} />
+            {/* <Button title="ADD" style={styles.addButton} onPress={handleSetBudgetItems} /> */}
+            <TouchableOpacity style={styles.addButton} onPress={pressedAddButton}>
+              <Text>ADD</Text>
+            </TouchableOpacity>
           </View>
 
           <View>
-            {/* {budgets.map((budget)=> <Budget startDate="12/24/2022" spending="$1500" saving="$30"/>)}
-            {
-              budgetItems.map((item) => {
-                <Budget startDate="12/24/2022" spending="$1500" saving="$30"/>
-              })
-            } */}
+            {/* list of budget preview buttons go here */}
+            {budgetItems}
           </View>
-          <BudgetPreviewButton startDate="12/24/2022" spending="$1500" saving="$30"/>
-          {/* <SetBudget/> */}
-        </View>
-      </ScrollView>
+
+          
+        </ScrollView>
+        {budgetContainer}
+
+        
+      </View>
+      
+      
     </SafeAreaView>
   );
 };
 
-
-
-// Components
 
 
 const styles = StyleSheet.create({
@@ -134,5 +238,73 @@ const styles = StyleSheet.create({
     margin: 12,
     borderWidth: 1,
     padding: 10,
+  },
+
+  addButton: {
+    backgroundColor: addButtonBlue,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 20,
+    width: 60,
+    height: 40,
+    marginTop: 10,
+    marginRight: 10,
+  },
+
+  setBudgetContainer: {
+    justifyContent: 'center',
+    backgroundColor: 'white',
+    width: 350,
+    height: 400,
+    alignItems: 'center',
+    borderRadius: 30,
+    borderColor: 'grey',
+    borderWidth: 1,
+    marginHorizontal: 10,
+    marginVertical: 10,
+    zIndex: 3,
+    elevation: 3,
+  },
+
+
+  textInputTitle: {
+    marginLeft: 10,
+    color: 'grey',
+    marginTop: 10,
+    alignContent: 'flex-start',
+  },
+
+  textInputBox: {
+    borderRadius: 20,
+    borderColor: 'grey',
+    borderWidth: 1,
+    justifyContent: 'center',
+    marginTop: 5, 
+    paddingHorizontal: 10,
+    height: 40,
+    width: 300,
+  },
+
+  addBudgetButton: {
+    backgroundColor: addButtonBlue,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 30,
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+    marginVertical: 20,
+  },
+
+
+  cancelButton: {
+    backgroundColor: buttonGrey,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 20,
+    width: 70,
+    height: 40,
+    marginTop: 10,
+    marginRight: 10,
   }
+
 });
