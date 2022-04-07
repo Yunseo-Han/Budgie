@@ -1,10 +1,10 @@
-<<<<<<< HEAD
 import { Realm, createRealmContext } from '@realm/react';
 
 export class Budget {
-  constructor({id = new Realm.BSON.ObjectId(), name, isActive = false}) {
+  constructor({id = new Realm.BSON.ObjectId(), name, isActive = false, startDate, endDate}) {
     this.name = name;
-    this.createdAt = new Date();
+    this.startDate = startDate;
+    this.endDate = endDate;
     this._id = id;
     this.amountSpent = 0;
     this.isActive = isActive;
@@ -17,7 +17,8 @@ export class Budget {
     properties: {
       _id: 'objectId',
       name: 'string',
-      createdAt: 'date',
+      startDate: 'date',
+      endDate: 'date',
       isActive: {type: 'bool', default: false},
       amountSpent: 'double'
     },
@@ -27,33 +28,4 @@ export class Budget {
 export default createRealmContext({
   schema: [Budget.schema],
   deleteRealmIfMigrationNeeded: true,
-=======
-import {createRealmContext, Realm} from '@realm/react';
-
-export class Budget {
-    constructor({id = new Realm.BSON.ObjectId(), name}) {
-        this.name = name;
-        this.createdAt = new Date();
-        this._id = id;
-        this.spending = spending;
-        this.saving = saving;
-    }
-
-    static schema = {
-        name: 'Budget',
-        primaryKey: '_id',
-        properties: {
-            _id: 'objectId',
-            name: 'string',
-            createdAt: 'date',
-            spending: 'int',
-            saving: 'int'
-        },
-    };
-}
-
-export const {useRealm, useQuery, RealmProvider} = createRealmContext({
-    schema: [Budget.schema],
-    deleteRealmIfMigrationNeeded: true,
->>>>>>> main
 });
