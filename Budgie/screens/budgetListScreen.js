@@ -8,43 +8,47 @@ import {
   Text,
   View,
   TouchableOpacity,
-  Button,
+  TextInput,
+  KeyboardAvoidingView,
 } from 'react-native';
 
 
-import { buttonGrey } from '../budgieColors';
+import { buttonGrey, addButtonBlue } from '../budgieColors';
+// import DateDatepicer from 'react-native-date-picker'
 
 
 
-// const SetBudget = ({startDate, spending, saving}) => {
-//   const [startingDate, onChangeText] = React.useState("Useless Text");
-//   const [number, onChangeNumber] = React.useState(null);
+export const BudgetListScreen = ({ navigation }) => {
 
-//   return (
-//     <SafeAreaView>
-//       <TextInput
-//         style={styles.budgetInput}
-//         onChangeText={onChangeText}
-//         value={text}
-//       />
-//       <TextInput
-//         style={styles.budgetInput}
-//         onChangeText={onChangeNumber}
-//         value={number}
-//         placeholder="useless placeholder"
-//         keyboardType="numeric"
-//       />
-//     </SafeAreaView>
-//   );
-// }
+  // Use states
+  const [budgetItems, setBudgetItems] = useState([]);
 
-// Screen
-export const HomeScreen = ({ navigation }) => {
+  
 
+
+  // Handle functions
+  function pressedBudgetPreviewButton() {
+    navigation.navigate('Budget', {
+      startDate : "12/24/2022",
+      spending : "$1500",
+      saving : "$30",
+    })
+  }
+
+  function pressedAddBudgetButton() {
+    console.log("adding")
+    setBudgetItems([...budgetItems, <BudgetPreviewButton startDate="12/24/2022" spending="$1500" saving="$30"/>])
+  } 
+
+  function handleSetBudget() {
+
+  }
+
+
+  // Components
   const BudgetPreviewButton = ({startDate, spending, saving}) => {
     return (
-  
-      <TouchableOpacity onPress={onPress} style={styles.roundedButton}>
+      <TouchableOpacity onPress={pressedBudgetPreviewButton} style={styles.roundedButton}>
         <Text style={styles.importantText}> {startDate} </Text>
         <View style = {{alignContent: 'flex-end', maxWidth: '50%'}}>
           <Text> {spending} </Text>
@@ -54,54 +58,81 @@ export const HomeScreen = ({ navigation }) => {
     );
   }
 
-    const [budgetItems, setBudgetItems] = useState([]);
-
-    function handleSetBudgetItems() {
-      setBudgetItems([...budgetItems, <Budget/>])
-    }
-
-    function onPress() {
-      navigation.navigate('Budget', {
-        startDate : "12/24/2022",
-        spending : "$1500",
-        saving : "$30",
-      })
-    }
-
-    function addBudget() {
-      console.log("adding")
-    }    
+  const SetBudgetContainer = () => {
     
-    return (
-      <SafeAreaView>
-        <StatusBar barStyle={'dark-content'}/>
-        <ScrollView contentInsetAdjustmentBehavior="automatic">
-          <View>
-          
-          <View style={{flexDirection:'row', justifyContent:'space-between'}}>
-            <Text style={styles.titleText}> Budgets </Text>
-            <Button title="ADD" onPress={handleSetBudgetItems} />
-          </View>
+    const [startingDate, setStartingDate] = React.useState("");
+    const [endingDate, setEndingDate] = React.useState("")
+    const [budgetLimit, setBudgetLimit] = React.useState(0);
 
-          <View>
-            {/* {budgets.map((budget)=> <Budget startDate="12/24/2022" spending="$1500" saving="$30"/>)}
-            {
-              budgetItems.map((item) => {
-                <Budget startDate="12/24/2022" spending="$1500" saving="$30"/>
-              })
-            } */}
-          </View>
-          <BudgetPreviewButton startDate="12/24/2022" spending="$1500" saving="$30"/>
-          {/* <SetBudget/> */}
+
+    return (
+      <KeyboardAvoidingView style={styles.setBudgetContainer} behavior={Platform.OS === "ios" ? "padding" : "height"}>
+        <View style={{flexDirection: 'row', alignSelf: 'stretch', justifyContent:'space-between', marginTop: 5}}>
+          <Text style={styles.titleText}>Add Budget</Text>
+          <TouchableOpacity style={styles.cancelButton}>
+            <Text>CANCEL</Text>
+          </TouchableOpacity>
         </View>
+
+        <View>
+          <Text style={styles.textInputTitle} >Budget Limit</Text>
+          <TextInput
+            style={styles.textInputBox}
+            onChangeText={newLimit => setBudgetLimit(newLimit)}
+          />
+        </View>
+
+        <View>
+          <Text style={styles.textInputTitle} >Starting Date</Text>
+          <TextInput
+            style={styles.textInputBox}
+            onChangeText={newDate => setStartingDate(newDate)}
+          />
+        </View>
+        
+        <View>
+          <Text style={styles.textInputTitle} >Ending Date</Text>
+          <TextInput
+            style={styles.textInputBox}
+            onChangeText={newDate => setEndingDate(newDate)}
+          />
+        </View>
+        
+        
+        <TouchableOpacity style={styles.addBudgetButton}>
+          <Text>Add Budget</Text>
+        </TouchableOpacity>
+
+      </KeyboardAvoidingView>
+      
+    );
+  }
+
+    
+
+  return (
+    <SafeAreaView>
+      <StatusBar barStyle={'dark-content'}/>
+      <ScrollView contentInsetAdjustmentBehavior="automatic">
+        <View style={{flexDirection:'row', justifyContent:'space-between'}}>
+          <Text style={styles.titleText}> Budgets </Text>
+          {/* <Button title="ADD" style={styles.addButton} onPress={handleSetBudgetItems} /> */}
+          <TouchableOpacity style={styles.addButton} onPress={pressedAddBudgetButton}>
+            <Text>ADD</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View>
+          {/* list of budget preview buttons go here */}
+          {budgetItems}
+        </View>
+
+        <SetBudgetContainer/>
       </ScrollView>
     </SafeAreaView>
   );
 };
 
-
-
-// Components
 
 
 const styles = StyleSheet.create({
@@ -134,5 +165,69 @@ const styles = StyleSheet.create({
     margin: 12,
     borderWidth: 1,
     padding: 10,
+  },
+
+  addButton: {
+    backgroundColor: addButtonBlue,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 20,
+    width: 60,
+    height: 40,
+    marginTop: 10,
+    marginRight: 10,
+  },
+
+  setBudgetContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 30,
+    borderBottomColor: 'grey',
+    borderWidth: 1,
+    marginHorizontal: 10,
+    marginVertical: 10,
+    zIndex: 3,
+    elevation: 3,
+  },
+
+
+  textInputTitle: {
+    marginLeft: 10,
+    color: 'grey',
+    marginTop: 10,
+    alignContent: 'flex-start',
+  },
+
+  textInputBox: {
+    borderRadius: 20,
+    borderColor: 'grey',
+    borderWidth: 1,
+    marginTop: 5, 
+    paddingHorizontal: 10,
+    height: 40,
+    width: 300,
+  },
+
+  addBudgetButton: {
+    backgroundColor: addButtonBlue,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 30,
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+    marginVertical: 20,
+  },
+
+
+  cancelButton: {
+    backgroundColor: buttonGrey,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 20,
+    width: 70,
+    height: 40,
+    marginTop: 10,
+    marginRight: 10,
   }
+
 });
