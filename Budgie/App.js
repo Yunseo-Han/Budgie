@@ -30,7 +30,7 @@ const { useRealm, useQuery, RealmProvider } = BudgetContext;
 const App = () => {   
   const realm = useRealm();
   const result = useQuery("Budget");
-  const budgets = useMemo(() => result.sorted("createdAt"), [result]);
+  const budgets = useMemo(() => result.sorted("startDate"), [result]);
 
   const handleAddBudget = useCallback(
     (name) => {
