@@ -9,16 +9,19 @@
 import React, {useState} from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import type {Node} from 'react';
+
 
 import {
   SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
+  Image,
   Text,
   useColorScheme,
   View,
+  Modal,
+  Pressable,
   TouchableOpacity,
   Button,
   TextInput,
@@ -79,7 +82,7 @@ const App = () => {
 };
 
 const HomeScreen = ({ navigation }) => {
-  const isDarkMode = useColorScheme() === 'dark';
+  //const isDarkMode = useColorScheme() === 'dark';
 
   const Budget = ({startDate, spending, saving}) => {
     return (
@@ -94,7 +97,7 @@ const HomeScreen = ({ navigation }) => {
     );
   }
     const backgroundStyle = {
-      backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+      backgroundColor: Colors.lighter,
     };
 
     const [budgetItems, setBudgetItems] = useState([]);
@@ -117,13 +120,13 @@ const HomeScreen = ({ navigation }) => {
     
     return (
       <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+      <StatusBar barStyle= 'dark-content' />
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
         <View
           style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
+            backgroundColor: Colors.white,
 
           }}>
         
@@ -152,53 +155,161 @@ const HomeScreen = ({ navigation }) => {
 };
 
 const BudgetScreen = ({ navigation, route }) => {
-  // const category = ({ title, allocated }) => {
-  //   return(
-      
-  //   );
-  // };
 
-  // const isDarkMode = useColorScheme() === 'dark';
+  const Category = ({ title, allocated }) => {
+    return(
+    <View flexDirection = 'row' justifyContent = 'flex-start' alignContent = 'center'>
+        <View style = {styles.listItem}>
+          <Text style={styles.importantText}> {title} </Text>
+          <View style = {{maxWidth : "50%"}}>
+            <Text> {allocated} </Text>
+          </View>
+        </View>
+        <TouchableOpacity onPress={onPress} style={styles.addButton}>
+          <View style = {{flex : 1}}>
+            <Text style = {{marginHorizontal : 10, marginVertical : 15}}>ADD</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+    );
+  };
 
-  // const backgroundStyle = {
-  //   backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  // };
+  const ModalAddCategory = () => {
+    return(
+      <View style={styles.centeredView}>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert("Modal has been closed.");
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+          <View flexDirection = 'row' justifyContent = 'flex-start' alignContent = 'center'>
+          <View>
+            <Text style={styles.sectionTitle}>New Category</Text>
+          </View>
+          <TouchableOpacity onPress={() =>setModalVisible(!modalVisible)}>
+            <View style = {{alignSelf: 'flex-end'}}>
+              <Text  style={styles.sectionTitle}>CLOSE</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+        
+              <TouchableOpacity
+              style={styles.rowButton}
+              onPress={() => setModalVisible(!modalVisible)}
+            >
+              <Text style={styles.buttonText}>Submit</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    </View>
+    );
+  };
 
-  // const spending = ({ title }) => {}
-  //   return( 
-  //     <View style={styles.item}>
-  //       <Text style={styles.title}>{title}</Text>
-  //     </View>
-  //     );
-  //   };
+  function onPress(){
+
+  }
+
+  function addCategory({title}){
+    setModalVisible(!modalVisible)
+  };
+
+  const backgroundStyle = {
+    backgroundColor: Colors.lighter,
+  };
 
 
-  return(
-  //   <SafeAreaView style={backgroundStyle}>
-  //     <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-  //     <ScrollView
-  //       contentInsetAdjustmentBehavior="automatic"
-  //       style={backgroundStyle}>
-  //       <View
-  //         style={{
-  //           backgroundColor: isDarkMode ? Colors.black : Colors.white,
-  //         }}>
-  //       <SectionList
-  //         sections={DATA}
-  //         keyExtractor={(item, index) => item + index}
-  //         renderItem={({ item }) => <Item title={item} />}
-  //         renderSectionHeader={({ section: { title } }) => (
-  //       <Text style={styles.header}>{title}</Text>
-  //     )}
-  //   />
-  //     </View>
-  //   </ScrollView>
-  // </SafeAreaView>
-  <Text>Hi </Text>
+  const Spending = ({ title, amount, date }) => {
+    return( 
+      <View style = {styles.roundedButton}>
+        <View style = {{flex : 5}}>
+        <Text style = {styles.importantText}> {title} </Text>
+        <Text> {date} </Text>
+        </View>
+          <View style = {{flex: 1}}>
+            <Text style = {styles.spendingAmount}> {amount} </Text>
+          </View>
+        </View>
+      );
+    };
+
+    const [modalVisible, setModalVisible] = useState(false);
+
+
+
+  return (
+    <SafeAreaView style={[backgroundStyle, styles.container]}>
+      <StatusBar barStyle='dark-content'/>
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        style = {backgroundStyle}>
+      <View style = {{alignContent : 'center'}}>
+      <Image
+          source={{
+            uri: 'https://reactnative.dev/docs/assets/p_cat2.png',
+          }}
+          style={{ 
+            width: 200, 
+            height: 200,
+            alignSelf: 'center'}}
+        />
+      </View>
+
+      <View style = {{borderTopColor : buttonGrey, borderTopWidth : 2}}>
+        <Text style = {styles.sectionText}> Budget Categories </Text>     
+        <Category title = "Rent" allocated = "$1500"/>
+        <Category title = "Rent" allocated = "$1500"/>
+        <Category title = "Rent" allocated = "$1500"/>
+        <TouchableOpacity style = {styles.rowButton}>
+          <Text onPress={() => {setModalVisible(true)
+        }} 
+          style = {styles.buttonText}
+          >New Category</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style = {{borderTopColor : buttonGrey, borderTopWidth : 2, marginHorizontal : 10}}>
+        <Text style = {styles.sectionTitle}> New Spendings </Text>    
+        <Spending title = "Nordstrom" amount = "$500.00" date = "4/6/2022"/>
+        <Spending title = "Best Buy" amount = "$50.00" date = "4/6/2022"/>
+        <Spending title = "Target" amount = "$54.00" date = "4/6/2022"/>
+      </View>
+      <ModalAddCategory/>
+    </ScrollView>
+  </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    //display: "flex",
+   // flexDirection: "row",
+   // justifyContent: 'center',
+    // alignItems: "center",
+    height: "100%",
+    //textAlign: "center"
+    paddingHorizontal : 10,
+    paddingVertical : 20,
+  },
+
+  listItem: {
+    backgroundColor: buttonGrey,
+    borderRadius: 10,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    flex : 3,
+    alignItems: 'center',
+    marginBottom: 10,
+    marginHorizontal : 10,
+  },
   roundedButton: {
     backgroundColor: buttonGrey,
     borderRadius: 10,
@@ -208,7 +319,28 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 10,
-    marginHorizontal: 20,
+  },
+
+   addButton: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+    borderWidth: 5,
+    borderColor: buttonGrey,
+    marginBottom: 10,
+    marginRight : 10,
+    height : 60,
+    width: 60,
+    // marginRight: 10,
+  },
+
+  rowButton: {
+    backgroundColor: buttonGrey,
+    borderRadius: 10,
+    marginTop: 20,
+    marginBottom : 30,
+    paddingHorizontal: 90,
+    alignSelf : 'center',
+    alignItems : 'stretch',
   },
 
   titleText: {
@@ -221,6 +353,53 @@ const styles = StyleSheet.create({
   importantText: {
     fontWeight: 'bold',
     maxWidth: '50%',
+  },
+
+  spendingAmount: {
+    fontWeight: 'bold',
+    color:'red',
+  },
+
+  sectionTitle:{
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginVertical: 10,
+  },
+
+  buttonText:{
+    fontSize: 20,
+    fontWeight: 'bold',
+    paddingVertical: 10,
+  },
+
+  sectionText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginVertical : 10,
+    marginHorizontal : 20,
+  },
+
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+
+  modalView: {
+    margin: 10,
+    backgroundColor: "white",
+    borderRadius: 10,
+    paddingHorizontal: 35,
+    paddingVertical: 10,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
   },
 
   budgetInput: {
