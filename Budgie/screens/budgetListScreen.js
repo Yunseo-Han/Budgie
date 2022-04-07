@@ -21,12 +21,17 @@ import DatePicker from 'react-native-date-picker'
 const deviceHeight = Dimensions.get('window').height;
 const deviceWidth = Dimensions.get('window').width;
 
+var isStartingDate = false;
+var isEndingDate = false;
+
+
 export const BudgetListScreen = ({ navigation }) => {
 
   // Use states
   const [budgetItems, setBudgetItems] = useState([]);
   const [budgetContainer, startBudgetContainer] = useState(BudgetContainer)
 
+  
   
 
   // Handle functions
@@ -50,9 +55,9 @@ export const BudgetListScreen = ({ navigation }) => {
   const BudgetPreviewButton = ({startDate, spending, saving}) => {
     return (
       <TouchableOpacity onPress={pressedBudgetPreviewButton} style={styles.roundedButton}>
-        <Text style={styles.importantText}> {startDate.getMonth()+'/'+startDate.getDay()+'/'+startDate.getFullYear()} </Text>
+        <Text style={styles.importantText}> {startDate.toLocaleDateString()} </Text>
         <View style = {{alignContent: 'flex-end', maxWidth: '50%'}}>
-          <Text> {spending} </Text>
+          <Text> {'$' + spending} </Text>
           <Text> {saving} </Text>
         </View>
       </TouchableOpacity>
@@ -70,8 +75,7 @@ export const BudgetListScreen = ({ navigation }) => {
     // Open date picker
     const [open, setOpen] = useState(false)
     // "Are we setting starting or ending?"" flag
-    var isStartingDate = false;
-    var isEndingDate = false;
+    
 
     function pressedCancelBudgetButton() {
       console.log("canceling")
@@ -118,14 +122,14 @@ export const BudgetListScreen = ({ navigation }) => {
           <View>
             <Text style={styles.textInputTitle} >Starting Date</Text>
             <TouchableOpacity style={styles.textInputBox} onPress={addStartingDate}>
-              <Text>{startingDate.getMonth()+'/'+startingDate.getDay()+'/'+startingDate.getFullYear()}</Text>
+              <Text>{startingDate.toLocaleDateString()}</Text>
             </TouchableOpacity>
           </View>
           
           <View>
             <Text style={styles.textInputTitle} >Ending Date</Text>
             <TouchableOpacity style={styles.textInputBox} onPress={addEndingDate}>
-              <Text>{endingDate.getMonth()+'/'+endingDate.getDay()+'/'+endingDate.getFullYear()}</Text>
+              <Text>{endingDate.toLocaleDateString()}</Text>
             </TouchableOpacity>
           </View>
           
@@ -140,19 +144,27 @@ export const BudgetListScreen = ({ navigation }) => {
           open={open}
           date={date}
           mode={"date"}
+          textColor={"#FFFFFF"}
           onConfirm={(date) => {
-            setOpen(false)
-            setDate(date)
+            console.log("**"+date.toLocaleDateString())
+            console.log("starting changed:" + isStartingDate)
+            console.log("ending changed:" + isEndingDate)
             if (isStartingDate) {
+              console.log("changing startingDate")
               setStartingDate(date)
               isStartingDate = false
             } else if (isEndingDate) {
+              console.log("changing endingDate")
               setEndingDate(date)
               isEndingDate = false
             } 
+            setOpen(false)
+            
           }}
           onCancel={() => {
             setOpen(false)
+            isStartingDate = false
+            isEndingDate = false
           }}
         />
       </View>
