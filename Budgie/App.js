@@ -2,7 +2,7 @@
  * Main
  */
 
-import React, {useState, useCallback, useMemo} from 'react';
+import React, {useState} from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -24,34 +24,14 @@ import { BudgetScreen } from './screens/budgetScreen'
 const Stack = createNativeStackNavigator();
 
 //REALM
-import BudgetContext, { Budget } from "./models/Budget";
+import BudgetContext from "./models/Budget";
 const { useRealm, useQuery, RealmProvider } = BudgetContext;
 
-const App = () => {   
-  const realm = useRealm();
-  const result = useQuery("Budget");
-  const budgets = useMemo(() => result.sorted("startDate"), [result]);
+const App = () => {  
 
-  const handleAddBudget = useCallback(
-    (name) => {
-      if (!name) {
-        return;
-      }
-      realm.write(() => {
-        realm.create("Budget", new Budget({name}));
-      });
-    },
-    [realm],
-  );
-
-  const handleDeleteBudget = useCallback(
-    (budget) => {
-      realm.write(() => {
-        realm.delete(budget);
-      });
-    },
-    [realm],
-  );
+  // REALM START
+    // Nothing to see here right now.
+  // REALM END
 
   return (
     <NavigationContainer>
