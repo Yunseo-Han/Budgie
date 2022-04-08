@@ -1,27 +1,44 @@
 import { Realm, createRealmContext } from '@realm/react';
 
 export class Budget {
-  constructor({id = new Realm.BSON.ObjectId(), name, startDate, endDate, goal}) {
-    this.name = name;
+  constructor({id = new Realm.BSON.ObjectId(), startDate, endDate, targetSpending}) {
+    this._id = id;
     this.startDate = startDate;
     this.endDate = endDate;
-    this._id = id;
     this.totalSpending = 0;
-    this.goal = goal;
-    this.transactions = [];
+    this.targetSpending = targetSpending;
+    this.categories = [];
   }
-
-  // To use a class as a Realm object type, define the object schema on the static property "schema".
+  
   static schema = {
     name: 'Budget',
     primaryKey: '_id',
     properties: {
       '_id' : 'objectId',
-      'name' : 'string',
       'startDate' : 'date',
       'endDate' : 'date',
       'totalSpending' : 'double',
-      'goal' : 'double',
+      'targetSpending' : 'double',
+      'categories' : { type: 'list', objectType: 'Category' }
+    }
+  };
+}
+
+export class Category {
+  constructor({id = new Realm.BSON.ObjectId(), name}) {
+    this._id = id;
+    this.name = name;
+    this.transactionSum = 0;
+    this.transactions = [];
+  }
+
+    static schema = {
+    name: 'Category',
+    primaryKey: '_id',
+    properties: {
+      '_id' : 'objectId',
+      'name' : 'string',
+      'transactionSum' : 'double',
       'transactionsList' : { type: 'list', objectType: 'Transaction' }
     }
   };
@@ -47,6 +64,6 @@ export class Transaction {
 }
 
 export default createRealmContext({
-  schema: [Budget.schema, Transaction.schema],
+  schema: [Budget.schema, Category.schema, Transaction.schema],
   deleteRealmIfMigrationNeeded: true,
 });

@@ -7,12 +7,12 @@ const result = useQuery("Budget");
 const budgets = useMemo(() => result.sorted("startDate"), [result]);
 
 export const handleAddBudget = useCallback(
-	(name, startDate, endDate, goal) => {
+	(startDate, endDate, targetSpending) => {
 	  if (!name) {
 	    return;
 	  }
 	  realm.write(() => {
-	    realm.create("Budget", new Budget({name, startDate, endDate, goal}));
+	    realm.create("Budget", new Budget({startDate, endDate, targetSpending}));
 	  });
 	},
 	[realm],
