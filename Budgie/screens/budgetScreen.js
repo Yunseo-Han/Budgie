@@ -76,12 +76,13 @@ export const BudgetScreen = ({ navigation, route }) => {
                 <Text style={styles.sectionTitle}>New Category</Text>
               </View>
               <TouchableOpacity onPress={() =>setModalVisible(!modalVisible)}>
-                <View style = {{alignSelf: 'flex-end'}}>
-                  <Text  style={styles.sectionTitle}>CLOSE</Text>
+                <View>
+                  <Text  style={styles.cancelButton}>CLOSE</Text>
                 </View>
               </TouchableOpacity>
+              
             </View>
-            
+            <TextInput style={styles.textInputBox}/>
                   <TouchableOpacity
                   style={styles.rowButton}
                   onPress={() => setModalVisible(!modalVisible)}
@@ -306,6 +307,17 @@ export const BudgetScreen = ({ navigation, route }) => {
       marginVertical: 10,
     },
   
+    cancelButton: {
+        backgroundColor: buttonGrey,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 20,
+        width: 70,
+        height: 40,
+        marginTop: 10,
+        marginRight: 10,
+    },
+
     buttonText:{
       fontSize: 20,
       fontWeight: 'bold',

@@ -346,20 +346,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
 
-  setSpendingContainer: {
-    justifyContent: 'center',
-    backgroundColor: 'white',
-    width: 350,
-    height: 400,
-    alignItems: 'center',
-    borderRadius: 30,
-    borderColor: 'grey',
-    borderWidth: 1,
-    marginHorizontal: 10,
-    marginVertical: 10,
-    zIndex: 3,
-    elevation: 3,
-  },
+  
 
 
   textInputTitle: {
