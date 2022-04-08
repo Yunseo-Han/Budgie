@@ -1,31 +1,69 @@
 import { Realm, createRealmContext } from '@realm/react';
 
 export class Budget {
-  constructor({id = new Realm.BSON.ObjectId(), name, isActive = false, startDate, endDate}) {
-    this.name = name;
+  constructor({id = new Realm.BSON.ObjectId(), startDate, endDate, targetSpending}) {
+    this._id = id;
     this.startDate = startDate;
     this.endDate = endDate;
-    this._id = id;
-    this.amountSpent = 0;
-    this.isActive = isActive;
+    this.totalSpending = 0;
+    this.targetSpending = targetSpending;
+    this.categories = [];
   }
-
-  // To use a class as a Realm object type, define the object schema on the static property "schema".
+  
   static schema = {
     name: 'Budget',
     primaryKey: '_id',
     properties: {
-      _id: 'objectId',
-      name: 'string',
-      startDate: 'date',
-      endDate: 'date',
-      isActive: {type: 'bool', default: false},
-      amountSpent: 'double'
-    },
+      '_id' : 'objectId',
+      'startDate' : 'date',
+      'endDate' : 'date',
+      'totalSpending' : 'double',
+      'targetSpending' : 'double',
+      'categories' : { type: 'list', objectType: 'Category' }
+    }
+  };
+}
+
+export class Category {
+  constructor({id = new Realm.BSON.ObjectId(), name}) {
+    this._id = id;
+    this.name = name;
+    this.transactionSum = 0;
+    this.transactions = [];
+  }
+
+    static schema = {
+    name: 'Category',
+    primaryKey: '_id',
+    properties: {
+      '_id' : 'objectId',
+      'name' : 'string',
+      'transactionSum' : 'double',
+      'transactionsList' : { type: 'list', objectType: 'Transaction' }
+    }
+  };
+}
+
+export class Transaction {
+  constructor({id = new Realm.BSON.ObjectId(), name, date, amount}) {
+    this.date = new Date();
+    this.amount = amount;
+    this.name = name;
+  }
+
+  static schema = {
+    name: 'Transaction',
+    primaryKey: '_id',
+    properties: {
+      '_id' : 'objectId',
+      'name' : 'string',
+      'date' : 'date',
+      'amount' : 'double'
+    }
   };
 }
 
 export default createRealmContext({
-  schema: [Budget.schema],
+  schema: [Budget.schema, Category.schema, Transaction.schema],
   deleteRealmIfMigrationNeeded: true,
 });

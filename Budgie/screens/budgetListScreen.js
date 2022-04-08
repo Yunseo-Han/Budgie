@@ -46,9 +46,7 @@ export const BudgetListScreen = ({ navigation }) => {
   function pressedAddButton() {
     console.log("opening add budget")
     startBudgetContainer(<BudgetContainer/>)
-  } 
-
-  
+  }   
 
 
   // Components
@@ -75,7 +73,8 @@ export const BudgetListScreen = ({ navigation }) => {
     // Open date picker
     const [open, setOpen] = useState(false)
     // "Are we setting starting or ending?"" flag
-    
+
+
 
     function pressedCancelBudgetButton() {
       console.log("canceling")
