@@ -12,6 +12,7 @@ import {
     Pressable,
     TouchableOpacity,
     Button,
+    KeyboardAvoidingView,
     TextInput,
   } from 'react-native';
 
@@ -23,6 +24,9 @@ export const BudgetScreen = ({ navigation, route }) => {
     const [spendingItems, setSpendingItems] = useState([]);
     
 
+    function pressedAddSpending() {
+        setSpendingContainer(<SpendingContainer/>)
+    }
 
     // function addNewSpending() {
     //   setSpendingItems(... spendingItmes, <Spending spendingName, spedflksjd/>)
@@ -44,7 +48,7 @@ export const BudgetScreen = ({ navigation, route }) => {
                 <Text> {allocated} </Text>
               </View>
             </View>
-            <TouchableOpacity onPress={onPress} style={styles.addButton}>
+            <TouchableOpacity onPress={pressedAddSpending} style={styles.addButton}>
               <View style = {{flex : 1}}>
                 <Text style = {{marginHorizontal : 10, marginVertical : 15}}>ADD</Text>
               </View>
@@ -131,7 +135,7 @@ export const BudgetScreen = ({ navigation, route }) => {
         }
     
         return (
-          <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 400, justifyContent: 'center', alignItems: 'center'}}>
+          <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 200, justifyContent: 'center', alignItems: 'center'}}>
             <KeyboardAvoidingView style={styles.setSpendingContainer} behavior={Platform.OS === "ios" ? "padding" : "height"}>
               <View style={{flexDirection: 'row', alignSelf: 'stretch', justifyContent:'space-between', marginTop: 5}}>
                 <Text style={styles.titleText}>Add Spending</Text>
@@ -217,6 +221,7 @@ export const BudgetScreen = ({ navigation, route }) => {
         </View>
         <ModalAddCategory/>
       </ScrollView>
+      {spendingContainer}
     </SafeAreaView>
     );
   };
@@ -342,5 +347,60 @@ export const BudgetScreen = ({ navigation, route }) => {
       margin: 12,
       borderWidth: 1,
       padding: 10,
-    }
+    },
+
+    setSpendingContainer: {
+        justifyContent: 'center',
+        backgroundColor: 'white',
+        width: 350,
+        height: 400,
+        alignItems: 'center',
+        borderRadius: 30,
+        borderColor: 'grey',
+        borderWidth: 1,
+        marginHorizontal: 10,
+        marginVertical: 10,
+        zIndex: 3,
+        elevation: 3,
+      },
+
+      textInputTitle: {
+        marginLeft: 10,
+        color: 'grey',
+        marginTop: 10,
+        alignContent: 'flex-start',
+      },
+    
+      textInputBox: {
+        borderRadius: 20,
+        borderColor: 'grey',
+        borderWidth: 1,
+        justifyContent: 'center',
+        marginTop: 5, 
+        paddingHorizontal: 10,
+        height: 40,
+        width: 300,
+      },
+    
+      addBudgetButton: {
+        backgroundColor: addButtonBlue,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 30,
+        paddingVertical: 10,
+        paddingHorizontal: 30,
+        marginVertical: 20,
+      },
+    
+    
+      cancelButton: {
+        backgroundColor: buttonGrey,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 20,
+        width: 70,
+        height: 40,
+        marginTop: 10,
+        marginRight: 10,
+      }
   });
