@@ -144,7 +144,7 @@ export const BudgetListScreen = ({ navigation }) => {
           open={open}
           date={date}
           mode={"date"}
-          textColor={"#FFFFFF"}
+          textColor={addButtonBlue}
           onConfirm={(date) => {
             console.log("**"+date.toLocaleDateString())
             console.log("starting changed:" + isStartingDate)
@@ -173,8 +173,81 @@ export const BudgetListScreen = ({ navigation }) => {
     );
   }
 
+
+  const SpendingContainer = () => {
+    const [spendingName, setSpendingName] = React.useState("");
+    const [spending, setSpending] = React.useState(0);
+    const [spendingCatatory, setSpendingCatagory] = React.useState("");
+
+    // outside in screen
+    // const [spendingContainer, setSpendingContainer] = useState(SpendingContainer)
+
     
 
+    function pressedCancelSpendingButton() {
+      console.log("canceling add spending")
+      setSpendingContainer(null)
+    }
+
+    function addNewSpending() {
+      // setBItems([...budgetItems, <BudgetPreviewButton startDate={startingDate} spending={budgetLimit} saving="$0"/>])
+      setSpending(0)
+      setSpendingCatagory("")
+      startBudgetContainer(null)
+    }
+
+    
+
+    return (
+      <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 400, justifyContent: 'center', alignItems: 'center'}}>
+        <KeyboardAvoidingView style={styles.setSpendingContainer} behavior={Platform.OS === "ios" ? "padding" : "height"}>
+          <View style={{flexDirection: 'row', alignSelf: 'stretch', justifyContent:'space-between', marginTop: 5}}>
+            <Text style={styles.titleText}>Add Spending</Text>
+            <TouchableOpacity style={styles.cancelButton} >
+              <Text>CANCEL</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View>
+            <Text style={styles.textInputTitle}>Spending Name</Text>
+            <TextInput
+              style={styles.textInputBox}
+              onChangeText={spendingName => setSpendingName(spendingName)}
+            />
+          </View>
+
+          <View>
+            <Text style={styles.textInputTitle}>Spending Amount</Text>
+            <TextInput
+              style={styles.textInputBox}
+              keyboardType={'decimal-pad'}
+              onChangeText={newSpending => setSpending(newSpending)}
+            />
+          </View>
+
+          <View>
+            <Text style={styles.textInputTitle}>Spending Catagory</Text>
+            <TextInput
+              style={styles.textInputBox}
+              onChangeText={spendingCatagory => setSpendingCatagory(spendingCatagory)}
+            />
+          </View>
+          
+          
+          <TouchableOpacity style={styles.addBudgetButton}>
+            <Text>Add Spending</Text>
+          </TouchableOpacity>
+
+        </KeyboardAvoidingView>
+      </View>
+      
+      
+    );
+  }
+
+
+    
+  // Screen
   return (
     <SafeAreaView>
       <View style={{width: deviceWidth, height: deviceHeight}}>
@@ -197,6 +270,7 @@ export const BudgetListScreen = ({ navigation }) => {
           
         </ScrollView>
         {budgetContainer}
+        <SpendingContainer/>
 
         
       </View>
@@ -252,6 +326,21 @@ const styles = StyleSheet.create({
   },
 
   setBudgetContainer: {
+    justifyContent: 'center',
+    backgroundColor: 'white',
+    width: 350,
+    height: 400,
+    alignItems: 'center',
+    borderRadius: 30,
+    borderColor: 'grey',
+    borderWidth: 1,
+    marginHorizontal: 10,
+    marginVertical: 10,
+    zIndex: 3,
+    elevation: 3,
+  },
+
+  setSpendingContainer: {
     justifyContent: 'center',
     backgroundColor: 'white',
     width: 350,
