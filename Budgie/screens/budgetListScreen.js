@@ -181,6 +181,17 @@ export const BudgetListScreen = ({ navigation }) => {
 
     // outside in screen
     // const [spendingContainer, setSpendingContainer] = useState(SpendingContainer)
+    // const [spendingItems, setSpendingItems] = useState([]);
+    
+
+
+    // function addNewSpending() {
+    //   setSpendingItems(... spendingItmes, <Spending spendingName, spedflksjd/>)
+    //   setSpendingName("")
+    //   setSpending(0)
+    //   setSpendingCatagory("")
+    //   setSpendingContainer(null)
+    // }
 
     
 
@@ -189,12 +200,7 @@ export const BudgetListScreen = ({ navigation }) => {
       setSpendingContainer(null)
     }
 
-    function addNewSpending() {
-      // setBItems([...budgetItems, <BudgetPreviewButton startDate={startingDate} spending={budgetLimit} saving="$0"/>])
-      setSpending(0)
-      setSpendingCatagory("")
-      startBudgetContainer(null)
-    }
+    
 
     
 
@@ -270,7 +276,7 @@ export const BudgetListScreen = ({ navigation }) => {
           
         </ScrollView>
         {budgetContainer}
-        <SpendingContainer/>
+        {/* <SpendingContainer/> */}
 
         
       </View>
