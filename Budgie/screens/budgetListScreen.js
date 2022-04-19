@@ -14,8 +14,15 @@ import {
 } from 'react-native';
 
 import { buttonGrey, addButtonBlue } from '../budgieColors';
-import DatePicker from 'react-native-date-picker'
+import DatePicker from 'react-native-date-picker';
 
+// REALM
+import {useMemo} from 'react';
+import BudgetContext, { Budget } from "../models/Budget";
+const { useRealm, useQuery, RealmProvider } = BudgetContext;
+const realm = useRealm();
+const result = useQuery("Budget");
+const budgets = useMemo(() => result.sorted("startDate"), [result]);
 
 
 const deviceHeight = Dimensions.get('window').height;
@@ -32,6 +39,29 @@ export const BudgetListScreen = ({ navigation }) => {
   const [budgetContainer, startBudgetContainer] = useState(BudgetContainer)
 
   
+
+
+  // REALM
+  function handleAddBudget(startDate, endDate, targetSpending) {
+    targetSpending = parseFloat(targetSpending);
+    realm.write(() => {
+      realm.create("Budget", new Budget({startDate, endDate, targetSpending}));
+    });
+
+    let i = 1;
+    budgets.forEach(element => {
+      console.log("Budget " + i);
+      console.log(element._id.toString());
+      console.log(element.startDate);
+      console.log(element.endDate);
+      console.log(element.targetSpending);
+      console.log("\n");
+      i++;
+    });
+  }
+
+
+
   
 
   // Handle functions
@@ -77,16 +107,18 @@ export const BudgetListScreen = ({ navigation }) => {
 
 
     function pressedCancelBudgetButton() {
-      console.log("canceling")
+      console.log("cancelling")
       startBudgetContainer(null)
     }
 
     function addNewBudget() {
-      setBudgetItems([...budgetItems, <BudgetPreviewButton startDate={startingDate} spending={budgetLimit} saving="$0"/>])
-      setStartingDate("")
-      setEndingDate("")
-      setBudgetLimit("")
-      startBudgetContainer(null)
+      console.log(startingDate, endingDate, budgetLimit);
+      handleAddBudget(startingDate, endingDate, budgetLimit);
+      setBudgetItems([...budgetItems, <BudgetPreviewButton startDate={startingDate} spending={budgetLimit} saving="$0"/>]);
+      setStartingDate("");
+      setEndingDate("");
+      setBudgetLimit("");
+      startBudgetContainer(null);
     }
 
     function addStartingDate() {
@@ -133,7 +165,7 @@ export const BudgetListScreen = ({ navigation }) => {
           </View>
           
           
-          <TouchableOpacity style={styles.addBudgetButton} onPress={addNewBudget}>
+          <TouchableOpacity style={styles.addBudgetButton} onPress={addNewBudget} >
             <Text>Add Budget</Text>
           </TouchableOpacity>
 
