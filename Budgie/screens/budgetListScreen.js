@@ -19,6 +19,7 @@ import DatePicker from 'react-native-date-picker';
 // REALM
 import {useMemo} from 'react';
 import BudgetContext, { Budget } from "../models/Budget";
+import { BudgetScreen } from './budgetScreen';
 const { useRealm, useQuery, RealmProvider } = BudgetContext;
 const realm = useRealm();
 const result = useQuery("Budget");
@@ -301,7 +302,17 @@ export const BudgetListScreen = ({ navigation }) => {
 
           <View>
             {/* list of budget preview buttons go here */}
-            {budgetItems}
+            {/* remember to delete UI implementation of budgets */}
+            {
+              budgets.map((item) => (
+                <BudgetPreviewButton
+                  key={item._id}
+                  startDate={item.startDate}
+                  spending={item.targetSpending}
+                  saving={item.targetSpending-item.totalSpending}
+                />
+              ))
+            }
           </View>
 
           
