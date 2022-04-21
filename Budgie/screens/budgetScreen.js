@@ -57,47 +57,47 @@ export const BudgetScreen = ({ navigation, route }) => {
         );
       };
 
-      const ModalAddCategory = () => {
-        return(
+    const ModalAddCategory = () => {
+      return(
+        <View style={styles.centeredView}>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            Alert.alert("Modal has been closed.");
+            setModalVisible(!modalVisible);
+          }}
+        >
           <View style={styles.centeredView}>
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => {
-              Alert.alert("Modal has been closed.");
-              setModalVisible(!modalVisible);
-            }}
-          >
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-              <View flexDirection = 'row' justifyContent = 'flex-start' alignContent = 'center'>
+            <View style={styles.modalView}>
+            <View flexDirection = 'row' justifyContent = 'flex-start' alignContent = 'center'>
+            <View>
+              <Text style={styles.sectionTitle}>New Category</Text>
+            </View>
+            <TouchableOpacity onPress={() =>setModalVisible(!modalVisible)}>
               <View>
-                <Text style={styles.sectionTitle}>New Category</Text>
+                <Text  style={styles.cancelButton}>CLOSE</Text>
               </View>
-              <TouchableOpacity onPress={() =>setModalVisible(!modalVisible)}>
-                <View>
-                  <Text  style={styles.cancelButton}>CLOSE</Text>
-                </View>
+            </TouchableOpacity>
+            
+          </View>
+          <TextInput style={styles.textInputBox}/>
+                <TouchableOpacity
+                style={styles.rowButton}
+                onPress={() => setModalVisible(!modalVisible)}
+              >
+                <Text style={styles.buttonText}>Submit</Text>
               </TouchableOpacity>
-              
             </View>
-            <TextInput style={styles.textInputBox}/>
-                  <TouchableOpacity
-                  style={styles.rowButton}
-                  onPress={() => setModalVisible(!modalVisible)}
-                >
-                  <Text style={styles.buttonText}>Submit</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </Modal>
-        </View>
-        );
-      };
+          </View>
+        </Modal>
+      </View>
+      );
+    };
   
     
-      function onPress(){
+    function onPress(){
 
     }
   
