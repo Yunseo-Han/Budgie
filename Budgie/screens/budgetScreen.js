@@ -1,4 +1,4 @@
-import React, {Component, useState} from 'react';
+import React, {Component, useState} from "react";
 import {
     SafeAreaView,
     ScrollView,
@@ -18,10 +18,24 @@ import {
 
 import { buttonGrey, addButtonBlue } from '../budgieColors';
 
+// REALM
+import {useMemo} from 'react';
+import BudgetContext, { Budget } from "../models/Budget";
+const { useRealm, useQuery, RealmProvider } = BudgetContext;
+const realm = useRealm();
+const result = useQuery("Budget");
+const budgets = useMemo(() => result.sorted("startDate"), [result]);
+
+
+
 export const BudgetScreen = ({ navigation, route }) => {
+
 
     const [spendingContainer, setSpendingContainer] = useState(SpendingContainer)
     const [spendingItems, setSpendingItems] = useState([]);
+    const [categoryName, setCategoryName] = React.useState("");
+
+    const {idString} = route.params;
     
 
     function pressedAddSpending() {
@@ -35,6 +49,32 @@ export const BudgetScreen = ({ navigation, route }) => {
     //   setSpendingCatagory("")
     //   setSpendingContainer(null)
     // }
+
+    function handleAddCategory() {
+      setModalVisible(!modalVisible);
+      let name = categoryName;
+      console.log(name);
+      let currentBudget = budgets.filtered('_id == ${idString}');
+      realm.write(() => {
+        
+      });
+
+      let i = 1;
+      budgets.forEach(element => {
+        console.log("Budget " + i);
+        console.log(element._id.toString());
+        console.log(element.startDate);
+        console.log(element.endDate);
+        console.log(element.targetSpending);
+        console.log(element.categories);
+        console.log("\n");
+        i++;
+      });
+    }
+
+    function addCategory({title}){
+      setModalVisible(!modalVisible);
+    };
 
 
 
@@ -82,11 +122,14 @@ export const BudgetScreen = ({ navigation, route }) => {
             </TouchableOpacity>
             
           </View>
-          <TextInput style={styles.textInputBox}/>
+            <TextInput 
+              style={styles.textInputBox}
+              onChangeText={newName => setCategoryName(newName)}
+            />
                 <TouchableOpacity
                 style={styles.rowButton}
-                onPress={() => setModalVisible(!modalVisible)}
-              >
+                onPress={handleAddCategory}
+                >
                 <Text style={styles.buttonText}>Submit</Text>
               </TouchableOpacity>
             </View>
@@ -97,16 +140,6 @@ export const BudgetScreen = ({ navigation, route }) => {
     };
   
     
-    function onPress(){
-
-    }
-  
-    function addCategory({title}){
-      setModalVisible(!modalVisible)
-    };
-  
-  
-  
     const Spending = ({ title, amount, date }) => {
       return( 
         <View style = {styles.roundedButton}>
@@ -163,7 +196,7 @@ export const BudgetScreen = ({ navigation, route }) => {
               </View>
     
               <View>
-                <Text style={styles.textInputTitle}>Spending Catagory</Text>
+                <Text style={styles.textInputTitle}>Spending Category</Text>
                 <TextInput
                   style={styles.textInputBox}
                   onChangeText={spendingCatagory => setSpendingCatagory(spendingCatagory)}
@@ -275,13 +308,14 @@ export const BudgetScreen = ({ navigation, route }) => {
     },
   
     rowButton: {
-      backgroundColor: buttonGrey,
-      borderRadius: 10,
-      marginTop: 20,
-      marginBottom : 30,
-      paddingHorizontal: 90,
-      alignSelf : 'center',
-      alignItems : 'stretch',
+      borderRadius: 20,
+    borderColor: 'grey',
+    borderWidth: 1,
+    justifyContent: 'center',
+    marginTop: 5, 
+    paddingHorizontal: 10,
+    height: 40,
+    width: 300,
     },
   
     titleText: {
