@@ -21,13 +21,14 @@ import {
 import { BudgetListScreen } from '../Budgie/screens/budgetListScreen';
 import { BudgetScreen } from './screens/budgetScreen'
 
-const Stack = createNativeStackNavigator();
+
 
 //REALM
 import BudgetContext from "./models/Budget";
 const { useRealm, useQuery, RealmProvider } = BudgetContext;
 
 const App = () => {  
+  const Stack = createNativeStackNavigator();
   // REALM START
     // Nothing to see here right now.
   // REALM END
