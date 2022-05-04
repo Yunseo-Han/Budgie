@@ -55,9 +55,13 @@ export const BudgetScreen = ({ navigation, route }) => {
       let name = categoryName;
       console.log(name);
       let currentBudget = budgets.filtered('_id == ${idString}');
+      let newCat;
       realm.write(() => {
-        
+        newCat = realm.create("Category", new Category({name}));
+        currentBudget.categories.push(newCat);
       });
+      console.log(newCat);
+      console.log(currentBudget.categories);
 
       let i = 1;
       budgets.forEach(element => {
@@ -126,7 +130,7 @@ export const BudgetScreen = ({ navigation, route }) => {
               style={styles.textInputBox}
               onChangeText={newName => setCategoryName(newName)}
             />
-                <TouchableOpacity
+              <TouchableOpacity
                 style={styles.rowButton}
                 onPress={handleAddCategory}
                 >
