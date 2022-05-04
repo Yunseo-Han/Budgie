@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState} from "react";
 
 import {
   SafeAreaView,
@@ -19,7 +19,7 @@ import DatePicker from 'react-native-date-picker';
 // REALM
 import {useMemo} from 'react';
 import BudgetContext, { Budget } from "../models/Budget";
-import { BudgetScreen } from './budgetScreen';
+
 
 
 
@@ -29,21 +29,23 @@ const deviceWidth = Dimensions.get('window').width;
 var isStartingDate = false;
 var isEndingDate = false;
 
-const { useRealm, useQuery, RealmProvider } = BudgetContext;
 
 export const BudgetListScreen = ({ navigation }) => {
+
+  const { useRealm, useQuery, RealmProvider } = BudgetContext;
   const realm = useRealm();
   const result = useQuery("Budget");
   const budgets = useMemo(() => result.sorted("startDate"), [result]);
 
-
-
   // Use states
   const [budgetItems, setBudgetItems] = useState([]);
-  const [budgetContainer, startBudgetContainer] = useState(BudgetContainer);
+  const [budgetContainer, startBudgetContainer] = useState(BudgetContainer)
+  const currentIdString = "";
 
   
-
+  function constructor(props) {
+    this.onPress = this.onPress.bind(this);
+  }
 
   // REALM
   function handleAddBudget(startDate, endDate, targetSpending) {
@@ -65,14 +67,14 @@ export const BudgetListScreen = ({ navigation }) => {
   }
 
 
+
   
 
   // Handle functions
-  function pressedBudgetPreviewButton() {
+  function pressedBudgetPreviewButton(idString) {
+    console.log(idString);
     navigation.navigate('Budget', {
-      startDate : "12/24/2022",
-      spending : "$1500",
-      saving : "$30",
+      idString : ""
     })
   }
 
@@ -83,13 +85,13 @@ export const BudgetListScreen = ({ navigation }) => {
 
 
   // Components
-  const BudgetPreviewButton = ({startDate, spending, saving}) => {
+  const BudgetPreviewButton = ({startDate, endDate, spending, saving, idString}) => {
     return (
-      <TouchableOpacity onPress={pressedBudgetPreviewButton} style={styles.roundedButton}>
-        <Text style={styles.importantText}> {startDate.toLocaleDateString()} </Text>
+      <TouchableOpacity onPress={() => pressedBudgetPreviewButton(idString)} style={styles.roundedButton}>
+        <Text style={styles.importantText}> {startDate.toLocaleDateString() + " - " + endDate.toLocaleDateString()} </Text>
         <View style = {{alignContent: 'flex-end', maxWidth: '50%'}}>
           <Text> {'$' + spending} </Text>
-          <Text> {saving} </Text>
+          <Text> {'$' + saving} </Text>
         </View>
       </TouchableOpacity>
     );
@@ -100,6 +102,7 @@ export const BudgetListScreen = ({ navigation }) => {
     const [startingDate, setStartingDate] = React.useState(new Date());
     const [endingDate, setEndingDate] = React.useState(new Date())
     const [budgetLimit, setBudgetLimit] = React.useState(0);
+    const [idString, setIdString] = React.useState("DEFAULT_ID_STRING");
 
     // Date picker data
     const [date, setDate] = useState(new Date())
@@ -117,7 +120,13 @@ export const BudgetListScreen = ({ navigation }) => {
     function addNewBudget() {
       console.log(startingDate, endingDate, budgetLimit);
       handleAddBudget(startingDate, endingDate, budgetLimit);
-      setBudgetItems([...budgetItems, <BudgetPreviewButton startDate={startingDate} spending={budgetLimit} saving="$0"/>]);
+      setBudgetItems([...budgetItems, 
+        <BudgetPreviewButton 
+          startDate={startingDate} 
+          spending={budgetLimit} 
+          saving="$0"
+          idString={idString}
+        />]);
       setStartingDate("");
       setEndingDate("");
       setBudgetLimit("");
@@ -211,7 +220,7 @@ export const BudgetListScreen = ({ navigation }) => {
   const SpendingContainer = () => {
     const [spendingName, setSpendingName] = React.useState("");
     const [spending, setSpending] = React.useState(0);
-    const [spendingCatatory, setSpendingCatagory] = React.useState("");
+    const [spendingCategory, setSpendingCategory] = React.useState("");
 
     // outside in screen
     // const [spendingContainer, setSpendingContainer] = useState(SpendingContainer)
@@ -310,8 +319,10 @@ export const BudgetListScreen = ({ navigation }) => {
                 <BudgetPreviewButton
                   key={item._id}
                   startDate={item.startDate}
+                  endDate={item.endDate}
                   spending={item.targetSpending}
                   saving={item.targetSpending-item.totalSpending}
+                  idString={item._id.toString()}
                 />
               ))
             }
@@ -432,4 +443,5 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginRight: 10,
   }
+
 });
