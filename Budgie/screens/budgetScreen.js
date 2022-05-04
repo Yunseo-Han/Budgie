@@ -54,6 +54,7 @@ export const BudgetScreen = ({ navigation, route }) => {
       setModalVisible(!modalVisible);
       let name = categoryName;
       console.log(name);
+      // CHECK THIS
       let currentBudget = budgets.filtered('_id == ${idString}');
       let newCat;
       realm.write(() => {
@@ -427,7 +428,7 @@ export const BudgetScreen = ({ navigation, route }) => {
         borderWidth: 1,
         justifyContent: 'center',
         marginTop: 5, 
-        paddingHorizontal: 10,
+        // paddingHorizontal: 10,
         height: 40,
         width: 300,
       },
