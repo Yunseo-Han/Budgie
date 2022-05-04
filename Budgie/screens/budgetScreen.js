@@ -17,13 +17,13 @@ import {
   } from 'react-native';
 
 import { buttonGrey, addButtonBlue } from '../budgieColors';
+import { ObjectId } from "bson";
 
 export const BudgetScreen = ({ navigation, route }) => {
 
     const [spendingContainer, setSpendingContainer] = useState(SpendingContainer)
     const [spendingItems, setSpendingItems] = useState([]);
     
-
     const [categoryName, setCategoryName] = React.useState("");
 
     const {idString} = route.params;
@@ -42,18 +42,24 @@ export const BudgetScreen = ({ navigation, route }) => {
     // }
 
     function handleAddCategory() {
+      console.log("HERE!");
+      return;
       setModalVisible(!modalVisible);
-      let name = categoryName;
+      let name = categoryName.trim();
+      if(name == "") {
+        return;
+      }
       console.log(name);
       // CHECK THIS
-      let currentBudget = budgets.filtered('_id == ${idString}');
+      let id = ObjectId(idString);
+      let currentBudget = budgets.filtered("_id == $0", id);
       let newCat;
       realm.write(() => {
         newCat = realm.create("Category", new Category({name}));
         currentBudget.categories.push(newCat);
       });
       console.log(newCat);
-      console.log(currentBudget.categories);
+      console.log(JSON.stringify(currentBudget.categories));
 
       let i = 1;
       budgets.forEach(element => {
@@ -119,11 +125,11 @@ export const BudgetScreen = ({ navigation, route }) => {
           </View>
             <TextInput 
               style={styles.textInputBox}
-              // onChangeText={newName => setCategoryName(newName)}
+              onChangeText={newName => setCategoryName(newName)}
             />
               <TouchableOpacity
                 style={styles.rowButton}
-                onPress={()=>setModalVisible(!modalVisible)}
+                onPress={()=>handleAddCategory()}
                 >
                 <Text style={styles.buttonText}>Submit</Text>
               </TouchableOpacity>

@@ -19,7 +19,8 @@ import DatePicker from 'react-native-date-picker';
 // REALM
 import {useMemo} from 'react';
 import BudgetContext, { Budget } from "../models/Budget";
-
+// import {BSON} from "realm-web";
+import { ObjectId } from "bson";
 
 
 
@@ -67,12 +68,13 @@ export const BudgetListScreen = ({ navigation }) => {
   }
 
 
-
-  
-
   // Handle functions
   function pressedBudgetPreviewButton(idString) {
     console.log(idString);
+    let id = ObjectId(idString);
+    let budObj = realm.objects("Budget").filtered("_id == $0", id);
+    console.log(budObj);
+    console.log(JSON.stringify(budObj.categories));
     navigation.navigate('Budget', {
       idString : ""
     })
@@ -211,8 +213,6 @@ export const BudgetListScreen = ({ navigation }) => {
           }}
         />
       </View>
-      
-      
     );
   }
 
