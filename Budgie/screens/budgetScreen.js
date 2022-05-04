@@ -119,11 +119,11 @@ export const BudgetScreen = ({ navigation, route }) => {
           </View>
             <TextInput 
               style={styles.textInputBox}
-              onChangeText={newName => setCategoryName(newName)}
+              // onChangeText={newName => setCategoryName(newName)}
             />
               <TouchableOpacity
                 style={styles.rowButton}
-                onPress={handleAddCategory}
+                onPress={()=>setModalVisible(!modalVisible)}
                 >
                 <Text style={styles.buttonText}>Submit</Text>
               </TouchableOpacity>
