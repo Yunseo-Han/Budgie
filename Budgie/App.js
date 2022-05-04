@@ -28,7 +28,6 @@ import BudgetContext from "./models/Budget";
 const { useRealm, useQuery, RealmProvider } = BudgetContext;
 
 const App = () => {  
-
   // REALM START
     // Nothing to see here right now.
   // REALM END

@@ -1,0 +1,598 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<RCTSafeAreaView
+  emulateUnlessSupported={true}
+  style={
+    Array [
+      Object {
+        "height": "100%",
+        "paddingHorizontal": 10,
+        "paddingVertical": 20,
+      },
+    ]
+  }
+>
+  <RCTScrollView
+    contentInsetAdjustmentBehavior="automatic"
+  >
+    <View>
+      <View
+        style={
+          Object {
+            "alignContent": "center",
+          }
+        }
+      >
+        <Image
+          source={
+            Object {
+              "uri": "https://reactnative.dev/docs/assets/p_cat2.png",
+            }
+          }
+          style={
+            Object {
+              "alignSelf": "center",
+              "height": 200,
+              "width": 200,
+            }
+          }
+        />
+      </View>
+      <View
+        style={
+          Object {
+            "borderTopColor": "#E3E3E3",
+            "borderTopWidth": 2,
+          }
+        }
+      >
+        <Text
+          style={
+            Object {
+              "fontSize": 20,
+              "fontWeight": "bold",
+              "marginHorizontal": 20,
+              "marginVertical": 10,
+            }
+          }
+        >
+           Budget Categories 
+        </Text>
+        <View
+          alignContent="center"
+          flexDirection="row"
+          justifyContent="flex-start"
+        >
+          <View
+            style={
+              Object {
+                "alignItems": "center",
+                "backgroundColor": "#E3E3E3",
+                "borderRadius": 10,
+                "flex": 3,
+                "flexDirection": "row",
+                "justifyContent": "space-between",
+                "marginBottom": 10,
+                "marginHorizontal": 10,
+                "paddingHorizontal": 20,
+                "paddingVertical": 15,
+              }
+            }
+          >
+            <Text
+              style={
+                Object {
+                  "fontWeight": "bold",
+                  "maxWidth": "50%",
+                }
+              }
+            >
+               
+              Rent
+               
+            </Text>
+            <View
+              style={
+                Object {
+                  "maxWidth": "50%",
+                }
+              }
+            >
+              <Text>
+                 
+                $1500
+                 
+              </Text>
+            </View>
+          </View>
+          <View
+            accessible={true}
+            collapsable={false}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "white",
+                "borderColor": "#E3E3E3",
+                "borderRadius": 20,
+                "borderWidth": 5,
+                "height": 60,
+                "marginBottom": 10,
+                "marginRight": 10,
+                "opacity": 1,
+                "width": 60,
+              }
+            }
+          >
+            <View
+              style={
+                Object {
+                  "flex": 1,
+                }
+              }
+            >
+              <Text
+                style={
+                  Object {
+                    "marginHorizontal": 10,
+                    "marginVertical": 15,
+                  }
+                }
+              >
+                ADD
+              </Text>
+            </View>
+          </View>
+        </View>
+        <View
+          alignContent="center"
+          flexDirection="row"
+          justifyContent="flex-start"
+        >
+          <View
+            style={
+              Object {
+                "alignItems": "center",
+                "backgroundColor": "#E3E3E3",
+                "borderRadius": 10,
+                "flex": 3,
+                "flexDirection": "row",
+                "justifyContent": "space-between",
+                "marginBottom": 10,
+                "marginHorizontal": 10,
+                "paddingHorizontal": 20,
+                "paddingVertical": 15,
+              }
+            }
+          >
+            <Text
+              style={
+                Object {
+                  "fontWeight": "bold",
+                  "maxWidth": "50%",
+                }
+              }
+            >
+               
+              Rent
+               
+            </Text>
+            <View
+              style={
+                Object {
+                  "maxWidth": "50%",
+                }
+              }
+            >
+              <Text>
+                 
+                $1500
+                 
+              </Text>
+            </View>
+          </View>
+          <View
+            accessible={true}
+            collapsable={false}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "white",
+                "borderColor": "#E3E3E3",
+                "borderRadius": 20,
+                "borderWidth": 5,
+                "height": 60,
+                "marginBottom": 10,
+                "marginRight": 10,
+                "opacity": 1,
+                "width": 60,
+              }
+            }
+          >
+            <View
+              style={
+                Object {
+                  "flex": 1,
+                }
+              }
+            >
+              <Text
+                style={
+                  Object {
+                    "marginHorizontal": 10,
+                    "marginVertical": 15,
+                  }
+                }
+              >
+                ADD
+              </Text>
+            </View>
+          </View>
+        </View>
+        <View
+          alignContent="center"
+          flexDirection="row"
+          justifyContent="flex-start"
+        >
+          <View
+            style={
+              Object {
+                "alignItems": "center",
+                "backgroundColor": "#E3E3E3",
+                "borderRadius": 10,
+                "flex": 3,
+                "flexDirection": "row",
+                "justifyContent": "space-between",
+                "marginBottom": 10,
+                "marginHorizontal": 10,
+                "paddingHorizontal": 20,
+                "paddingVertical": 15,
+              }
+            }
+          >
+            <Text
+              style={
+                Object {
+                  "fontWeight": "bold",
+                  "maxWidth": "50%",
+                }
+              }
+            >
+               
+              Rent
+               
+            </Text>
+            <View
+              style={
+                Object {
+                  "maxWidth": "50%",
+                }
+              }
+            >
+              <Text>
+                 
+                $1500
+                 
+              </Text>
+            </View>
+          </View>
+          <View
+            accessible={true}
+            collapsable={false}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "white",
+                "borderColor": "#E3E3E3",
+                "borderRadius": 20,
+                "borderWidth": 5,
+                "height": 60,
+                "marginBottom": 10,
+                "marginRight": 10,
+                "opacity": 1,
+                "width": 60,
+              }
+            }
+          >
+            <View
+              style={
+                Object {
+                  "flex": 1,
+                }
+              }
+            >
+              <Text
+                style={
+                  Object {
+                    "marginHorizontal": 10,
+                    "marginVertical": 15,
+                  }
+                }
+              >
+                ADD
+              </Text>
+            </View>
+          </View>
+        </View>
+        <View
+          accessible={true}
+          collapsable={false}
+          focusable={false}
+          onClick={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            Object {
+              "alignItems": "stretch",
+              "alignSelf": "center",
+              "backgroundColor": "#E3E3E3",
+              "borderRadius": 10,
+              "marginBottom": 30,
+              "marginTop": 20,
+              "opacity": 1,
+              "paddingHorizontal": 90,
+            }
+          }
+        >
+          <Text
+            onPress={[Function]}
+            style={
+              Object {
+                "fontSize": 20,
+                "fontWeight": "bold",
+                "paddingVertical": 10,
+              }
+            }
+          >
+            New Category
+          </Text>
+        </View>
+      </View>
+      <View
+        style={
+          Object {
+            "borderTopColor": "#E3E3E3",
+            "borderTopWidth": 2,
+            "marginHorizontal": 10,
+          }
+        }
+      >
+        <Text
+          style={
+            Object {
+              "fontSize": 20,
+              "fontWeight": "bold",
+              "marginVertical": 10,
+            }
+          }
+        >
+           New Spendings 
+        </Text>
+        <View
+          style={
+            Object {
+              "alignItems": "center",
+              "backgroundColor": "#E3E3E3",
+              "borderRadius": 10,
+              "flexDirection": "row",
+              "justifyContent": "space-between",
+              "marginBottom": 10,
+              "paddingHorizontal": 20,
+              "paddingVertical": 15,
+            }
+          }
+        >
+          <View
+            style={
+              Object {
+                "flex": 5,
+              }
+            }
+          >
+            <Text
+              style={
+                Object {
+                  "fontWeight": "bold",
+                  "maxWidth": "50%",
+                }
+              }
+            >
+               
+              Nordstrom
+               
+            </Text>
+            <Text>
+               
+              4/6/2022
+               
+            </Text>
+          </View>
+          <View
+            style={
+              Object {
+                "flex": 1,
+              }
+            }
+          >
+            <Text
+              style={
+                Object {
+                  "color": "red",
+                  "fontWeight": "bold",
+                }
+              }
+            >
+               
+              $500.00
+               
+            </Text>
+          </View>
+        </View>
+        <View
+          style={
+            Object {
+              "alignItems": "center",
+              "backgroundColor": "#E3E3E3",
+              "borderRadius": 10,
+              "flexDirection": "row",
+              "justifyContent": "space-between",
+              "marginBottom": 10,
+              "paddingHorizontal": 20,
+              "paddingVertical": 15,
+            }
+          }
+        >
+          <View
+            style={
+              Object {
+                "flex": 5,
+              }
+            }
+          >
+            <Text
+              style={
+                Object {
+                  "fontWeight": "bold",
+                  "maxWidth": "50%",
+                }
+              }
+            >
+               
+              Best Buy
+               
+            </Text>
+            <Text>
+               
+              4/6/2022
+               
+            </Text>
+          </View>
+          <View
+            style={
+              Object {
+                "flex": 1,
+              }
+            }
+          >
+            <Text
+              style={
+                Object {
+                  "color": "red",
+                  "fontWeight": "bold",
+                }
+              }
+            >
+               
+              $50.00
+               
+            </Text>
+          </View>
+        </View>
+        <View
+          style={
+            Object {
+              "alignItems": "center",
+              "backgroundColor": "#E3E3E3",
+              "borderRadius": 10,
+              "flexDirection": "row",
+              "justifyContent": "space-between",
+              "marginBottom": 10,
+              "paddingHorizontal": 20,
+              "paddingVertical": 15,
+            }
+          }
+        >
+          <View
+            style={
+              Object {
+                "flex": 5,
+              }
+            }
+          >
+            <Text
+              style={
+                Object {
+                  "fontWeight": "bold",
+                  "maxWidth": "50%",
+                }
+              }
+            >
+               
+              Target
+               
+            </Text>
+            <Text>
+               
+              4/6/2022
+               
+            </Text>
+          </View>
+          <View
+            style={
+              Object {
+                "flex": 1,
+              }
+            }
+          >
+            <Text
+              style={
+                Object {
+                  "color": "red",
+                  "fontWeight": "bold",
+                }
+              }
+            >
+               
+              $54.00
+               
+            </Text>
+          </View>
+        </View>
+      </View>
+      <View
+        style={
+          Object {
+            "alignItems": "center",
+            "flex": 1,
+            "justifyContent": "center",
+            "marginTop": 22,
+          }
+        }
+      >
+        <Modal
+          animationType="slide"
+          hardwareAccelerated={false}
+          onRequestClose={[Function]}
+          transparent={true}
+          visible={false}
+        />
+      </View>
+    </View>
+  </RCTScrollView>
+</RCTSafeAreaView>
+`;

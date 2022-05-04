@@ -20,10 +20,7 @@ import DatePicker from 'react-native-date-picker';
 import {useMemo} from 'react';
 import BudgetContext, { Budget } from "../models/Budget";
 import { BudgetScreen } from './budgetScreen';
-const { useRealm, useQuery, RealmProvider } = BudgetContext;
-const realm = useRealm();
-const result = useQuery("Budget");
-const budgets = useMemo(() => result.sorted("startDate"), [result]);
+
 
 
 const deviceHeight = Dimensions.get('window').height;
@@ -32,12 +29,18 @@ const deviceWidth = Dimensions.get('window').width;
 var isStartingDate = false;
 var isEndingDate = false;
 
+const { useRealm, useQuery, RealmProvider } = BudgetContext;
 
 export const BudgetListScreen = ({ navigation }) => {
+  const realm = useRealm();
+  const result = useQuery("Budget");
+  const budgets = useMemo(() => result.sorted("startDate"), [result]);
+
+
 
   // Use states
   const [budgetItems, setBudgetItems] = useState([]);
-  const [budgetContainer, startBudgetContainer] = useState(BudgetContainer)
+  const [budgetContainer, startBudgetContainer] = useState(BudgetContainer);
 
   
 
@@ -60,7 +63,6 @@ export const BudgetListScreen = ({ navigation }) => {
       i++;
     });
   }
-
 
 
   
@@ -430,5 +432,4 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginRight: 10,
   }
-
 });
