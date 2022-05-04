@@ -82,11 +82,14 @@ export const BudgetScreen = ({ navigation, route }) => {
             </TouchableOpacity>
             
           </View>
-          <TextInput style={styles.textInputBox}/>
-                <TouchableOpacity
+            <TextInput 
+              style={styles.textInputBox}
+              onChangeText={newName => setCategoryName(newName)}
+            />
+              <TouchableOpacity
                 style={styles.rowButton}
-                onPress={() => setModalVisible(!modalVisible)}
-              >
+                onPress={handleAddCategory}
+                >
                 <Text style={styles.buttonText}>Submit</Text>
               </TouchableOpacity>
             </View>
@@ -97,16 +100,6 @@ export const BudgetScreen = ({ navigation, route }) => {
     };
   
     
-    function onPress(){
-
-    }
-  
-    function addCategory({title}){
-      setModalVisible(!modalVisible)
-    };
-  
-  
-  
     const Spending = ({ title, amount, date }) => {
       return( 
         <View style = {styles.roundedButton}>
@@ -163,7 +156,7 @@ export const BudgetScreen = ({ navigation, route }) => {
               </View>
     
               <View>
-                <Text style={styles.textInputTitle}>Spending Catagory</Text>
+                <Text style={styles.textInputTitle}>Spending Category</Text>
                 <TextInput
                   style={styles.textInputBox}
                   onChangeText={spendingCatagory => setSpendingCatagory(spendingCatagory)}
