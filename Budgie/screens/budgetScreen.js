@@ -24,9 +24,12 @@ export const BudgetScreen = ({ navigation, route }) => {
     const [spendingContainer, setSpendingContainer] = useState(SpendingContainer)
     const [spendingItems, setSpendingItems] = useState([]);
     
-    const [categoryName, setCategoryName] = React.useState("");
-
+  
     const {idString} = route.params;
+
+    // add catagory modal 
+    const [categoryModalVisible, setCategoryModalVisible] = useState(false);
+    
     
 
     function pressedAddSpending() {
@@ -44,34 +47,34 @@ export const BudgetScreen = ({ navigation, route }) => {
     function handleAddCategory() {
       console.log("HERE!");
       return;
-      setModalVisible(!modalVisible);
-      let name = categoryName.trim();
-      if(name == "") {
-        return;
-      }
-      console.log(name);
-      // CHECK THIS
-      let id = ObjectId(idString);
-      let currentBudget = budgets.filtered("_id == $0", id);
-      let newCat;
-      realm.write(() => {
-        newCat = realm.create("Category", new Category({name}));
-        currentBudget.categories.push(newCat);
-      });
-      console.log(newCat);
-      console.log(JSON.stringify(currentBudget.categories));
+      // setModalVisible(!modalVisible);
+      // let name = categoryName.trim();
+      // if(name == "") {
+      //   return;
+      // }
+      // console.log(name);
+      // // CHECK THIS
+      // let id = ObjectId(idString);
+      // let currentBudget = budgets.filtered("_id == $0", id);
+      // let newCat;
+      // realm.write(() => {
+      //   newCat = realm.create("Category", new Category({name}));
+      //   currentBudget.categories.push(newCat);
+      // });
+      // console.log(newCat);
+      // console.log(JSON.stringify(currentBudget.categories));
 
-      let i = 1;
-      budgets.forEach(element => {
-        console.log("Budget " + i);
-        console.log(element._id.toString());
-        console.log(element.startDate);
-        console.log(element.endDate);
-        console.log(element.targetSpending);
-        console.log(element.categories);
-        console.log("\n");
-        i++;
-      });
+      // let i = 1;
+      // budgets.forEach(element => {
+      //   console.log("Budget " + i);
+      //   console.log(element._id.toString());
+      //   console.log(element.startDate);
+      //   console.log(element.endDate);
+      //   console.log(element.targetSpending);
+      //   console.log(element.categories);
+      //   console.log("\n");
+      //   i++;
+      // });
     }
 
     function addCategory({title}){
@@ -99,44 +102,49 @@ export const BudgetScreen = ({ navigation, route }) => {
       };
 
     const ModalAddCategory = () => {
+      // category name iput 
+      const [categoryInput, setCatagoryInput] = React.useState("");
+
+
       return(
-        <View style={styles.centeredView}>
         <Modal
           animationType="slide"
           transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => {
-            Alert.alert("Modal has been closed.");
-            setModalVisible(!modalVisible);
-          }}
+          visible={categoryModalVisible}
+          // onRequestClose={() => {
+          //   Alert.alert("Modal has been closed.");
+          //   setModalVisible(!modalVisible);
+          // }}
         >
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
-            <View flexDirection = 'row' justifyContent = 'flex-start' alignContent = 'center'>
-            <View>
-              <Text style={styles.sectionTitle}>New Category</Text>
-            </View>
-            <TouchableOpacity onPress={() =>setModalVisible(!modalVisible)}>
-              <View>
-                <Text  style={styles.cancelButton}>CLOSE</Text>
+
+              <View flexDirection = 'row' justifyContent = 'space-between' alignContent = 'center'>
+
+                <Text style={styles.sectionTitle}>New Category</Text>
+                <TouchableOpacity style={styles.cancelButton} onPress={() =>setCatagoryModalVisible(false)}>
+                  <View>
+                    <Text>CLOSE</Text>
+                  </View>
+                </TouchableOpacity>
+
               </View>
-            </TouchableOpacity>
-            
-          </View>
-            <TextInput 
-              style={styles.textInputBox}
-              onChangeText={newName => setCategoryName(newName)}
-            />
+
+              <TextInput 
+                style={styles.textInputBox}
+                onChangeText={setCatagoryInput}
+                value={categoryInput}
+              />
+
               <TouchableOpacity
                 style={styles.rowButton}
-                onPress={()=>handleAddCategory()}
-                >
+                onPress={handleAddCategory}>
                 <Text style={styles.buttonText}>Submit</Text>
               </TouchableOpacity>
+
             </View>
           </View>
         </Modal>
-      </View>
       );
     };
   
@@ -155,7 +163,7 @@ export const BudgetScreen = ({ navigation, route }) => {
         );
       };
   
-      const [modalVisible, setModalVisible] = useState(false);
+      
   
   
     const SpendingContainer = () => {
@@ -239,7 +247,7 @@ export const BudgetScreen = ({ navigation, route }) => {
           <Category title = "Rent" allocated = "$1500"/>
           <Category title = "Rent" allocated = "$1500"/>
           <TouchableOpacity style = {styles.rowButton}>
-            <Text onPress={() => {setModalVisible(true)
+            <Text onPress={() => {setCategoryModalVisible(true)
           }} 
             style = {styles.buttonText}
             >New Category</Text>
