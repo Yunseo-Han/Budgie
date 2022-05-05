@@ -5,6 +5,7 @@ import {
   ScrollView,
   StatusBar,
   StyleSheet,
+  Modal, 
   Text,
   View,
   TouchableOpacity,
@@ -19,7 +20,8 @@ import DatePicker from 'react-native-date-picker';
 // REALM
 import {useMemo} from 'react';
 import BudgetContext, { Budget } from "../models/Budget";
-
+// import {BSON} from "realm-web";
+import { ObjectId } from "bson";
 
 
 
@@ -39,8 +41,12 @@ export const BudgetListScreen = ({ navigation }) => {
 
   // Use states
   const [budgetItems, setBudgetItems] = useState([]);
-  const [budgetContainer, startBudgetContainer] = useState(BudgetContainer)
+  // const [budgetContainer, startBudgetContainer] = useState(BudgetContainer)
   const currentIdString = "";
+
+
+  // Budget Modal
+  const [budgetModalVisible, setBudgetModalVisible] = useState(false);
 
   
   function constructor(props) {
@@ -67,29 +73,26 @@ export const BudgetListScreen = ({ navigation }) => {
   }
 
 
-
   
-
-  // Handle functions
-  function pressedBudgetPreviewButton(idString) {
-    console.log(idString);
-    navigation.navigate('Budget', {
-      idString : ""
-    })
-  }
-
-  function pressedAddButton() {
-    console.log("opening add budget")
-    startBudgetContainer(<BudgetContainer/>)
-  }   
-
-
   // Components
   const BudgetPreviewButton = ({startDate, endDate, spending, saving, idString}) => {
+
+    // Handle functions   ******* used to be outside the component
+    function pressedBudgetPreviewButton(idString) {
+      console.log(idString);
+      let id = ObjectId(idString);
+      let budObj = realm.objects("Budget").filtered("_id == $0", id);
+      console.log(budObj);
+      console.log(JSON.stringify(budObj.categories));
+      navigation.navigate('Budget', {
+        idString : ""
+      })
+    }
+
     return (
       <TouchableOpacity onPress={() => pressedBudgetPreviewButton(idString)} style={styles.roundedButton}>
         <Text style={styles.importantText}> {startDate.toLocaleDateString() + " - " + endDate.toLocaleDateString()} </Text>
-        <View style = {{alignContent: 'flex-end', maxWidth: '50%'}}>
+        <View style = {{alignContent: 'flex-end', maxWidth: '30%'}}>
           <Text> {'$' + spending} </Text>
           <Text> {'$' + saving} </Text>
         </View>
@@ -97,7 +100,10 @@ export const BudgetListScreen = ({ navigation }) => {
     );
   }
 
-  const BudgetContainer = () => {
+
+
+
+  const AddNewBudgetModal = () => {
     
     const [startingDate, setStartingDate] = React.useState(new Date());
     const [endingDate, setEndingDate] = React.useState(new Date())
@@ -112,10 +118,6 @@ export const BudgetListScreen = ({ navigation }) => {
 
 
 
-    function pressedCancelBudgetButton() {
-      console.log("cancelling")
-      startBudgetContainer(null)
-    }
 
     function addNewBudget() {
       console.log(startingDate, endingDate, budgetLimit);
@@ -130,7 +132,7 @@ export const BudgetListScreen = ({ navigation }) => {
       setStartingDate("");
       setEndingDate("");
       setBudgetLimit("");
-      startBudgetContainer(null);
+      setBudgetModalVisible(false);
     }
 
     function addStartingDate() {
@@ -143,156 +145,139 @@ export const BudgetListScreen = ({ navigation }) => {
       isEndingDate = true
     }
 
+
     return (
-      <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 300, justifyContent: 'center', alignItems: 'center'}}>
-        <KeyboardAvoidingView style={styles.setBudgetContainer} behavior={Platform.OS === "ios" ? "padding" : "height"}>
-          <View style={{flexDirection: 'row', alignSelf: 'stretch', justifyContent:'space-between', marginTop: 5}}>
-            <Text style={styles.titleText}>Add Budget</Text>
-            <TouchableOpacity style={styles.cancelButton} onPress={pressedCancelBudgetButton}>
-              <Text>CANCEL</Text>
-            </TouchableOpacity>
-          </View>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={budgetModalVisible}> 
+        <View style={styles.centeredView}>
+        <View style={styles.modalView}>
+          <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
+            <View style={{flexDirection: 'row', alignSelf: 'stretch', justifyContent:'space-between', marginTop: 5}}>
+              <Text style={styles.titleText}>Add Budget</Text>
+              <TouchableOpacity style={styles.cancelButton} onPress={()=>setBudgetModalVisible(false)}>
+                <Text>CANCEL</Text>
+              </TouchableOpacity>
+            </View>
 
-          <View>
-            <Text style={styles.textInputTitle}>Budget Limit</Text>
-            <TextInput
-              style={styles.textInputBox}
-              keyboardType={'decimal-pad'}
-              onChangeText={newLimit => setBudgetLimit(newLimit)}
-            />
-          </View>
+            <View>
+              <Text style={styles.textInputTitle}>Budget Limit</Text>
+              <TextInput
+                style={styles.textInputBox}
+                keyboardType={'decimal-pad'}
+                onChangeText={newLimit => setBudgetLimit(newLimit)}
+              />
+            </View>
 
-          <View>
-            <Text style={styles.textInputTitle} >Starting Date</Text>
-            <TouchableOpacity style={styles.textInputBox} onPress={addStartingDate}>
-              <Text>{startingDate.toLocaleDateString()}</Text>
-            </TouchableOpacity>
-          </View>
-          
-          <View>
-            <Text style={styles.textInputTitle} >Ending Date</Text>
-            <TouchableOpacity style={styles.textInputBox} onPress={addEndingDate}>
-              <Text>{endingDate.toLocaleDateString()}</Text>
-            </TouchableOpacity>
-          </View>
-          
-          
-          <TouchableOpacity style={styles.addBudgetButton} onPress={addNewBudget} >
-            <Text>Add Budget</Text>
-          </TouchableOpacity>
-
-        </KeyboardAvoidingView>
-        <DatePicker
-          modal
-          open={open}
-          date={date}
-          mode={"date"}
-          textColor={addButtonBlue}
-          onConfirm={(date) => {
-            console.log("**"+date.toLocaleDateString())
-            console.log("starting changed:" + isStartingDate)
-            console.log("ending changed:" + isEndingDate)
-            if (isStartingDate) {
-              console.log("changing startingDate")
-              setStartingDate(date)
-              isStartingDate = false
-            } else if (isEndingDate) {
-              console.log("changing endingDate")
-              setEndingDate(date)
-              isEndingDate = false
-            } 
-            setOpen(false)
+            <View>
+              <Text style={styles.textInputTitle} >Starting Date</Text>
+              <TouchableOpacity style={styles.textInputBox} onPress={addStartingDate}>
+                <Text>{startingDate.toLocaleDateString()}</Text>
+              </TouchableOpacity>
+            </View>
             
-          }}
-          onCancel={() => {
-            setOpen(false)
-            isStartingDate = false
-            isEndingDate = false
-          }}
-        />
-      </View>
-      
-      
-    );
-  }
-
-
-  const SpendingContainer = () => {
-    const [spendingName, setSpendingName] = React.useState("");
-    const [spending, setSpending] = React.useState(0);
-    const [spendingCategory, setSpendingCategory] = React.useState("");
-
-    // outside in screen
-    // const [spendingContainer, setSpendingContainer] = useState(SpendingContainer)
-    // const [spendingItems, setSpendingItems] = useState([]);
-    
-
-
-    // function addNewSpending() {
-    //   setSpendingItems(... spendingItmes, <Spending spendingName, spedflksjd/>)
-    //   setSpendingName("")
-    //   setSpending(0)
-    //   setSpendingCatagory("")
-    //   setSpendingContainer(null)
-    // }
-
-    
-
-    function pressedCancelSpendingButton() {
-      console.log("canceling add spending")
-      setSpendingContainer(null)
-    }
-
-    
-
-    
-
-    return (
-      <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 400, justifyContent: 'center', alignItems: 'center'}}>
-        <KeyboardAvoidingView style={styles.setSpendingContainer} behavior={Platform.OS === "ios" ? "padding" : "height"}>
-          <View style={{flexDirection: 'row', alignSelf: 'stretch', justifyContent:'space-between', marginTop: 5}}>
-            <Text style={styles.titleText}>Add Spending</Text>
-            <TouchableOpacity style={styles.cancelButton} >
-              <Text>CANCEL</Text>
+            <View>
+              <Text style={styles.textInputTitle} >Ending Date</Text>
+              <TouchableOpacity style={styles.textInputBox} onPress={addEndingDate}>
+                <Text>{endingDate.toLocaleDateString()}</Text>
+              </TouchableOpacity>
+            </View>
+            
+            
+            <TouchableOpacity style={styles.addBudgetButton} onPress={addNewBudget} >
+              <Text>Add Budget</Text>
             </TouchableOpacity>
-          </View>
 
-          <View>
-            <Text style={styles.textInputTitle}>Spending Name</Text>
-            <TextInput
-              style={styles.textInputBox}
-              onChangeText={spendingName => setSpendingName(spendingName)}
-            />
-          </View>
-
-          <View>
-            <Text style={styles.textInputTitle}>Spending Amount</Text>
-            <TextInput
-              style={styles.textInputBox}
-              keyboardType={'decimal-pad'}
-              onChangeText={newSpending => setSpending(newSpending)}
-            />
-          </View>
-
-          <View>
-            <Text style={styles.textInputTitle}>Spending Catagory</Text>
-            <TextInput
-              style={styles.textInputBox}
-              onChangeText={spendingCatagory => setSpendingCatagory(spendingCatagory)}
-            />
-          </View>
-          
-          
-          <TouchableOpacity style={styles.addBudgetButton}>
-            <Text>Add Spending</Text>
-          </TouchableOpacity>
-
-        </KeyboardAvoidingView>
-      </View>
-      
-      
+          </KeyboardAvoidingView>
+          <DatePicker
+            modal
+            open={open}
+            date={date}
+            mode={"date"}
+            textColor={addButtonBlue}
+            onConfirm={(date) => {
+              if (isStartingDate) {
+                setStartingDate(date)
+                isStartingDate = false
+              } else if (isEndingDate) {
+                setEndingDate(date)
+                isEndingDate = false
+              } 
+              setOpen(false)
+              
+            }}
+            onCancel={() => {
+              setOpen(false)
+              isStartingDate = false
+              isEndingDate = false
+            }}
+          />
+        </View>
+        </View>
+      </Modal>
     );
   }
+
+
+  // const SpendingContainer = () => {
+  //   const [spendingName, setSpendingName] = React.useState("");
+  //   const [spending, setSpending] = React.useState(0);
+  //   const [spendingCategory, setSpendingCategory] = React.useState("");
+
+
+  //   function pressedCancelSpendingButton() {
+  //     console.log("canceling add spending")
+  //     setSpendingContainer(null)
+  //   }
+
+    
+  //   return (
+  //     <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 400, justifyContent: 'center', alignItems: 'center'}}>
+  //       <KeyboardAvoidingView style={styles.setSpendingContainer} behavior={Platform.OS === "ios" ? "padding" : "height"}>
+  //         <View style={{flexDirection: 'row', alignSelf: 'stretch', justifyContent:'space-between', marginTop: 5}}>
+  //           <Text style={styles.titleText}>Add Spending</Text>
+  //           <TouchableOpacity style={styles.cancelButton} >
+  //             <Text>CANCEL</Text>
+  //           </TouchableOpacity>
+  //         </View>
+
+  //         <View>
+  //           <Text style={styles.textInputTitle}>Spending Name</Text>
+  //           <TextInput
+  //             style={styles.textInputBox}
+  //             onChangeText={spendingName => setSpendingName(spendingName)}
+  //           />
+  //         </View>
+
+  //         <View>
+  //           <Text style={styles.textInputTitle}>Spending Amount</Text>
+  //           <TextInput
+  //             style={styles.textInputBox}
+  //             keyboardType={'decimal-pad'}
+  //             onChangeText={newSpending => setSpending(newSpending)}
+  //           />
+  //         </View>
+
+  //         <View>
+  //           <Text style={styles.textInputTitle}>Spending Catagory</Text>
+  //           <TextInput
+  //             style={styles.textInputBox}
+  //             onChangeText={spendingCatagory => setSpendingCatagory(spendingCatagory)}
+  //           />
+  //         </View>
+          
+          
+  //         <TouchableOpacity style={styles.addBudgetButton}>
+  //           <Text>Add Spending</Text>
+  //         </TouchableOpacity>
+
+  //       </KeyboardAvoidingView>
+  //     </View>
+      
+      
+  //   );
+  // }
 
 
     
@@ -301,19 +286,18 @@ export const BudgetListScreen = ({ navigation }) => {
     <SafeAreaView>
       <View style={{width: deviceWidth, height: deviceHeight}}>
       <StatusBar barStyle={'dark-content'}/>
-
         <ScrollView contentInsetAdjustmentBehavior="automatic">
+
           <View style={{flexDirection:'row', justifyContent:'space-between'}}>
             <Text style={styles.titleText}> Budgets </Text>
-            {/* <Button title="ADD" style={styles.addButton} onPress={handleSetBudgetItems} /> */}
-            <TouchableOpacity style={styles.addButton} onPress={pressedAddButton}>
+            <TouchableOpacity style={styles.addButton} onPress={()=>setBudgetModalVisible(true)}>
               <Text>ADD</Text>
             </TouchableOpacity>
           </View>
 
+          <AddNewBudgetModal/>
+
           <View>
-            {/* list of budget preview buttons go here */}
-            {/* remember to delete UI implementation of budgets */}
             {
               budgets.map((item) => (
                 <BudgetPreviewButton
@@ -330,13 +314,7 @@ export const BudgetListScreen = ({ navigation }) => {
 
           
         </ScrollView>
-        {budgetContainer}
-        {/* <SpendingContainer/> */}
-
-        
       </View>
-      
-      
     </SafeAreaView>
   );
 };
@@ -365,7 +343,7 @@ const styles = StyleSheet.create({
   
   importantText: {
     fontWeight: 'bold',
-    maxWidth: '50%',
+    maxWidth: '70%',
   },
 
   budgetInput: {
@@ -400,9 +378,6 @@ const styles = StyleSheet.create({
     zIndex: 3,
     elevation: 3,
   },
-
-  
-
 
   textInputTitle: {
     marginLeft: 10,
@@ -442,6 +417,29 @@ const styles = StyleSheet.create({
     height: 40,
     marginTop: 10,
     marginRight: 10,
-  }
+  },
+
+  modalView: {
+    margin: 10,
+    backgroundColor: "white",
+    borderRadius: 10,
+    paddingHorizontal: 35,
+    paddingVertical: 10,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
+
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
 
 });
