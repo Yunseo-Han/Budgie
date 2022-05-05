@@ -17,11 +17,13 @@ import {
   } from 'react-native';
 
 import PieChart from 'react-native-pie-chart';
-
 import { buttonGrey, addButtonBlue } from '../budgieColors';
-import { ObjectId } from "bson";
-
 import { Dimensions } from "react-native";
+
+//REALM
+import {useMemo} from 'react';
+import BudgetContext, { Budget, Category } from "../models/Budget";
+import { ObjectId } from "bson";
 
 
 export const BudgetScreen = ({ navigation, route }) => {
@@ -31,10 +33,14 @@ export const BudgetScreen = ({ navigation, route }) => {
     
   
     const {idString} = route.params;
-    // add catagory modal 
+    // add category modal 
     const [categoryModalVisible, setCategoryModalVisible] = useState(false);
    
     const screenWidth = Dimensions.get("window").width;
+
+    //REALM
+    const { useRealm, useQuery, RealmProvider } = BudgetContext;
+    const realm = useRealm();
 
     
 
@@ -50,46 +56,15 @@ export const BudgetScreen = ({ navigation, route }) => {
     //   setSpendingContainer(null)
     // }
 
-    function handleAddCategory() {
-      console.log("HERE!");
-      return;
-      // setModalVisible(!modalVisible);
-      // let name = categoryName.trim();
-      // if(name == "") {
-      //   return;
-      // }
-      // console.log(name);
-      // // CHECK THIS
-      // let id = ObjectId(idString);
-      // let currentBudget = budgets.filtered("_id == $0", id);
-      // let newCat;
-      // realm.write(() => {
-      //   newCat = realm.create("Category", new Category({name}));
-      //   currentBudget.categories.push(newCat);
-      // });
-      // console.log(newCat);
-      // console.log(JSON.stringify(currentBudget.categories));
+    
 
-      // let i = 1;
-      // budgets.forEach(element => {
-      //   console.log("Budget " + i);
-      //   console.log(element._id.toString());
-      //   console.log(element.startDate);
-      //   console.log(element.endDate);
-      //   console.log(element.targetSpending);
-      //   console.log(element.categories);
-      //   console.log("\n");
-      //   i++;
-      // });
-    }
-
-    function addCategory({title}){
-      setModalVisible(!modalVisible);
-    };
+    // function addCategory({title}){
+    //   setModalVisible(!modalVisible);
+    // };
 
 
     // Components
-    const Category = ({ title, allocated, spent}) => {
+    const CategorySummary = ({ title, allocated, spent}) => {
         return(
         <View flexDirection = 'row' justifyContent = 'flex-start' alignContent = 'center'>
             <View style = {styles.listItem}>
@@ -111,7 +86,42 @@ export const BudgetScreen = ({ navigation, route }) => {
     const ModalAddCategory = () => {
       // category name iput 
       const [categoryInput, setCatagoryInput] = React.useState("");
+      const [categoryLimitInput, setCategoryLimitInput] = React.useState("");
 
+      function handleAddCategory() {
+        let name = categoryInput.trim();
+        let limit = categoryLimitInput;
+        if(name == "") {
+          console.log("Every category must be given a name.");
+          return;
+        }
+        let id = ObjectId(idString);
+        let currentBudget = realm.objects("Budget").filtered("_id == $0", id)[0];
+        if(currentBudget.categories.some(e => e.name === name)) {
+          console.log("A category using with that name already exists.");
+          return;
+        }
+        let newCat;
+        realm.write(() => {
+          newCat = realm.create("Category", new Category({name: name, spendingLimit: limit}));
+          currentBudget.categories.push(newCat);
+        });
+
+        console.log(JSON.stringify(currentBudget), "\n");
+
+
+        // let i = 1;
+        // budgets.forEach(element => {
+        //   console.log("Budget " + i);
+        //   console.log(element._id.toString());
+        //   console.log(element.startDate);
+        //   console.log(element.endDate);
+        //   console.log(element.targetSpending);
+        //   console.log(element.categories);
+        //   console.log("\n");
+        //   i++;
+        // });
+      }
 
       return(
         <Modal
@@ -263,9 +273,9 @@ export const BudgetScreen = ({ navigation, route }) => {
   
         <View style = {{borderTopColor : buttonGrey, borderTopWidth : 2}}>
           <Text style = {styles.sectionText}> Budget Categories </Text>     
-          <Category title = "Rent" allocated = "$1500"/>
-          <Category title = "Rent" allocated = "$1500"/>
-          <Category title = "Rent" allocated = "$1500"/>
+          <CategorySummary title = "Rent" allocated = "$1500"/>
+          <CategorySummary title = "Rent" allocated = "$1500"/>
+          <CategorySummary title = "Rent" allocated = "$1500"/>
           <TouchableOpacity style = {styles.rowButton}>
             <Text onPress={() => {setCategoryModalVisible(true)
           }} 
