@@ -16,7 +16,12 @@ import {
     TextInput,
   } from 'react-native';
 
+import PieChart from 'react-native-pie-chart';
+
 import { buttonGrey, addButtonBlue } from '../budgieColors';
+
+import { Dimensions } from "react-native";
+
 
 export const BudgetScreen = ({ navigation, route }) => {
 
@@ -27,6 +32,8 @@ export const BudgetScreen = ({ navigation, route }) => {
     const [categoryName, setCategoryName] = React.useState("");
 
     const {idString} = route.params;
+
+    const screenWidth = Dimensions.get("window").width;
     
 
     function pressedAddSpending() {
@@ -157,6 +164,7 @@ export const BudgetScreen = ({ navigation, route }) => {
         const [spending, setSpending] = React.useState(0);
         const [spendingCatatory, setSpendingCatagory] = React.useState("");
         
+
     
         function pressedCancelSpendingButton() {
           console.log("canceling add spending")
@@ -210,13 +218,17 @@ export const BudgetScreen = ({ navigation, route }) => {
       
 
     // Screen
+    const widthAndHeight = 250
+    const series = [123, 321, 123, 789, 537]
+    const sliceColor = ['#D8F3DC','#B7E4C7','#95D5B2', '#74C69D', '#52B788']
+    
     return(
         <SafeAreaView style={[styles.container]}>
         <StatusBar barStyle='dark-content'/>
         <ScrollView
           contentInsetAdjustmentBehavior="automatic">
-        <View style = {{alignContent : 'center'}}>
-        <Image
+        <View style = {{alignItems : 'center'}}>
+        {/* <Image
             source={{
               uri: 'https://reactnative.dev/docs/assets/p_cat2.png',
             }}
@@ -224,6 +236,14 @@ export const BudgetScreen = ({ navigation, route }) => {
               width: 200, 
               height: 200,
               alignSelf: 'center'}}
+          /> */}
+          <PieChart
+            widthAndHeight={widthAndHeight}
+            series={series}
+            sliceColor={sliceColor}
+            doughnut={true}
+            coverRadius={0.45}
+            coverFill={'#FFF'}
           />
         </View>
   
