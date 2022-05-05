@@ -41,7 +41,7 @@ export const BudgetListScreen = ({ navigation }) => {
 
   // Use states
   const [budgetItems, setBudgetItems] = useState([]);
-  const [budgetContainer, startBudgetContainer] = useState(BudgetContainer)
+  // const [budgetContainer, startBudgetContainer] = useState(BudgetContainer)
   const currentIdString = "";
 
 
@@ -74,15 +74,6 @@ export const BudgetListScreen = ({ navigation }) => {
 
 
   
-
-  function pressedAddButton() {
-    console.log("opening add budget")
-    startBudgetContainer(<BudgetContainer/>)
-  }   
-
-
-
-  
   // Components
   const BudgetPreviewButton = ({startDate, endDate, spending, saving, idString}) => {
 
@@ -101,7 +92,7 @@ export const BudgetListScreen = ({ navigation }) => {
     return (
       <TouchableOpacity onPress={() => pressedBudgetPreviewButton(idString)} style={styles.roundedButton}>
         <Text style={styles.importantText}> {startDate.toLocaleDateString() + " - " + endDate.toLocaleDateString()} </Text>
-        <View style = {{alignContent: 'flex-end', maxWidth: '50%'}}>
+        <View style = {{alignContent: 'flex-end', maxWidth: '30%'}}>
           <Text> {'$' + spending} </Text>
           <Text> {'$' + saving} </Text>
         </View>
@@ -112,7 +103,7 @@ export const BudgetListScreen = ({ navigation }) => {
 
 
 
-  const BudgetContainer = () => {
+  const AddNewBudgetModal = () => {
     
     const [startingDate, setStartingDate] = React.useState(new Date());
     const [endingDate, setEndingDate] = React.useState(new Date())
@@ -127,10 +118,6 @@ export const BudgetListScreen = ({ navigation }) => {
 
 
 
-    function pressedCancelBudgetButton() {
-      console.log("cancelling")
-      startBudgetContainer(null)
-    }
 
     function addNewBudget() {
       console.log(startingDate, endingDate, budgetLimit);
@@ -146,7 +133,6 @@ export const BudgetListScreen = ({ navigation }) => {
       setEndingDate("");
       setBudgetLimit("");
       setBudgetModalVisible(false);
-      // startBudgetContainer(null);
     }
 
     function addStartingDate() {
@@ -160,15 +146,14 @@ export const BudgetListScreen = ({ navigation }) => {
     }
 
 
-    // parent view used to have: style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 300, justifyContent: 'center', alignItems: 'center'}}
-
     return (
       <Modal
         animationType="slide"
         transparent={true}
         visible={budgetModalVisible}> 
+        <View style={styles.centeredView}>
         <View style={styles.modalView}>
-          <KeyboardAvoidingView style={styles.setBudgetContainer} behavior={Platform.OS === "ios" ? "padding" : "height"}>
+          <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
             <View style={{flexDirection: 'row', alignSelf: 'stretch', justifyContent:'space-between', marginTop: 5}}>
               <Text style={styles.titleText}>Add Budget</Text>
               <TouchableOpacity style={styles.cancelButton} onPress={()=>setBudgetModalVisible(false)}>
@@ -212,15 +197,10 @@ export const BudgetListScreen = ({ navigation }) => {
             mode={"date"}
             textColor={addButtonBlue}
             onConfirm={(date) => {
-              console.log("**"+date.toLocaleDateString())
-              console.log("starting changed:" + isStartingDate)
-              console.log("ending changed:" + isEndingDate)
               if (isStartingDate) {
-                console.log("changing startingDate")
                 setStartingDate(date)
                 isStartingDate = false
               } else if (isEndingDate) {
-                console.log("changing endingDate")
                 setEndingDate(date)
                 isEndingDate = false
               } 
@@ -234,87 +214,70 @@ export const BudgetListScreen = ({ navigation }) => {
             }}
           />
         </View>
+        </View>
       </Modal>
     );
   }
 
 
-  const SpendingContainer = () => {
-    const [spendingName, setSpendingName] = React.useState("");
-    const [spending, setSpending] = React.useState(0);
-    const [spendingCategory, setSpendingCategory] = React.useState("");
-
-    // outside in screen
-    // const [spendingContainer, setSpendingContainer] = useState(SpendingContainer)
-    // const [spendingItems, setSpendingItems] = useState([]);
-    
+  // const SpendingContainer = () => {
+  //   const [spendingName, setSpendingName] = React.useState("");
+  //   const [spending, setSpending] = React.useState(0);
+  //   const [spendingCategory, setSpendingCategory] = React.useState("");
 
 
-    // function addNewSpending() {
-    //   setSpendingItems(... spendingItmes, <Spending spendingName, spedflksjd/>)
-    //   setSpendingName("")
-    //   setSpending(0)
-    //   setSpendingCatagory("")
-    //   setSpendingContainer(null)
-    // }
+  //   function pressedCancelSpendingButton() {
+  //     console.log("canceling add spending")
+  //     setSpendingContainer(null)
+  //   }
 
     
+  //   return (
+  //     <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 400, justifyContent: 'center', alignItems: 'center'}}>
+  //       <KeyboardAvoidingView style={styles.setSpendingContainer} behavior={Platform.OS === "ios" ? "padding" : "height"}>
+  //         <View style={{flexDirection: 'row', alignSelf: 'stretch', justifyContent:'space-between', marginTop: 5}}>
+  //           <Text style={styles.titleText}>Add Spending</Text>
+  //           <TouchableOpacity style={styles.cancelButton} >
+  //             <Text>CANCEL</Text>
+  //           </TouchableOpacity>
+  //         </View>
 
-    function pressedCancelSpendingButton() {
-      console.log("canceling add spending")
-      setSpendingContainer(null)
-    }
+  //         <View>
+  //           <Text style={styles.textInputTitle}>Spending Name</Text>
+  //           <TextInput
+  //             style={styles.textInputBox}
+  //             onChangeText={spendingName => setSpendingName(spendingName)}
+  //           />
+  //         </View>
 
-    
+  //         <View>
+  //           <Text style={styles.textInputTitle}>Spending Amount</Text>
+  //           <TextInput
+  //             style={styles.textInputBox}
+  //             keyboardType={'decimal-pad'}
+  //             onChangeText={newSpending => setSpending(newSpending)}
+  //           />
+  //         </View>
 
-    
-
-    return (
-      <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 400, justifyContent: 'center', alignItems: 'center'}}>
-        <KeyboardAvoidingView style={styles.setSpendingContainer} behavior={Platform.OS === "ios" ? "padding" : "height"}>
-          <View style={{flexDirection: 'row', alignSelf: 'stretch', justifyContent:'space-between', marginTop: 5}}>
-            <Text style={styles.titleText}>Add Spending</Text>
-            <TouchableOpacity style={styles.cancelButton} >
-              <Text>CANCEL</Text>
-            </TouchableOpacity>
-          </View>
-
-          <View>
-            <Text style={styles.textInputTitle}>Spending Name</Text>
-            <TextInput
-              style={styles.textInputBox}
-              onChangeText={spendingName => setSpendingName(spendingName)}
-            />
-          </View>
-
-          <View>
-            <Text style={styles.textInputTitle}>Spending Amount</Text>
-            <TextInput
-              style={styles.textInputBox}
-              keyboardType={'decimal-pad'}
-              onChangeText={newSpending => setSpending(newSpending)}
-            />
-          </View>
-
-          <View>
-            <Text style={styles.textInputTitle}>Spending Catagory</Text>
-            <TextInput
-              style={styles.textInputBox}
-              onChangeText={spendingCatagory => setSpendingCatagory(spendingCatagory)}
-            />
-          </View>
+  //         <View>
+  //           <Text style={styles.textInputTitle}>Spending Catagory</Text>
+  //           <TextInput
+  //             style={styles.textInputBox}
+  //             onChangeText={spendingCatagory => setSpendingCatagory(spendingCatagory)}
+  //           />
+  //         </View>
           
           
-          <TouchableOpacity style={styles.addBudgetButton}>
-            <Text>Add Spending</Text>
-          </TouchableOpacity>
+  //         <TouchableOpacity style={styles.addBudgetButton}>
+  //           <Text>Add Spending</Text>
+  //         </TouchableOpacity>
 
-        </KeyboardAvoidingView>
-      </View>
+  //       </KeyboardAvoidingView>
+  //     </View>
       
       
-    );
-  }
+  //   );
+  // }
 
 
     
@@ -323,21 +286,18 @@ export const BudgetListScreen = ({ navigation }) => {
     <SafeAreaView>
       <View style={{width: deviceWidth, height: deviceHeight}}>
       <StatusBar barStyle={'dark-content'}/>
-
         <ScrollView contentInsetAdjustmentBehavior="automatic">
+
           <View style={{flexDirection:'row', justifyContent:'space-between'}}>
             <Text style={styles.titleText}> Budgets </Text>
-            {/* <Button title="ADD" style={styles.addButton} onPress={handleSetBudgetItems} /> */}
             <TouchableOpacity style={styles.addButton} onPress={()=>setBudgetModalVisible(true)}>
               <Text>ADD</Text>
             </TouchableOpacity>
           </View>
 
-          <BudgetContainer/>
+          <AddNewBudgetModal/>
 
           <View>
-            {/* list of budget preview buttons go here */}
-            {/* remember to delete UI implementation of budgets */}
             {
               budgets.map((item) => (
                 <BudgetPreviewButton
@@ -354,13 +314,7 @@ export const BudgetListScreen = ({ navigation }) => {
 
           
         </ScrollView>
-        {budgetContainer}
-        {/* <SpendingContainer/> */}
-
-        
       </View>
-      
-      
     </SafeAreaView>
   );
 };
@@ -389,7 +343,7 @@ const styles = StyleSheet.create({
   
   importantText: {
     fontWeight: 'bold',
-    maxWidth: '50%',
+    maxWidth: '70%',
   },
 
   budgetInput: {
@@ -479,6 +433,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5
+  },
+
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
   },
 
 });

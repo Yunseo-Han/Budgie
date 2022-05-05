@@ -83,18 +83,19 @@ export const BudgetScreen = ({ navigation, route }) => {
 
 
     // Components
-    const Category = ({ title, allocated }) => {
+    const Category = ({ title, allocated, spent}) => {
         return(
         <View flexDirection = 'row' justifyContent = 'flex-start' alignContent = 'center'>
             <View style = {styles.listItem}>
               <Text style={styles.importantText}> {title} </Text>
-              <View style = {{maxWidth : "50%"}}>
-                <Text> {allocated} </Text>
+              <View style = {{alignContent: 'flex-end', maxWidth: '30%'}}>
+                <Text>{allocated} </Text>
+                <Text>{spent}</Text>
               </View>
             </View>
             <TouchableOpacity onPress={pressedAddSpending} style={styles.addButton}>
-              <View style = {{flex : 1}}>
-                <Text style = {{marginHorizontal : 10, marginVertical : 15}}>ADD</Text>
+              <View style={styles.centerAddSymbol}>
+                <Text alignSelf='center'>+</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -303,14 +304,13 @@ export const BudgetScreen = ({ navigation, route }) => {
     },
   
      addButton: {
-      backgroundColor: 'white',
       borderRadius: 20,
-      borderWidth: 5,
+      borderWidth: 3,
       borderColor: buttonGrey,
       marginBottom: 10,
       marginRight : 10,
-      height : 60,
-      width: 60,
+      height : 50,
+      width: 50,
       // marginRight: 10,
     },
   
@@ -454,5 +454,11 @@ export const BudgetScreen = ({ navigation, route }) => {
         height: 40,
         marginTop: 10,
         marginRight: 10,
+      },
+
+      centerAddSymbol: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        flex: 1
       }
   });
