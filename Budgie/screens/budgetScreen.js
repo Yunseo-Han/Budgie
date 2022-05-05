@@ -92,7 +92,7 @@ export const BudgetScreen = ({ navigation, route }) => {
 
 
     // Components
-    const Category = ({ title, allocated, spent}) => {
+    const CategorySummary = ({ title, allocated, spent}) => {
         return(
         <View flexDirection = 'row' justifyContent = 'flex-start' alignContent = 'center'>
             <View style = {styles.listItem}>
@@ -167,12 +167,13 @@ export const BudgetScreen = ({ navigation, route }) => {
     
     const Spending = ({ title, amount, date }) => {
       return( 
-        <View style = {styles.roundedButton}>
-          <View style = {{flex : 5}}>
-          <Text style = {styles.importantText}> {title} </Text>
-          <Text> {date} </Text>
-          </View>
-            <View style = {{flex: 1}}>
+          <View style = {styles.roundedButton}>
+            <View style = {{alignContent: 'flex-start', maxWidth: '70%'}}>
+              <Text style = {{fontWeight: 'bold'}}> {title} </Text>
+              <Text> {date} </Text>
+            </View>
+
+            <View style = {{alignContent: 'flex-end', maxWidth: '30%'}}>
               <Text style = {styles.spendingAmount}> {amount} </Text>
             </View>
           </View>
@@ -274,14 +275,11 @@ export const BudgetScreen = ({ navigation, route }) => {
   
         <View style = {{borderTopColor : buttonGrey, borderTopWidth : 2}}>
           <Text style = {styles.sectionText}> Budget Categories </Text>     
-          <Category title = "Rent" allocated = "$1500"/>
-          <Category title = "Rent" allocated = "$1500"/>
-          <Category title = "Rent" allocated = "$1500"/>
-          <TouchableOpacity style = {styles.rowButton}>
-            <Text onPress={() => {setCategoryModalVisible(true)
-          }} 
-            style = {styles.buttonText}
-            >New Category</Text>
+          <CategorySummary title = "Rent" allocated = "$1500"/>
+          <CategorySummary title = "Rent" allocated = "$1500"/>
+          <CategorySummary title = "Rent" allocated = "$1500"/>
+          <TouchableOpacity style = {styles.addCategoryButton} onPress={() => {setCategoryModalVisible(true)}} >
+            <Text style={styles.importantText}>New Category</Text>
           </TouchableOpacity>
         </View>
   
@@ -499,5 +497,15 @@ export const BudgetScreen = ({ navigation, route }) => {
         // paddingVertical: 10,
       },
 
-
+      addCategoryButton: {
+        backgroundColor: addButtonBlue,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 30,
+        paddingVertical: 10,
+        paddingHorizontal: 30,
+        marginVertical: 20,
+        marginHorizontal: 50,
+      },
+      
   });
