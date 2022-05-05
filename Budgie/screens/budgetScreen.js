@@ -122,7 +122,7 @@ export const BudgetScreen = ({ navigation, route }) => {
               <View flexDirection = 'row' justifyContent = 'space-between' alignContent = 'center'>
 
                 <Text style={styles.sectionTitle}>New Category</Text>
-                <TouchableOpacity style={styles.cancelButton} onPress={() =>setCatagoryModalVisible(false)}>
+                <TouchableOpacity style={styles.cancelButton} onPress={() =>setCategoryModalVisible(false)}>
                   <View>
                     <Text>CLOSE</Text>
                   </View>
