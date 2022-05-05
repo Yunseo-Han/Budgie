@@ -155,7 +155,7 @@ export const BudgetScreen = ({ navigation, route }) => {
               <TouchableOpacity
                 style={styles.addBudgetButton}
                 onPress={handleAddCategory}>
-                <Text>Submit</Text>
+                <Text>Add Category</Text>
               </TouchableOpacity>
 
             </View>
@@ -200,7 +200,7 @@ export const BudgetScreen = ({ navigation, route }) => {
             <View style={styles.centeredView}>
               <View style={styles.modalView}>
                   <View style={{flexDirection: 'row', alignSelf: 'stretch', justifyContent:'space-between', marginTop: 5}}>
-                    <Text style={styles.sectionTitle}>Add Spending</Text>
+                    <Text style={styles.sectionTitle}>New Spending</Text>
                     <TouchableOpacity style={styles.cancelButton} onPress={() =>setSpendingModalVisible(false)}>
                       <Text>CANCEL</Text>
                     </TouchableOpacity>
@@ -288,6 +288,9 @@ export const BudgetScreen = ({ navigation, route }) => {
           <Spending title = "Nordstrom" amount = "$500.00" date = "4/6/2022"/>
           <Spending title = "Best Buy" amount = "$50.00" date = "4/6/2022"/>
           <Spending title = "Target" amount = "$54.00" date = "4/6/2022"/>
+          <TouchableOpacity style = {styles.addCategoryButton} onPress={() => {setSpendingModalVisible(true)}} >
+            <Text style={styles.importantText}>New Spending</Text>
+          </TouchableOpacity>
         </View>
         <ModalAddCategory/>
         <ModalAddSpending/>
@@ -470,6 +473,7 @@ export const BudgetScreen = ({ navigation, route }) => {
         paddingVertical: 10,
         paddingHorizontal: 30,
         marginVertical: 20,
+        marginHorizontal: 30,
       },
     
     
