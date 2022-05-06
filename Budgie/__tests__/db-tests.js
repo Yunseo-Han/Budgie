@@ -1,18 +1,30 @@
 // REALM
 import {useMemo} from 'react';
 import BudgetContext, { Budget } from "../models/Budget";
-import { BudgetScreen } from './budgetScreen';
+import { BudgetScreen } from '../budgetScreen';
 const { useRealm, useQuery, RealmProvider } = BudgetContext;
 const realm = useRealm();
 const result = useQuery("Budget");
 const budgets = useMemo(() => result.sorted("startDate"), [result]);
+const categories = useMemo(() => result.sorted("startDate"), [result]);
+const transactions = useMemo(() => result.sorted("startDate"), [result]);
 
-function handleAddBudget(startDate, endDate, targetSpending) {
-	targetSpending = parseFloat(targetSpending);
-	realm.write(() => {
-	  realm.create("Budget", new Budget({startDate, endDate, targetSpending}));
-	});
+export default function testDb() {
+	QueryBudgets();
+	QueryCategories();
+	QueryTransactions();
+	QueryBudgetsDeletions();
+	QueryCategoriesDeletions();
+	QueryTransactionsDeletions();
+	QueryBudgetsUpdates();
+	QueryBudgetsRollbacks();
+	QueryTransactionsRollbacks();
+	QueryCategoriesUpdates();
+	QueryCategoriesRollbacks();
+}
 
+// Budget Insertions Test
+export default function QueryBudgets() {
 	let i = 1;
 	budgets.forEach(element => {
 	  console.log("Budget " + i);
@@ -24,3 +36,108 @@ function handleAddBudget(startDate, endDate, targetSpending) {
 	  i++;
 	});
 }
+
+// Category Insertions Test
+export default function QueryCategories() {
+	let i = 1;
+	categories.forEach(element => {
+	  console.log("Category " + i);
+	  console.log(element._id.toString());
+	  console.log("\n");
+	  i++;
+	});
+}
+
+// Transactions Insertions Test
+export default function QueryTransactions() {
+	let i = 1;
+	transactions.forEach(element => {
+	  console.log("Transaction " + i);
+	  console.log(element._id.toString());
+	  console.log("\n");
+	  i++;
+	});
+}
+
+// Budget Deletions Test
+export default function QueryBudgetsDeletions() {
+	let i = 1;
+	budgets.forEach(element => {
+	  console.log("Budget Deleted " + i);
+	  console.log(element._id.toString());
+	  i++;
+	});
+}
+
+// Category Deletions Test
+export default function QueryCategoriesDeletions() {
+	let i = 1;
+	categories.forEach(element => {
+	  console.log("Category Deleted " + i);
+	  console.log(element._id.toString());
+	  i++;
+	});
+}
+
+// Transactions Deletions Test
+export default function QueryTransactionsDeletions() {
+	let i = 1;
+	transactions.forEach(element => {
+	  console.log("Transactions Deleted " + i);
+	  console.log(element._id.toString());
+	  i++;
+	});
+}
+
+// Sprint 2 //
+// Budget Updates Test
+export default function QueryBudgetsUpdates() {
+	let i = 1;
+	budgets.forEach(element => {
+	  console.log("Budgets Updated " + i);
+	  console.log(element._id.toString());
+	  i++;
+	});
+}
+
+// Budget Rollbacks Test
+export default function QueryBudgetsRollbacks() {
+	let i = 1;
+	budgets.forEach(element => {
+	  console.log("Budgets Rollbacked " + i);
+	  console.log(element._id.toString());
+	  i++;
+	});
+}
+
+// Transaction Rollbacks Test
+export default function QueryTransactionsRollbacks() {
+	let i = 1;
+	transactions.forEach(element => {
+	  console.log("Transactions Rollbacked " + i);
+	  console.log(element._id.toString());
+	  i++;
+	});
+}
+
+// Category Updates Test
+export default function QueryCategoriesUpdates() {
+	let i = 1;
+	categories.forEach(element => {
+	  console.log("Categories Updated " + i);
+	  console.log(element._id.toString());
+	  i++;
+	});
+}
+
+// Category Rollbacks Test
+export default function QueryCategoriesRollbacks() {
+	let i = 1;
+	categories.forEach(element => {
+	  console.log("Categories Rollbacked " + i);
+	  console.log(element._id.toString());
+	  i++;
+	});
+}
+
+
