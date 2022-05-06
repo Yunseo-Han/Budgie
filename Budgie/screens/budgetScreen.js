@@ -25,6 +25,9 @@ import {useMemo} from 'react';
 import BudgetContext, { Budget, Category } from "../models/Budget";
 import { ObjectId } from "bson";
 
+const screenWidth = Dimensions.get("window").width;
+
+
 
 export const BudgetScreen = ({ navigation, route }) => {
 
@@ -36,7 +39,6 @@ export const BudgetScreen = ({ navigation, route }) => {
     // add category modal 
     const [categoryModalVisible, setCategoryModalVisible] = useState(false);
    
-    const screenWidth = Dimensions.get("window").width;
 
     //REALM
     const { useRealm, useQuery, RealmProvider } = BudgetContext;
@@ -179,6 +181,29 @@ export const BudgetScreen = ({ navigation, route }) => {
           </View>
         );
       };
+
+      const Legend = ({ title, amount, limit, color }) => {
+
+        return( 
+          <View style = {[styles.legendBox, {alignContent: 'center'}]}>
+              <View style = {[styles.bar, {backgroundColor : color}, 
+                {width : (amount/limit)*(0.6*screenWidth)}]}></View>
+
+              <View style = {[styles.bar, {backgroundColor : buttonGrey}, 
+                {width : (0.6*screenWidth)-((amount/limit)*(0.6*screenWidth))}]}></View>
+
+              <View style = {{paddingLeft : 10}}>
+                <View style = {{width : 0.4 * screenWidth}}>
+                  <Text style = {{fontWeight : 'bold', maxWidth: '60%'}}> {title} </Text>
+                  <View style = {{flexDirection : 'row'}}>
+                    <Text style = {{ fontWeight: 'bold', color : 'green'}}> {"$" + amount} </Text>
+                    <Text style = {{ paddingLeft : 0, color:'grey'}}> {"/ $" + limit} </Text>
+                </View>
+                </View>
+            </View>
+          </View>
+          );
+        };
   
       
   
@@ -200,7 +225,7 @@ export const BudgetScreen = ({ navigation, route }) => {
             <KeyboardAvoidingView style={styles.setSpendingContainer} behavior={Platform.OS === "ios" ? "padding" : "height"}>
               <View style={{flexDirection: 'row', alignSelf: 'stretch', justifyContent:'space-between', marginTop: 5}}>
                 <Text style={styles.titleText}>Add Spending</Text>
-                <TouchableOpacity style={styles.cancelButton} >
+                <TouchableOpacity style={styles.cancelButton}>
                   <Text>CANCEL</Text>
                 </TouchableOpacity>
               </View>
@@ -251,16 +276,7 @@ export const BudgetScreen = ({ navigation, route }) => {
         <StatusBar barStyle='dark-content'/>
         <ScrollView
           contentInsetAdjustmentBehavior="automatic">
-        <View style = {{alignItems : 'center'}}>
-        {/* <Image
-            source={{
-              uri: 'https://reactnative.dev/docs/assets/p_cat2.png',
-            }}
-            style={{ 
-              width: 200, 
-              height: 200,
-              alignSelf: 'center'}}
-          /> */}
+        <View style = {{alignItems : 'center', paddingVertical : 10}}>
           <PieChart
             widthAndHeight={widthAndHeight}
             series={series}
@@ -269,6 +285,11 @@ export const BudgetScreen = ({ navigation, route }) => {
             coverRadius={0.45}
             coverFill={'#FFF'}
           />
+        </View>
+        <View style = {{paddingVertical : 20}}>
+          <Legend title = "Schmoney" amount = '400' limit = '2000' color = "#D8F3DC"/>
+          <Legend title = "Apple Bottom Jeans boots with the fur" amount = '800' limit = '900' color = "#B7E4C7"/>
+          <Legend title = "Schmoney" amount = '500' limit = '1000' color = "#95D5B2"/>
         </View>
   
         <View style = {{borderTopColor : buttonGrey, borderTopWidth : 2}}>
@@ -321,6 +342,11 @@ export const BudgetScreen = ({ navigation, route }) => {
       marginBottom: 10,
       marginHorizontal : 10,
     },
+
+    bar : {
+      height : 30,
+    },
+
     roundedButton: {
       backgroundColor: buttonGrey,
       borderRadius: 10,
@@ -330,6 +356,16 @@ export const BudgetScreen = ({ navigation, route }) => {
       flexDirection: 'row',
       alignItems: 'center',
       marginBottom: 10,
+    },
+
+    legendBox: {
+      // justifyContent: 'space-between',
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical : 10,
+      paddingHorizontal : 20,
+      maxWidth : "100%",
+      // flex : [0, 0, "200%"]
     },
   
      addButton: {
