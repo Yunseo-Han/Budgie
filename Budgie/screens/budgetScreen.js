@@ -22,6 +22,7 @@ import { buttonGrey, addButtonBlue } from '../budgieColors';
 
 import { Dimensions } from "react-native";
 
+const screenWidth = Dimensions.get("window").width;
 
 export const BudgetScreen = ({ navigation, route }) => {
 
@@ -33,7 +34,7 @@ export const BudgetScreen = ({ navigation, route }) => {
 
     const {idString} = route.params;
 
-    const screenWidth = Dimensions.get("window").width;
+   
     
 
     function pressedAddSpending() {
@@ -158,7 +159,19 @@ export const BudgetScreen = ({ navigation, route }) => {
   
       const [modalVisible, setModalVisible] = useState(false);
   
-  
+      const Legend = ({ title, amount, color}) => {
+        return( 
+          <View style = {{ alignItems : 'center', flexDirection: 'row'}}>
+            <View style = {[styles.bar, {backgroundColor : color}]}>
+            <Text style = {[styles.importantText, {color: 'black'}]}> {title} </Text>
+            </View>
+              <View>
+                <Text style = {styles.spendingAmount}> {amount} </Text>
+              </View>
+            </View>
+          );
+        };
+
     const SpendingContainer = () => {
         const [spendingName, setSpendingName] = React.useState("");
         const [spending, setSpending] = React.useState(0);
@@ -227,24 +240,18 @@ export const BudgetScreen = ({ navigation, route }) => {
         <StatusBar barStyle='dark-content'/>
         <ScrollView
           contentInsetAdjustmentBehavior="automatic">
-        <View style = {{alignItems : 'center'}}>
-        {/* <Image
-            source={{
-              uri: 'https://reactnative.dev/docs/assets/p_cat2.png',
-            }}
-            style={{ 
-              width: 200, 
-              height: 200,
-              alignSelf: 'center'}}
-          /> */}
+        <View style = {{alignItems : 'center', paddingVertical: 20}}>
           <PieChart
             widthAndHeight={widthAndHeight}
             series={series}
             sliceColor={sliceColor}
             doughnut={true}
-            coverRadius={0.45}
+            coverRadius={0.5}
             coverFill={'#FFF'}
           />
+        </View>
+        <View>
+          <Legend title = "Schmoney" amount = "$800" color = "#D8F3DC"/>
         </View>
   
         <View style = {{borderTopColor : buttonGrey, borderTopWidth : 2}}>
@@ -285,6 +292,11 @@ export const BudgetScreen = ({ navigation, route }) => {
       paddingVertical : 20,
     },
   
+    bar:{
+      width : screenWidth,
+      height: 20
+    },    
+
     listItem: {
       backgroundColor: buttonGrey,
       borderRadius: 10,
