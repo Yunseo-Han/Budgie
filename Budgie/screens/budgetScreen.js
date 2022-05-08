@@ -54,11 +54,6 @@ export const BudgetScreen = ({ navigation, route }) => {
     let currentBudget = realm.objects("Budget").filtered("_id == $0", id)[0];
 
 
-    // function pressedAddSpending() {
-    //     setSpendingContainer(<SpendingContainer/>)
-    // }
-
-
     // function addNewSpending() {
     //   setSpendingItems(... spendingItmes, <Spending spendingName, spedflksjd/>)
     //   setSpendingName("")
@@ -96,7 +91,7 @@ export const BudgetScreen = ({ navigation, route }) => {
     const ModalAddCategory = () => {
       // category name iput 
 
-      const [categoryInput, setCatagoryInput] = React.useState("");
+      const [categoryInput, setCategoryInput] = React.useState("");
       
       const [categoryLimitInput, setCategoryLimitInput] = React.useState("");
 
@@ -145,6 +140,12 @@ export const BudgetScreen = ({ navigation, route }) => {
      setSpendingModalVisible(true);
     }
 
+    // function pressedSeeTransactions(){
+    //   navigation.navigate('Transactions', {
+    //     idString : idString
+    //   })
+    // }
+
 
       return(
         <Modal
@@ -177,7 +178,7 @@ export const BudgetScreen = ({ navigation, route }) => {
               <Text style={styles.textInputTitle}>Category Spending Limit</Text>
               <TextInput 
                 style={styles.textInputBox}
-                onChangeText={setCatagoryLimitInput}
+                onChangeText={setCategoryLimitInput}
                 value={categoryLimitInput}
               />
 
@@ -213,12 +214,13 @@ export const BudgetScreen = ({ navigation, route }) => {
 
         return( 
           <View style = {[styles.legendBox, {alignContent: 'center'}]}>
-            <TouchableOpacity>
+            <TouchableOpacity style = {{flexDirection : 'row'}}>
             <View style = {[styles.bar, {backgroundColor : color}, 
               {width : (amount/limit)*(0.6*screenWidth)}]}></View>
-            </TouchableOpacity>
+            
             <View style = {[styles.bar, {backgroundColor : buttonGrey}, 
               {width : (0.6*screenWidth)-((amount/limit)*(0.6*screenWidth))}]}></View>
+            </TouchableOpacity>
             
               <View style = {{paddingLeft : 10}}>
                 <View style = {{width : 0.4 * screenWidth}}>
@@ -358,9 +360,10 @@ export const BudgetScreen = ({ navigation, route }) => {
                   <Legend
                     title = {item.name}
                     amount = {400}    //item.transactionSum
-                    limit = {900}     //item.spendingLimit 
+                    limit = {item.spendingLimit}     //item.spendingLimit 
                     color = {sliceColor[index]}
                     index = {index}
+                    catIdString={item._id.toString()}
                   />
                 ))
             }
@@ -370,13 +373,7 @@ export const BudgetScreen = ({ navigation, route }) => {
           }} 
             style = {styles.buttonText}
             >New Category</Text>
-
           </TouchableOpacity>
-          <TouchableOpacity onPress={pressedAddSpending} style={styles.rowButton}>
-              <View style = {styles.buttonText}>
-                <Text alignSelf='center'>Add Spending</Text>
-              </View>
-            </TouchableOpacity>
         </View>
   
         <View style = {{borderTopColor : buttonGrey, borderTopWidth : 2, marginHorizontal : 10}}>
@@ -508,7 +505,7 @@ export const BudgetScreen = ({ navigation, route }) => {
       fontSize: 20,
       fontWeight: 'bold',
       marginVertical : 10,
-      marginHorizontal : 20,
+      marginHorizontal : 10,
     },
   
     centeredView: {
