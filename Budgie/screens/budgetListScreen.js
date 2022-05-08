@@ -122,13 +122,6 @@ export const BudgetListScreen = ({ navigation }) => {
     function addNewBudget() {
       console.log(startingDate, endingDate, budgetLimit);
       handleAddBudget(startingDate, endingDate, budgetLimit);
-      setBudgetItems([...budgetItems, 
-        <BudgetPreviewButton 
-          startDate={startingDate} 
-          spending={budgetLimit} 
-          saving="$0"
-          idString={idString}
-        />]);
       setStartingDate("");
       setEndingDate("");
       setBudgetLimit("");
