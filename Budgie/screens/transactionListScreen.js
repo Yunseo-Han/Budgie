@@ -77,7 +77,25 @@ export const TransactionListScreen = ({ navigation, route }) => {
       const ModalAddSpending = () => {
         const [spendingName, setSpendingName] = React.useState("");
         const [spending, setSpending] = React.useState(0);
-        const [spendingCatagory, setSpendingCatagory] = React.useState("");
+        const [date, setDate] = React.useState(new Date());
+        const [amount, setAmount] = React.useState(0);
+        
+        //TODO: Add Transaction to currentCat.transactions list (based on budgetListScreen)
+        function handleAddTransaction(spendingName, date, amount) {
+          let newTrans;
+          realm.write(() => {
+            newTrans = realm.create("Transaction", new Transaction({spendingName, date, amount}));
+          });
+        }
+
+        //TODO: Add Transaction to currentCat.transactions list (based on BudgetListScreen)
+        function addTransaction(){
+          handleAddTransaction(spendingName, date, amount);
+          setSpendingName("");
+          setDate("");
+          setAmount("");
+          setSpendingModalVisible(false);
+        }
 
         return (
           <Modal
@@ -111,16 +129,8 @@ export const TransactionListScreen = ({ navigation, route }) => {
                     />
                   </View>
         
-                  <View>
-                    <Text style={styles.textInputTitle}>Spending Category</Text>
-                    <TextInput
-                      style={styles.textInputBox}
-                      onChangeText={spendingCatagory => setSpendingCatagory(spendingCatagory)}
-                    />
-                  </View>
-                  
-                  
-                  <TouchableOpacity style={styles.addBudgetButton}>
+                  {/* TODO: ONPRESS TO ADD TO DATABASE HERE, go to problem at addTransaction */}
+                  <TouchableOpacity style={styles.addBudgetButton} onPress={addTransaction}>
                     <Text>Add Spending</Text>
                   </TouchableOpacity>
         
@@ -142,11 +152,6 @@ export const TransactionListScreen = ({ navigation, route }) => {
       <View style = {{paddingVertical : 20}}>
         <View styles = {{flexDirection : 'row', justifyContent:'space-between'}}>
           <Text style = {styles.sectionText}> {currentCat.name} Transactions</Text>  
-          {/* <TouchableOpacity style = {styles.addCategoryButton}>
-            <Text onPress={() => {setSpendingModalVisible(true)}}
-            style = {styles.buttonText}
-            >New Spending</Text>
-          </TouchableOpacity> */}
             <TouchableOpacity onPress={() =>setSpendingModalVisible(true)} style={styles.addButton}>
               <View style={styles.centerAddSymbol}>
                 <Text style={styles.plusSymbol}>+</Text>
@@ -159,8 +164,8 @@ export const TransactionListScreen = ({ navigation, route }) => {
                 <Spending
                   key = {item._id}
                   title = {item.name}
-                  date = {item.date}    //item.transactionSum
-                  amount = {item.amount}     //item.spendingLimit 
+                  date = {item.date}   
+                  amount = {item.amount}
                 />
               ))
           }
