@@ -42,6 +42,9 @@ export const BudgetScreen = ({ navigation, route }) => {
     const { useRealm, useQuery, RealmProvider } = BudgetContext;
     const realm = useRealm();
 
+    const id = ObjectId(idString);
+    const currentBudget = realm.objects("Budget").filtered("_id == $0", id)[0];
+
     function transactionsExist() {
       let id = ObjectId(idString);
       let currentBudget = realm.objects("Budget").filtered("_id == $0", id)[0];
@@ -56,14 +59,12 @@ export const BudgetScreen = ({ navigation, route }) => {
     }
 
     function populateCategories(numTxs) {
-      let id = ObjectId(idString);
-      let currentBudget = realm.objects("Budget").filtered("_id == $0", id)[0];
       console.log("\n", JSON.stringify(currentBudget.categories), "\n");
       currentBudget.categories.forEach((e) => {
         let total = 0;
         realm.write(() => {
           for(let i = 0; i < numTxs; i++) {
-            let ranamt = (Math.random() * 100.00).toFixed(2);
+            let ranamt = parseFloat((Math.random() * 100.00).toFixed(2));
             e.transactions.push(realm.create("Transaction", new Transaction({
               name: "test", 
               date: new Date(), 
@@ -111,8 +112,6 @@ export const BudgetScreen = ({ navigation, route }) => {
           console.log("Every category must be given a name.");
           return;
         }
-        let id = ObjectId(idString);
-        let currentBudget = realm.objects("Budget").filtered("_id == $0", id)[0];
         if(currentBudget.categories.some(e => e.name === name)) {
           console.log("A category using with that name already exists.");
           return;
@@ -124,7 +123,7 @@ export const BudgetScreen = ({ navigation, route }) => {
         });
 
         //console.log(JSON.stringify(currentBudget), "\n");
-        //populateCategories(10);
+        populateCategories(10);
       }
 
       return(
