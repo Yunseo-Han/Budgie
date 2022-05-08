@@ -94,7 +94,10 @@ export const BudgetScreen = ({ navigation, route }) => {
       function handleAddCategory() {
         setCategoryModalVisible(false);
         let name = categoryInput.trim();
-        //let limit = categoryLimitInput;
+        let limit = categoryLimitInput;
+        if(isNaN(limit)) {
+
+        }
         if(name == "") {
           console.log("Every category must be given a name.");
           return;
@@ -105,7 +108,7 @@ export const BudgetScreen = ({ navigation, route }) => {
         }
         let newCat;
         realm.write(() => {
-          newCat = realm.create("Category", new Category({name: name, spendingLimit: parseFloat(categoryLimitInput)}));  //TODO: implement spendingLimit
+          newCat = realm.create("Category", new Category({name: name, spendingLimit: parseFloat(categoryLimitInput.toFixed(2))}));
           currentBudget.categories.push(newCat);
         });
 
@@ -247,7 +250,7 @@ export const BudgetScreen = ({ navigation, route }) => {
       if (currentBudget.categories.length == 0) return defaultNum;
       if (!transactionsExist()) return defaultNum;
       else {
-        currentBudget.categories.forEach( (e) => {series.push(e.transactionSum);});
+        currentBudget.categories.forEach( (e) => {series.push(parseFloat(e.transactionSum.toFixed(2)));});
         console.log(series);
         return series;
       }
