@@ -1,3 +1,4 @@
+import 'react-native-get-random-values'
 import { Realm, createRealmContext } from '@realm/react';
 
 export class Budget {
@@ -7,7 +8,7 @@ export class Budget {
     this.endDate = endDate;
     this.totalSpending = 0;
     this.targetSpending = targetSpending;
-    this.categories = [];
+    this.categories = new Array();
   }
   
   static schema = {
@@ -25,21 +26,23 @@ export class Budget {
 }
 
 export class Category {
-  constructor({id = new Realm.BSON.ObjectId(), name}) {
+  constructor({id = new Realm.BSON.ObjectId(), name, spendingLimit}) {
     this._id = id;
     this.name = name;
     this.transactionSum = 0;
+    this.spendingLimit = spendingLimit;
     this.transactions = [];
   }
 
-    static schema = {
+  static schema = {
     name: 'Category',
     primaryKey: '_id',
     properties: {
       '_id' : 'objectId',
       'name' : 'string',
       'transactionSum' : 'double',
-      'transactionsList' : { type: 'list', objectType: 'Transaction' }
+      'spendingLimit' : 'double',
+      'transactions' : { type: 'list', objectType: 'Transaction' }
     }
   };
 }

@@ -56,8 +56,9 @@ export const BudgetListScreen = ({ navigation }) => {
   // REALM
   function handleAddBudget(startDate, endDate, targetSpending) {
     targetSpending = parseFloat(targetSpending);
+    let newBudget;
     realm.write(() => {
-      realm.create("Budget", new Budget({startDate, endDate, targetSpending}));
+      newBudget = realm.create("Budget", new Budget({startDate, endDate, targetSpending}));
     });
 
     let i = 1;
@@ -81,11 +82,10 @@ export const BudgetListScreen = ({ navigation }) => {
     function pressedBudgetPreviewButton(idString) {
       console.log(idString);
       let id = ObjectId(idString);
-      let budObj = realm.objects("Budget").filtered("_id == $0", id);
-      console.log(budObj);
-      console.log(JSON.stringify(budObj.categories));
+      let budObj = realm.objects("Budget").filtered("_id == $0", id)[0];
+      console.log(JSON.stringify(budObj));
       navigation.navigate('Budget', {
-        idString : ""
+        idString : idString
       })
     }
 
