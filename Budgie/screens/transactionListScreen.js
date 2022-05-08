@@ -57,6 +57,14 @@ export const TransactionListScreen = ({ navigation, route }) => {
     function handleAddTransaction(spendingName, date, amount) {
       let newTrans;
       let amt = parseFloat(parseFloat(amount).toFixed(2));
+      if(isNaN(amt)) {
+        console.log("Amount entered is not a number.");
+        return;
+      }
+      if(amt < 0) {
+        console.log("Amount entered must be greater than 0.");
+        return;
+      }
       realm.write(() => {
         newTrans = realm.create("Transaction", new Transaction({name: spendingName, date: date, amount: amt}));
         currentCat.transactions.push(newTrans);
