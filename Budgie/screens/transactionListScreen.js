@@ -21,7 +21,7 @@ import {
 
   //REALM
 import {useMemo} from 'react';
-import BudgetContext, { Budget, Category } from "../models/Budget";
+import BudgetContext, { Budget, Category, Transaction} from "../models/Budget";
 import { ObjectId } from "bson";
 
 const screenWidth = Dimensions.get("window").width;
@@ -52,6 +52,14 @@ export const TransactionListScreen = ({ navigation, route }) => {
     const catID = ObjectId(catIdString);
     const currentCat = realm.objects("Category").filtered("_id == $0", catID)[0];
 
+    //TODO: Add Transaction to currentCat.transactions list (based on budgetListScreen)
+    function handleAddTransaction(spendingName, date, amount) {
+      let newTrans;
+      realm.write(() => {
+        newTrans = realm.create("Transaction", new Transaction({spendingName, date, amount}));
+      });
+    }
+
 
     function transactionsExist() {
       if(currentCat.transactions.length > 0) {
@@ -78,22 +86,16 @@ export const TransactionListScreen = ({ navigation, route }) => {
         const [spendingName, setSpendingName] = React.useState("");
         const [spending, setSpending] = React.useState(0);
         const [date, setDate] = React.useState(new Date());
-        const [amount, setAmount] = React.useState(0);
+        // const [amount, setAmount] = React.useState(0);
         
-        //TODO: Add Transaction to currentCat.transactions list (based on budgetListScreen)
-        function handleAddTransaction(spendingName, date, amount) {
-          let newTrans;
-          realm.write(() => {
-            newTrans = realm.create("Transaction", new Transaction({spendingName, date, amount}));
-          });
-        }
+        
 
         //TODO: Add Transaction to currentCat.transactions list (based on BudgetListScreen)
         function addTransaction(){
-          handleAddTransaction(spendingName, date, amount);
+          handleAddTransaction(spendingName, date, spending);
           setSpendingName("");
           setDate("");
-          setAmount("");
+          setSpending(0);
           setSpendingModalVisible(false);
         }
 
@@ -151,7 +153,7 @@ export const TransactionListScreen = ({ navigation, route }) => {
       
         <View style = {{flexDirection:'row', justifyContent:'space-between', paddingVertical: 10}}>
           <Text style = {styles.titleText}> {currentCat.name}</Text>  
-          <TouchableOpacity style={styles.addButton} onPress={()=>setModalVisible(true)}>
+          <TouchableOpacity style={styles.addButton} onPress={()=>setSpendingModalVisible(true)}>
               <Text>ADD</Text>
           </TouchableOpacity>
         </View>
