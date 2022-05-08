@@ -49,6 +49,7 @@ export class Category {
 
 export class Transaction {
   constructor({id = new Realm.BSON.ObjectId(), name, date, amount}) {
+    this._id = id;
     this.date = new Date();
     this.amount = amount;
     this.name = name;
