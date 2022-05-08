@@ -22,7 +22,7 @@ import { Dimensions } from "react-native";
 
 //REALM
 import {useMemo} from 'react';
-import BudgetContext, { Budget, Category } from "../models/Budget";
+import BudgetContext, { Budget, Category, Transaction } from "../models/Budget";
 import { ObjectId } from "bson";
 
 
@@ -42,26 +42,41 @@ export const BudgetScreen = ({ navigation, route }) => {
     const { useRealm, useQuery, RealmProvider } = BudgetContext;
     const realm = useRealm();
 
-    
+    function transactionsExist() {
+      let id = ObjectId(idString);
+      let currentBudget = realm.objects("Budget").filtered("_id == $0", id)[0];
+      if(currentBudget.categories.some(e => e.transactions.length > 0)) {
+        return true;
+      }
+      return false;
+    }
 
     function pressedAddSpending() {
         setSpendingContainer(<SpendingContainer/>)
     }
 
-    // function addNewSpending() {
-    //   setSpendingItems(... spendingItmes, <Spending spendingName, spedflksjd/>)
-    //   setSpendingName("")
-    //   setSpending(0)
-    //   setSpendingCatagory("")
-    //   setSpendingContainer(null)
-    // }
-
-    
-
-    // function addCategory({title}){
-    //   setModalVisible(!modalVisible);
-    // };
-
+    function populateCategories(numTxs) {
+      let id = ObjectId(idString);
+      let currentBudget = realm.objects("Budget").filtered("_id == $0", id)[0];
+      console.log("\n", JSON.stringify(currentBudget.categories), "\n");
+      currentBudget.categories.forEach((e) => {
+        let total = 0;
+        realm.write(() => {
+          for(let i = 0; i < numTxs; i++) {
+            let ranamt = (Math.random() * 100.00).toFixed(2);
+            e.transactions.push(realm.create("Transaction", new Transaction({
+              name: "test", 
+              date: new Date(), 
+              amount: ranamt
+            })));
+            total += ranamt;
+          }
+        });
+        realm.write(() => {
+          e.transactionSum = total;
+        });
+      });
+    }
 
     // Components
     const CategorySummary = ({ title, allocated, spent}) => {
@@ -89,8 +104,9 @@ export const BudgetScreen = ({ navigation, route }) => {
       const [categoryLimitInput, setCategoryLimitInput] = React.useState("");
 
       function handleAddCategory() {
+        setCategoryModalVisible(false);
         let name = categoryInput.trim();
-        let limit = categoryLimitInput;
+        //let limit = categoryLimitInput;
         if(name == "") {
           console.log("Every category must be given a name.");
           return;
@@ -103,24 +119,12 @@ export const BudgetScreen = ({ navigation, route }) => {
         }
         let newCat;
         realm.write(() => {
-          newCat = realm.create("Category", new Category({name: name, spendingLimit: limit}));
+          newCat = realm.create("Category", new Category({name: name, spendingLimit: 0}));
           currentBudget.categories.push(newCat);
         });
 
-        console.log(JSON.stringify(currentBudget), "\n");
-
-
-        // let i = 1;
-        // budgets.forEach(element => {
-        //   console.log("Budget " + i);
-        //   console.log(element._id.toString());
-        //   console.log(element.startDate);
-        //   console.log(element.endDate);
-        //   console.log(element.targetSpending);
-        //   console.log(element.categories);
-        //   console.log("\n");
-        //   i++;
-        // });
+        //console.log(JSON.stringify(currentBudget), "\n");
+        //populateCategories(10);
       }
 
       return(
