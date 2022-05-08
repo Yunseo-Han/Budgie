@@ -55,8 +55,10 @@ export const TransactionListScreen = ({ navigation, route }) => {
     //TODO: Add Transaction to currentCat.transactions list (based on budgetListScreen)
     function handleAddTransaction(spendingName, date, amount) {
       let newTrans;
+      let amt = parseFloat(amount);
       realm.write(() => {
-        newTrans = realm.create("Transaction", new Transaction({spendingName, date, amount}));
+        newTrans = realm.create("Transaction", new Transaction({name: spendingName, date: date, amount: amt}));
+        currentCat.transactions.push(newTrans);
       });
     }
 
