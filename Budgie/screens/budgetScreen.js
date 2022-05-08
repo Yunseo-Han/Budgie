@@ -105,7 +105,7 @@ export const BudgetScreen = ({ navigation, route }) => {
         }
         let newCat;
         realm.write(() => {
-          newCat = realm.create("Category", new Category({name: name, spendingLimit: 0}));  //TODO: implement spendingLimit
+          newCat = realm.create("Category", new Category({name: name, spendingLimit: parseFloat(categoryLimitInput)}));  //TODO: implement spendingLimit
           currentBudget.categories.push(newCat);
         });
 
@@ -198,10 +198,10 @@ export const BudgetScreen = ({ navigation, route }) => {
             </TouchableOpacity>
             
               <View style = {{paddingLeft : 10}}>
-                <View style = {{width : 0.4 * screenWidth}}>
+                <View style = {{width : 0.5 * screenWidth}}>
                   <Text style = {{fontWeight : 'bold', maxWidth: '60%'}}> {title} </Text>
                   <View style = {{flexDirection : 'row'}}>
-                    <Text style = {{ fontWeight: 'bold', color : isOverBudgetColor()}}> {"$" + amount} </Text>
+                    <Text style = {{ fontWeight: 'bold', color : isOverBudgetColor()}}> {"$" + amount.toFixed(2)} </Text>
                     <Text style = {{ paddingLeft : 0, color:'grey'}}> {"/ $" + limit} </Text>
                 </View>
                 </View>
