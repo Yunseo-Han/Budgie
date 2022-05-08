@@ -20,6 +20,7 @@ import {
 
 import { BudgetListScreen } from '../Budgie/screens/budgetListScreen';
 import { BudgetScreen } from './screens/budgetScreen'
+import { TransactionListScreen } from './screens/transactionListScreen'
 
 
 
@@ -44,6 +45,10 @@ const App = () => {
           name="Budget" 
           component={BudgetScreen} 
           options={({ route }) => ({ title: route.params.startDate })}/>
+      <Stack.Screen 
+          name="Transactions" 
+          component={TransactionListScreen} 
+          options={({ route }) => ({ title: route.params.categoryID})}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
