@@ -33,12 +33,9 @@ export const TransactionListScreen = ({ navigation, route }) => {
 
     // const [spendingContainer, setSpendingContainer] = useState(SpendingContainer)
     const [spendingItems, setSpendingItems] = useState([]);
-
-    
     
     const {catIdString} = route.params;
 
-    
     // add spending modal 
     const [spendingModalVisible, setSpendingModalVisible] = useState(false);
    
@@ -51,6 +48,10 @@ export const TransactionListScreen = ({ navigation, route }) => {
 
     const catID = ObjectId(catIdString);
     const currentCat = realm.objects("Category").filtered("_id == $0", catID)[0];
+
+    // Reversing the transactions list so that it puts the newest transactions at the top.
+    const result = useQuery("Category").filtered("_id == $0", catID)[0].transactions;
+    const reversedTxs = useMemo(() => result.sorted("date", true), [result]);
 
     //TODO: Add Transaction to currentCat.transactions list (based on budgetListScreen)
     function handleAddTransaction(spendingName, date, amount) {
@@ -164,7 +165,7 @@ export const TransactionListScreen = ({ navigation, route }) => {
       
       <View>
           {
-              currentCat.transactions.map((item) => (
+              reversedTxs.map((item) => (
                 <Spending
                   key = {item._id}
                   title = {item.name}
