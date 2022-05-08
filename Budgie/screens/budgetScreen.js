@@ -28,13 +28,17 @@ import { ObjectId } from "bson";
 
 export const BudgetScreen = ({ navigation, route }) => {
 
-    const [spendingContainer, setSpendingContainer] = useState(SpendingContainer)
+    // const [spendingContainer, setSpendingContainer] = useState(SpendingContainer)
     const [spendingItems, setSpendingItems] = useState([]);
     
   
     const {idString} = route.params;
+
     // add category modal 
+
     const [categoryModalVisible, setCategoryModalVisible] = useState(false);
+    // add spending modal 
+    const [spendingModalVisible, setSpendingModalVisible] = useState(false);
    
     const screenWidth = Dimensions.get("window").width;
 
@@ -44,9 +48,9 @@ export const BudgetScreen = ({ navigation, route }) => {
 
     
 
-    function pressedAddSpending() {
-        setSpendingContainer(<SpendingContainer/>)
-    }
+    // function pressedAddSpending() {
+    //     setSpendingContainer(<SpendingContainer/>)
+    // }
 
     // function addNewSpending() {
     //   setSpendingItems(... spendingItmes, <Spending spendingName, spedflksjd/>)
@@ -74,9 +78,9 @@ export const BudgetScreen = ({ navigation, route }) => {
                 <Text>{spent}</Text>
               </View>
             </View>
-            <TouchableOpacity onPress={pressedAddSpending} style={styles.addButton}>
+            <TouchableOpacity onPress={() =>setSpendingModalVisible(true)} style={styles.addButton}>
               <View style={styles.centerAddSymbol}>
-                <Text alignSelf='center'>+</Text>
+                <Text style={styles.plusSymbol}>+</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -86,6 +90,7 @@ export const BudgetScreen = ({ navigation, route }) => {
     const ModalAddCategory = () => {
       // category name iput 
       const [categoryInput, setCatagoryInput] = React.useState("");
+      
       const [categoryLimitInput, setCategoryLimitInput] = React.useState("");
 
       function handleAddCategory() {
@@ -106,6 +111,7 @@ export const BudgetScreen = ({ navigation, route }) => {
           newCat = realm.create("Category", new Category({name: name, spendingLimit: limit}));
           currentBudget.categories.push(newCat);
         });
+
 
         console.log(JSON.stringify(currentBudget), "\n");
 
@@ -128,10 +134,6 @@ export const BudgetScreen = ({ navigation, route }) => {
           animationType="slide"
           transparent={true}
           visible={categoryModalVisible}
-          // onRequestClose={() => {
-          //   Alert.alert("Modal has been closed.");
-          //   setModalVisible(!modalVisible);
-          // }}
         >
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
@@ -147,16 +149,25 @@ export const BudgetScreen = ({ navigation, route }) => {
 
               </View>
 
+
+              <Text style={styles.textInputTitle}>Category Name</Text>
               <TextInput 
                 style={styles.textInputBox}
                 onChangeText={setCatagoryInput}
                 value={categoryInput}
               />
 
+              <Text style={styles.textInputTitle}>Category Spending Limit</Text>
+              <TextInput 
+                style={styles.textInputBox}
+                onChangeText={setCatagoryLimitInput}
+                value={categoryLimitInput}
+              />
+
               <TouchableOpacity
-                style={styles.rowButton}
+                style={styles.addBudgetButton}
                 onPress={handleAddCategory}>
-                <Text style={styles.buttonText}>Submit</Text>
+                <Text>Add Category</Text>
               </TouchableOpacity>
 
             </View>
@@ -168,12 +179,13 @@ export const BudgetScreen = ({ navigation, route }) => {
     
     const Spending = ({ title, amount, date }) => {
       return( 
-        <View style = {styles.roundedButton}>
-          <View style = {{flex : 5}}>
-          <Text style = {styles.importantText}> {title} </Text>
-          <Text> {date} </Text>
-          </View>
-            <View style = {{flex: 1}}>
+          <View style = {styles.roundedButton}>
+            <View style = {{alignContent: 'flex-start', maxWidth: '70%'}}>
+              <Text style = {{fontWeight: 'bold'}}> {title} </Text>
+              <Text> {date} </Text>
+            </View>
+
+            <View style = {{alignContent: 'flex-end', maxWidth: '30%'}}>
               <Text style = {styles.spendingAmount}> {amount} </Text>
             </View>
           </View>
@@ -183,60 +195,62 @@ export const BudgetScreen = ({ navigation, route }) => {
       
   
   
-    const SpendingContainer = () => {
+    const ModalAddSpending = () => {
         const [spendingName, setSpendingName] = React.useState("");
         const [spending, setSpending] = React.useState(0);
         const [spendingCatatory, setSpendingCatagory] = React.useState("");
         
 
     
-        function pressedCancelSpendingButton() {
-          console.log("canceling add spending")
-          setSpendingContainer(null)
-        }
     
         return (
-          <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 200, justifyContent: 'center', alignItems: 'center'}}>
-            <KeyboardAvoidingView style={styles.setSpendingContainer} behavior={Platform.OS === "ios" ? "padding" : "height"}>
-              <View style={{flexDirection: 'row', alignSelf: 'stretch', justifyContent:'space-between', marginTop: 5}}>
-                <Text style={styles.titleText}>Add Spending</Text>
-                <TouchableOpacity style={styles.cancelButton} >
-                  <Text>CANCEL</Text>
-                </TouchableOpacity>
+          <Modal
+          animationType="slide"
+          transparent={true}
+          visible={spendingModalVisible}
+          >
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                  <View style={{flexDirection: 'row', alignSelf: 'stretch', justifyContent:'space-between', marginTop: 5}}>
+                    <Text style={styles.sectionTitle}>New Spending</Text>
+                    <TouchableOpacity style={styles.cancelButton} onPress={() =>setSpendingModalVisible(false)}>
+                      <Text>CANCEL</Text>
+                    </TouchableOpacity>
+                  </View>
+        
+                  <View>
+                    <Text style={styles.textInputTitle}>Spending Name</Text>
+                    <TextInput
+                      style={styles.textInputBox}
+                      onChangeText={spendingName => setSpendingName(spendingName)}
+                    />
+                  </View>
+        
+                  <View>
+                    <Text style={styles.textInputTitle}>Spending Amount</Text>
+                    <TextInput
+                      style={styles.textInputBox}
+                      keyboardType={'decimal-pad'}
+                      onChangeText={newSpending => setSpending(newSpending)}
+                    />
+                  </View>
+        
+                  <View>
+                    <Text style={styles.textInputTitle}>Spending Category</Text>
+                    <TextInput
+                      style={styles.textInputBox}
+                      onChangeText={spendingCatagory => setSpendingCatagory(spendingCatagory)}
+                    />
+                  </View>
+                  
+                  
+                  <TouchableOpacity style={styles.addBudgetButton}>
+                    <Text>Add Spending</Text>
+                  </TouchableOpacity>
+        
               </View>
-    
-              <View>
-                <Text style={styles.textInputTitle}>Spending Name</Text>
-                <TextInput
-                  style={styles.textInputBox}
-                  onChangeText={spendingName => setSpendingName(spendingName)}
-                />
-              </View>
-    
-              <View>
-                <Text style={styles.textInputTitle}>Spending Amount</Text>
-                <TextInput
-                  style={styles.textInputBox}
-                  keyboardType={'decimal-pad'}
-                  onChangeText={newSpending => setSpending(newSpending)}
-                />
-              </View>
-    
-              <View>
-                <Text style={styles.textInputTitle}>Spending Category</Text>
-                <TextInput
-                  style={styles.textInputBox}
-                  onChangeText={spendingCatagory => setSpendingCatagory(spendingCatagory)}
-                />
-              </View>
-              
-              
-              <TouchableOpacity style={styles.addBudgetButton}>
-                <Text>Add Spending</Text>
-              </TouchableOpacity>
-    
-            </KeyboardAvoidingView>
-          </View>
+            </View>
+          </Modal>
         );
       }
       
@@ -276,11 +290,10 @@ export const BudgetScreen = ({ navigation, route }) => {
           <CategorySummary title = "Rent" allocated = "$1500"/>
           <CategorySummary title = "Rent" allocated = "$1500"/>
           <CategorySummary title = "Rent" allocated = "$1500"/>
-          <TouchableOpacity style = {styles.rowButton}>
-            <Text onPress={() => {setCategoryModalVisible(true)
-          }} 
-            style = {styles.buttonText}
-            >New Category</Text>
+
+          <TouchableOpacity style = {styles.addCategoryButton} onPress={() => {setCategoryModalVisible(true)}} >
+            <Text style={styles.importantText}>New Category</Text>
+
           </TouchableOpacity>
         </View>
   
@@ -289,10 +302,13 @@ export const BudgetScreen = ({ navigation, route }) => {
           <Spending title = "Nordstrom" amount = "$500.00" date = "4/6/2022"/>
           <Spending title = "Best Buy" amount = "$50.00" date = "4/6/2022"/>
           <Spending title = "Target" amount = "$54.00" date = "4/6/2022"/>
+          <TouchableOpacity style = {styles.addCategoryButton} onPress={() => {setSpendingModalVisible(true)}} >
+            <Text style={styles.importantText}>New Spending</Text>
+          </TouchableOpacity>
         </View>
         <ModalAddCategory/>
+        <ModalAddSpending/>
       </ScrollView>
-      {spendingContainer}
     </SafeAreaView>
     );
   };
@@ -334,7 +350,7 @@ export const BudgetScreen = ({ navigation, route }) => {
   
      addButton: {
       borderRadius: 20,
-      borderWidth: 3,
+      borderWidth: 2,
       borderColor: buttonGrey,
       marginBottom: 10,
       marginRight : 10,
@@ -471,6 +487,7 @@ export const BudgetScreen = ({ navigation, route }) => {
         paddingVertical: 10,
         paddingHorizontal: 30,
         marginVertical: 20,
+        marginHorizontal: 30,
       },
     
     
@@ -489,5 +506,24 @@ export const BudgetScreen = ({ navigation, route }) => {
         justifyContent: 'center',
         alignItems: 'center',
         flex: 1
-      }
+      },
+
+      plusSymbol:{
+        fontSize: 30,
+        color: 'grey',
+        // fontWeight: 'bold',
+        // paddingVertical: 10,
+      },
+
+      addCategoryButton: {
+        backgroundColor: addButtonBlue,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 30,
+        paddingVertical: 10,
+        paddingHorizontal: 30,
+        marginVertical: 20,
+        marginHorizontal: 50,
+      },
+      
   });
