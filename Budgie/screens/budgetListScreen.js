@@ -86,7 +86,7 @@ export const BudgetListScreen = ({ navigation }) => {
       console.log(JSON.stringify(budObj));
       navigation.navigate('Budget', {
         idString : idString
-      })
+      });
     }
 
     return (
