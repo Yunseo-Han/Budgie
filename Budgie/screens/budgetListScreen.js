@@ -282,7 +282,7 @@ export const BudgetListScreen = ({ navigation }) => {
       <StatusBar barStyle={'dark-content'}/>
         <ScrollView contentInsetAdjustmentBehavior="automatic">
 
-          <View style={{flexDirection:'row', justifyContent:'space-between'}}>
+          <View style={{flexDirection:'row', justifyContent:'space-between', paddingVertical: 10}}>
             <Text style={styles.titleText}> Budgets </Text>
             <TouchableOpacity style={styles.addButton} onPress={()=>setBudgetModalVisible(true)}>
               <Text>ADD</Text>

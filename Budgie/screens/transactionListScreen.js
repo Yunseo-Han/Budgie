@@ -145,20 +145,20 @@ export const TransactionListScreen = ({ navigation, route }) => {
     return(
       <SafeAreaView style={[styles.container]}>
       <StatusBar barStyle='dark-content'/>
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic">
+      <ScrollView contentInsetAdjustmentBehavior="automatic">
 
       
-      <View style = {{paddingVertical : 20}}>
-        <View styles = {{flexDirection : 'row', justifyContent:'space-between'}}>
-          <Text style = {styles.sectionText}> {currentCat.name} Transactions</Text>  
-            <TouchableOpacity onPress={() =>setSpendingModalVisible(true)} style={styles.addButton}>
-              <View style={styles.centerAddSymbol}>
-                <Text style={styles.plusSymbol}>+</Text>
-              </View>
-            </TouchableOpacity>
+      
+        <View style = {{flexDirection:'row', justifyContent:'space-between', paddingVertical: 10}}>
+          <Text style = {styles.titleText}> {currentCat.name}</Text>  
+          <TouchableOpacity style={styles.addButton} onPress={()=>setModalVisible(true)}>
+              <Text>ADD</Text>
+          </TouchableOpacity>
         </View>
-        <View>
+        
+        
+      
+      <View>
           {
               currentCat.transactions.map((item) => (
                 <Spending
@@ -170,8 +170,6 @@ export const TransactionListScreen = ({ navigation, route }) => {
               ))
           }
         </View>
-        
-      </View>
 
       
       
@@ -197,6 +195,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 10,
+    marginHorizontal: 20,
   },
 
   spendingAmount: {
@@ -298,14 +297,14 @@ sectionText: {
 },
 
 addButton: {
-  borderRadius: 20,
-  borderWidth: 2,
-  borderColor: buttonGrey,
-  marginBottom: 10,
-  marginRight : 10,
-  height : 50,
-  width: 50,
-  // marginRight: 10,
+  backgroundColor: addButtonBlue,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 20,
+    width: 60,
+    height: 40,
+    marginTop: 10,
+    marginRight: 10,
 },
 
 centerAddSymbol: {
@@ -319,6 +318,13 @@ plusSymbol:{
   color: 'grey',
   // fontWeight: 'bold',
   // paddingVertical: 10,
+},
+
+titleText: {
+  fontSize: 30,
+  fontWeight: 'bold',
+  marginVertical: 10,
+  marginHorizontal: 10,
 },
 
 });
