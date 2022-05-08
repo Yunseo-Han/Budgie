@@ -29,19 +29,14 @@ const screenWidth = Dimensions.get("window").width;
 
 
 
-export const BudgetScreen = ({ navigation, route }) => {
 
-    // const [spendingContainer, setSpendingContainer] = useState(SpendingContainer)
-    const [spendingItems, setSpendingItems] = useState([]);
+export const BudgetScreen = ({ navigation, route }) => {
     
     const {idString} = route.params;
 
     // add category modal 
 
     const [categoryModalVisible, setCategoryModalVisible] = useState(false);
-
-    // add spending modal 
-    const [spendingModalVisible, setSpendingModalVisible] = useState(false);
    
     const screenWidth = Dimensions.get("window").width;
 
@@ -62,7 +57,11 @@ export const BudgetScreen = ({ navigation, route }) => {
       return false;
     }
 
+    function constructor(props) {
+      this.onPress = this.onPress.bind(this);
+    }
 
+    //TODO: Sometimes transactionSum gives really long decimal places (fix it to 2)
     function populateCategories(numTxs) {
       console.log("\n", JSON.stringify(currentBudget.categories), "\n");
       currentBudget.categories.forEach((e) => {
@@ -85,29 +84,8 @@ export const BudgetScreen = ({ navigation, route }) => {
     }
 
 
-    // Components
-    const CategorySummary = ({ title, allocated, spent}) => {
-        return(
-        <View flexDirection = 'row' justifyContent = 'flex-start' alignContent = 'center'>
-            <View style = {styles.listItem}>
-              <Text style={styles.importantText}> {title} </Text>
-              <View style = {{alignContent: 'flex-end', maxWidth: '30%'}}>
-                <Text>{allocated} </Text>
-                <Text>{spent}</Text>
-              </View>
-            </View>
-            <TouchableOpacity onPress={() =>setSpendingModalVisible(true)} style={styles.addButton}>
-              <View style={styles.centerAddSymbol}>
-
-                <Text style={styles.plusSymbol}>+</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-        );
-      };
-
     const ModalAddCategory = () => {
-      // category name iput 
+      // category name input 
 
       const [categoryInput, setCategoryInput] = React.useState("");
       
@@ -127,27 +105,17 @@ export const BudgetScreen = ({ navigation, route }) => {
         }
         let newCat;
         realm.write(() => {
-          newCat = realm.create("Category", new Category({name: name, spendingLimit: 0}));
+          newCat = realm.create("Category", new Category({name: name, spendingLimit: 0}));  //TODO: implement spendingLimit
           currentBudget.categories.push(newCat);
         });
 
-        //populateCategories(10);
+        populateCategories(10);
       }
       
       function pressedSubmitNewCategory() {
         handleAddCategory();
         setCategoryModalVisible(false);
     }
-
-    function showTransactions(index){
-     setSpendingModalVisible(true);
-    }
-
-    // function pressedSeeTransactions(){
-    //   navigation.navigate('Transactions', {
-    //     idString : idString
-    //   })
-    // }
 
 
       return(
@@ -186,7 +154,7 @@ export const BudgetScreen = ({ navigation, route }) => {
               />
 
               <TouchableOpacity
-                style={styles.rowButton}
+                style={styles.addCategoryButton}
                 onPress={pressedSubmitNewCategory}>
                 <Text style={styles.buttonText}>Submit</Text>
               </TouchableOpacity>
@@ -197,39 +165,43 @@ export const BudgetScreen = ({ navigation, route }) => {
       );
     };
   
-    
-    const Spending = ({ title, amount, date }) => {
-      return( 
-          <View style = {styles.roundedButton}>
-            <View style = {{alignContent: 'flex-start', maxWidth: '70%'}}>
-              <Text style = {{fontWeight: 'bold'}}> {title} </Text>
-              <Text> {date} </Text>
-            </View>
+    //Legend go to transactionListScreen when clicked on
+      function pressedLegendButton(catIdString) {
+        console.log(catIdString);
+        navigation.navigate('Transactions', {
+          catIdString : catIdString
+        })
+      }
 
-            <View style = {{alignContent: 'flex-end', maxWidth: '30%'}}>
-              <Text style = {styles.spendingAmount}> {amount} </Text>
-            </View>
-          </View>
-        );
-      };
+      const Legend = ({ title, amount, limit, color, index, catIdString }) => {
 
-      const Legend = ({ title, amount, limit, color, index }) => {
+        //Set bar to full if over budget
+        function isOverBudgetWidth(){
+          if (amount >= limit) return 0.6*screenWidth;
+          else return (amount/limit)*(0.6*screenWidth);
+        }
+
+        //Set dollar amount WORD to red if over budget
+        function isOverBudgetColor(){
+          if (amount >= limit) return 'red';
+          else return 'green';
+        }
 
         return( 
           <View style = {[styles.legendBox, {alignContent: 'center'}]}>
-            <TouchableOpacity style = {{flexDirection : 'row'}}>
+            <TouchableOpacity style = {{flexDirection : 'row'}}  onPress={()=>pressedLegendButton(catIdString)}>
             <View style = {[styles.bar, {backgroundColor : color}, 
-              {width : (amount/limit)*(0.6*screenWidth)}]}></View>
+              {width : isOverBudgetWidth()}]}></View>
             
             <View style = {[styles.bar, {backgroundColor : buttonGrey}, 
-              {width : (0.6*screenWidth)-((amount/limit)*(0.6*screenWidth))}]}></View>
+              {width : (0.6*screenWidth) - isOverBudgetWidth()}]}></View>
             </TouchableOpacity>
             
               <View style = {{paddingLeft : 10}}>
                 <View style = {{width : 0.4 * screenWidth}}>
                   <Text style = {{fontWeight : 'bold', maxWidth: '60%'}}> {title} </Text>
                   <View style = {{flexDirection : 'row'}}>
-                    <Text style = {{ fontWeight: 'bold', color : 'green'}}> {"$" + amount} </Text>
+                    <Text style = {{ fontWeight: 'bold', color : isOverBudgetColor()}}> {"$" + amount} </Text>
                     <Text style = {{ paddingLeft : 0, color:'grey'}}> {"/ $" + limit} </Text>
                 </View>
                 </View>
@@ -238,78 +210,22 @@ export const BudgetScreen = ({ navigation, route }) => {
           );
         };
   
-      
-  
-  
-        const ModalAddSpending = () => {
-        const [spendingName, setSpendingName] = React.useState("");
-        const [spending, setSpending] = React.useState(0);
-        const [spendingCatagory, setSpendingCatagory] = React.useState("");
-        
 
-    
-    
-        return (
-          <Modal
-          animationType="slide"
-          transparent={true}
-          visible={spendingModalVisible}
-          >
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                  <View style={{flexDirection: 'row', alignSelf: 'stretch', justifyContent:'space-between', marginTop: 5}}>
-                    <Text style={styles.sectionTitle}>New Spending</Text>
-                    <TouchableOpacity style={styles.cancelButton} onPress={() =>setSpendingModalVisible(false)}>
-                      <Text>CANCEL</Text>
-                    </TouchableOpacity>
-                  </View>
-        
-                  <View>
-                    <Text style={styles.textInputTitle}>Spending Name</Text>
-                    <TextInput
-                      style={styles.textInputBox}
-                      onChangeText={spendingName => setSpendingName(spendingName)}
-                    />
-                  </View>
-        
-                  <View>
-                    <Text style={styles.textInputTitle}>Spending Amount</Text>
-                    <TextInput
-                      style={styles.textInputBox}
-                      keyboardType={'decimal-pad'}
-                      onChangeText={newSpending => setSpending(newSpending)}
-                    />
-                  </View>
-        
-                  <View>
-                    <Text style={styles.textInputTitle}>Spending Category</Text>
-                    <TextInput
-                      style={styles.textInputBox}
-                      onChangeText={spendingCatagory => setSpendingCatagory(spendingCatagory)}
-                    />
-                  </View>
-                  
-                  
-                  <TouchableOpacity style={styles.addBudgetButton}>
-                    <Text>Add Spending</Text>
-                  </TouchableOpacity>
-        
-              </View>
-            </View>
-          </Modal>
 
-        );
-      }
-      
+//PIE CHART AND LEGEND CATEGORIES STUFF
+    const widthAndHeight = 250  //pie chart size
 
-    // Screen
-    const widthAndHeight = 250
-    const defaultNum = [100]
+    //Default settings: pie chart is grey when no categories or spending
+    const defaultNum = [100]    
     const defaultColor = [buttonGrey]
-    const colorPalette = ['#D8F3DC','#B7E4C7','#95D5B2', '#74C69D', '#52B788', '#00A36C', '#478778']
-    const series = []
-    const sliceColor = ['#D8F3DC','#B7E4C7','#95D5B2', '#74C69D', '#52B788', '#00A36C', '#478778']
 
+
+    //These arrays is what the chart is based on
+    const series = []
+    const sliceColor = ['#D8F3DC','#B7E4C7','#95D5B2', '#74C69D', '#52B788', 
+                        '#00A36C', '#478778', '#C1E1C1', '#9FE2BF', '#008080']
+
+    
     function transactionsExist(){
       if(currentBudget.categories.some(e => e.transactions.length > 0)) {
         return true;
@@ -317,79 +233,93 @@ export const BudgetScreen = ({ navigation, route }) => {
       return false;
     }
 
-    function setsliceColor(){
+    //for pie chart COLORS
+    function setSliceColor(){
       if (currentBudget.categories.length == 0) return defaultColor;
       if (!transactionsExist()) return defaultColor;
-      else return sliceColor;
+      else{
+        return sliceColor.slice(0, currentBudget.categories.length); //series and sliceColor must be same size for pie chart to work
+      } 
     }
 
+    //For pie chart slice
     function setSlice(){
       if (currentBudget.categories.length == 0) return defaultNum;
       if (!transactionsExist()) return defaultNum;
-      else return series;
+      else {
+        currentBudget.categories.forEach( (e) => {series.push(e.transactionSum);});
+        console.log(series);
+        return series;
+      }
+    }
+
+    //Set legend category bar to red when over budget
+    function setBarColor(index) {
+      console.log(currentBudget.categories.spendingLimit);    //TODO: getting 'undefined' for both spendingLimit and transactionSum, cannot do comparison
+      if (currentBudget.categories.transactionSum >= currentBudget.categories.spendingLimit) return '#FF0000'; 
+      else return sliceColor[index];
     }
     
-    function setColor(index) {
-      return sliceColor[index];
-    }
+    
 
-    function addSlice(amount, color){
-      series.push(amount);
-      sliceColor.push(color);
-    }
-
+     // Screen
     return(
         <SafeAreaView style={[styles.container]}>
         <StatusBar barStyle='dark-content'/>
         <ScrollView
           contentInsetAdjustmentBehavior="automatic">
+        
+        {/* PIE CHART */}
         <View style = {{alignItems : 'center', paddingVertical : 10}}>
           <PieChart
             widthAndHeight={widthAndHeight}
-            series={setSlice()}
-            sliceColor={setsliceColor()}
+            series = {setSlice()} //setSlice()
+            sliceColor = {setSliceColor()} //setSliceColor()
             doughnut={true}
             coverRadius={0.45}
             coverFill={'#FFF'}
           />
         </View>
 
-        {/* borderTopColor : buttonGrey, borderTopWidth : 2 */}
+      {/* BUDGET CATEGORIES */}
         <View style = {{paddingVertical : 20}}>
         <Text style = {styles.sectionText}> Budget Categories </Text>  
           <View>
             {
                 currentBudget.categories.map((item, index) => (
                   <Legend
+                    key={item._id}
                     title = {item.name}
-                    amount = {400}    //item.transactionSum
+                    amount = {item.transactionSum}    //item.transactionSum
                     limit = {item.spendingLimit}     //item.spendingLimit 
-                    color = {sliceColor[index]}
+                    color = {setBarColor(index)}    //TODO: fix setBarColor->'undefined' error
                     index = {index}
-                    catIdString={item._id.toString()}
+                    catIdString = {item._id.toString()}
                   />
                 ))
             }
           </View>
-          <TouchableOpacity style = {styles.rowButton}>
-            <Text onPress={() => {setCategoryModalVisible(true)
-          }} 
-            style = {styles.buttonText}
+
+          {/* NEW CATEGORY BUTTON */}
+          <TouchableOpacity style = {styles.addCategoryButton}>
+            <Text onPress={() => {setCategoryModalVisible(true)}} 
+              style = {styles.buttonText}
             >New Category</Text>
           </TouchableOpacity>
         </View>
-  
-        <View style = {{borderTopColor : buttonGrey, borderTopWidth : 2, marginHorizontal : 10}}>
+
+        {/* REMOVED SPENDING STUFF commented for reference*/}
+        {/* <View style = {{borderTopColor : buttonGrey, borderTopWidth : 2, marginHorizontal : 10}}>
           <Text style = {styles.sectionTitle}> New Spendings </Text>    
           <Spending title = "Nordstrom" amount = "$500.00" date = "4/6/2022"/>
           <Spending title = "Best Buy" amount = "$50.00" date = "4/6/2022"/>
           <Spending title = "Target" amount = "$54.00" date = "4/6/2022"/>
           <TouchableOpacity style = {styles.addCategoryButton} onPress={() => {setSpendingModalVisible(true)}} >
-            <Text style={styles.importantText}>New Spending</Text>
+            <Text style={styles.buttonText}>New Spending</Text>
           </TouchableOpacity>
-        </View>
+        </View> */}
+
         <ModalAddCategory/>
-        <ModalAddSpending/>
       </ScrollView>
     </SafeAreaView>
     );
@@ -397,12 +327,7 @@ export const BudgetScreen = ({ navigation, route }) => {
 
   const styles = StyleSheet.create({
     container: {
-      //display: "flex",
-     // flexDirection: "row",
-     // justifyContent: 'center',
-      // alignItems: "center",
       height: "100%",
-      //textAlign: "center"
       paddingHorizontal : 10,
       paddingVertical : 20,
     },
@@ -499,9 +424,9 @@ export const BudgetScreen = ({ navigation, route }) => {
     },
 
     buttonText:{
-      fontSize: 20,
+      fontSize: 15,
       fontWeight: 'bold',
-      paddingVertical: 10,
+      paddingVertical: 5,
     },
   
     sectionText: {
