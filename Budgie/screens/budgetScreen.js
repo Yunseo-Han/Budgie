@@ -49,8 +49,6 @@ export const BudgetScreen = ({ navigation, route }) => {
     const currentBudget = realm.objects("Budget").filtered("_id == $0", id)[0];
 
     function transactionsExist() {
-      let id = ObjectId(idString);
-      let currentBudget = realm.objects("Budget").filtered("_id == $0", id)[0];
       if(currentBudget.categories.some(e => e.transactions.length > 0)) {
         return true;
       }
@@ -263,7 +261,6 @@ export const BudgetScreen = ({ navigation, route }) => {
 
     //Set legend category bar to red when over budget
     function setBarColor(index) {
-      console.log(currentBudget.categories[index].spendingLimit);
       if (currentBudget.categories[index].transactionSum >= currentBudget.categories[index].spendingLimit) return '#FF0000'; 
       else return sliceColor[index];
     }
