@@ -94,9 +94,15 @@ export const BudgetScreen = ({ navigation, route }) => {
       function handleAddCategory() {
         setCategoryModalVisible(false);
         let name = categoryInput.trim();
-        let limit = categoryLimitInput;
+        let limit = parseFloat(parseFloat(categoryLimitInput).toFixed(2));
+        // Don't think it'll reach the error checking if parseFloat fails, 
+        // but whatever, I'm leaving it here anyway
         if(isNaN(limit)) {
-
+          console.log("Spending limit is not a number");
+          return;
+        } else if(limit < 0) {
+          console.log("Spending limit must be greater than 0.");
+          return;
         }
         if(name == "") {
           console.log("Every category must be given a name.");
@@ -108,11 +114,11 @@ export const BudgetScreen = ({ navigation, route }) => {
         }
         let newCat;
         realm.write(() => {
-          newCat = realm.create("Category", new Category({name: name, spendingLimit: parseFloat(categoryLimitInput.toFixed(2))}));
+          newCat = realm.create("Category", new Category({name: name, spendingLimit: limit}));
           currentBudget.categories.push(newCat);
         });
 
-        populateCategories(10);
+        //populateCategories(10);
       }
       
       function pressedSubmitNewCategory() {
@@ -251,15 +257,14 @@ export const BudgetScreen = ({ navigation, route }) => {
       if (!transactionsExist()) return defaultNum;
       else {
         currentBudget.categories.forEach( (e) => {series.push(parseFloat(e.transactionSum.toFixed(2)));});
-        console.log(series);
         return series;
       }
     }
 
     //Set legend category bar to red when over budget
     function setBarColor(index) {
-      console.log(currentBudget.categories.spendingLimit);    //TODO: getting 'undefined' for both spendingLimit and transactionSum, cannot do comparison
-      if (currentBudget.categories.transactionSum >= currentBudget.categories.spendingLimit) return '#FF0000'; 
+      console.log(currentBudget.categories[index].spendingLimit);
+      if (currentBudget.categories[index].transactionSum >= currentBudget.categories[index].spendingLimit) return '#FF0000'; 
       else return sliceColor[index];
     }
     
