@@ -302,6 +302,10 @@ export const BudgetListScreen = ({ navigation }) => {
             }
           </View>
 
+        <TouchableOpacity style={styles.addButton}>
+            <Text>NUKE</Text>
+        </TouchableOpacity>
+
           
         </ScrollView>
       </View>
