@@ -16,12 +16,12 @@ import {
     TextInput,
   } from 'react-native';
 
-  import { buttonGrey, addButtonBlue } from '../budgieColors';
-  import { Dimensions } from "react-native";
+import { buttonGrey, addButtonBlue } from '../budgieColors';
+import { Dimensions } from "react-native";
 
   //REALM
 import {useMemo} from 'react';
-import BudgetContext, { Budget, Category } from "../models/Budget";
+import BudgetContext, { Budget, Category, Transaction} from "../models/Budget";
 import { ObjectId } from "bson";
 
 const screenWidth = Dimensions.get("window").width;
@@ -33,12 +33,9 @@ export const TransactionListScreen = ({ navigation, route }) => {
 
     // const [spendingContainer, setSpendingContainer] = useState(SpendingContainer)
     const [spendingItems, setSpendingItems] = useState([]);
-
-    
     
     const {catIdString} = route.params;
 
-    
     // add spending modal 
     const [spendingModalVisible, setSpendingModalVisible] = useState(false);
    
@@ -51,6 +48,29 @@ export const TransactionListScreen = ({ navigation, route }) => {
 
     const catID = ObjectId(catIdString);
     const currentCat = realm.objects("Category").filtered("_id == $0", catID)[0];
+
+    // Reversing the transactions list so that it puts the newest transactions at the top.
+    const result = useQuery("Category").filtered("_id == $0", catID)[0].transactions;
+    const reversedTxs = useMemo(() => result.sorted("date", true), [result]);
+
+    //TODO: Add Transaction to currentCat.transactions list (based on budgetListScreen)
+    function handleAddTransaction(spendingName, date, amount) {
+      let newTrans;
+      let amt = parseFloat(parseFloat(amount).toFixed(2));
+      if(isNaN(amt)) {
+        console.log("Amount entered is not a number.");
+        return;
+      }
+      if(amt < 0) {
+        console.log("Amount entered must be greater than 0.");
+        return;
+      }
+      realm.write(() => {
+        newTrans = realm.create("Transaction", new Transaction({name: spendingName, date: date, amount: amt}));
+        currentCat.transactions.push(newTrans);
+        currentCat.transactionSum += amt;
+      });
+    }
 
 
     function transactionsExist() {
@@ -78,22 +98,16 @@ export const TransactionListScreen = ({ navigation, route }) => {
         const [spendingName, setSpendingName] = React.useState("");
         const [spending, setSpending] = React.useState(0);
         const [date, setDate] = React.useState(new Date());
-        const [amount, setAmount] = React.useState(0);
+        // const [amount, setAmount] = React.useState(0);
         
-        //TODO: Add Transaction to currentCat.transactions list (based on budgetListScreen)
-        function handleAddTransaction(spendingName, date, amount) {
-          let newTrans;
-          realm.write(() => {
-            newTrans = realm.create("Transaction", new Transaction({spendingName, date, amount}));
-          });
-        }
+        
 
         //TODO: Add Transaction to currentCat.transactions list (based on BudgetListScreen)
         function addTransaction(){
-          handleAddTransaction(spendingName, date, amount);
+          handleAddTransaction(spendingName, date, spending);
           setSpendingName("");
           setDate("");
-          setAmount("");
+          setSpending(0);
           setSpendingModalVisible(false);
         }
 
@@ -145,22 +159,22 @@ export const TransactionListScreen = ({ navigation, route }) => {
     return(
       <SafeAreaView style={[styles.container]}>
       <StatusBar barStyle='dark-content'/>
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic">
+      <ScrollView contentInsetAdjustmentBehavior="automatic">
 
       
-      <View style = {{paddingVertical : 20}}>
-        <View styles = {{flexDirection : 'row', justifyContent:'space-between'}}>
-          <Text style = {styles.sectionText}> {currentCat.name} Transactions</Text>  
-            <TouchableOpacity onPress={() =>setSpendingModalVisible(true)} style={styles.addButton}>
-              <View style={styles.centerAddSymbol}>
-                <Text style={styles.plusSymbol}>+</Text>
-              </View>
-            </TouchableOpacity>
+      
+        <View style = {{flexDirection:'row', justifyContent:'space-between', paddingVertical: 10}}>
+          <Text style = {styles.titleText}> {currentCat.name}</Text>  
+          <TouchableOpacity style={styles.addButton} onPress={()=>setSpendingModalVisible(true)}>
+              <Text>ADD</Text>
+          </TouchableOpacity>
         </View>
-        <View>
+        
+        
+      
+      <View>
           {
-              currentCat.transactions.map((item) => (
+              reversedTxs.map((item) => (
                 <Spending
                   key = {item._id}
                   title = {item.name}
@@ -170,8 +184,6 @@ export const TransactionListScreen = ({ navigation, route }) => {
               ))
           }
         </View>
-        
-      </View>
 
       
       
@@ -197,6 +209,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 10,
+    marginHorizontal: 20,
   },
 
   spendingAmount: {
@@ -298,14 +311,14 @@ sectionText: {
 },
 
 addButton: {
-  borderRadius: 20,
-  borderWidth: 2,
-  borderColor: buttonGrey,
-  marginBottom: 10,
-  marginRight : 10,
-  height : 50,
-  width: 50,
-  // marginRight: 10,
+  backgroundColor: addButtonBlue,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 20,
+    width: 60,
+    height: 40,
+    marginTop: 10,
+    marginRight: 10,
 },
 
 centerAddSymbol: {
@@ -319,6 +332,13 @@ plusSymbol:{
   color: 'grey',
   // fontWeight: 'bold',
   // paddingVertical: 10,
+},
+
+titleText: {
+  fontSize: 30,
+  fontWeight: 'bold',
+  marginVertical: 10,
+  marginHorizontal: 10,
 },
 
 });

@@ -73,6 +73,13 @@ export const BudgetListScreen = ({ navigation }) => {
     });
   }
 
+  function handleDeleteAll() {
+    realm.write(() => {
+      // Delete all objects from the realm.
+      realm.deleteAll();
+    });
+  }
+
 
   
   // Components
@@ -81,10 +88,6 @@ export const BudgetListScreen = ({ navigation }) => {
     // Handle functions   ******* used to be outside the component
     function pressedBudgetPreviewButton(idString) {
       console.log(idString);
-      let id = ObjectId(idString);
-      let budObj = realm.objects("Budget").filtered("_id == $0", id)[0];
-      console.log(JSON.stringify(budObj));
-      console.log("**************************");
       navigation.navigate('Budget', {
         idString : idString
       });
@@ -282,7 +285,7 @@ export const BudgetListScreen = ({ navigation }) => {
       <StatusBar barStyle={'dark-content'}/>
         <ScrollView contentInsetAdjustmentBehavior="automatic">
 
-          <View style={{flexDirection:'row', justifyContent:'space-between'}}>
+          <View style={{flexDirection:'row', justifyContent:'space-between', paddingVertical: 10}}>
             <Text style={styles.titleText}> Budgets </Text>
             <TouchableOpacity style={styles.addButton} onPress={()=>setBudgetModalVisible(true)}>
               <Text>ADD</Text>
@@ -305,6 +308,10 @@ export const BudgetListScreen = ({ navigation }) => {
               ))
             }
           </View>
+
+        <TouchableOpacity style={styles.addButton} onPress={()=> handleDeleteAll()}>
+            <Text>NUKE</Text>
+        </TouchableOpacity>
 
           
         </ScrollView>

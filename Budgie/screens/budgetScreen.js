@@ -49,8 +49,6 @@ export const BudgetScreen = ({ navigation, route }) => {
     const currentBudget = realm.objects("Budget").filtered("_id == $0", id)[0];
 
     function transactionsExist() {
-      let id = ObjectId(idString);
-      let currentBudget = realm.objects("Budget").filtered("_id == $0", id)[0];
       if(currentBudget.categories.some(e => e.transactions.length > 0)) {
         return true;
       }
@@ -94,7 +92,16 @@ export const BudgetScreen = ({ navigation, route }) => {
       function handleAddCategory() {
         setCategoryModalVisible(false);
         let name = categoryInput.trim();
-        //let limit = categoryLimitInput;
+        let limit = parseFloat(parseFloat(categoryLimitInput).toFixed(2));
+        // Don't think it'll reach the error checking if parseFloat fails, 
+        // but whatever, I'm leaving it here anyway
+        if(isNaN(limit)) {
+          console.log("Spending limit is not a number");
+          return;
+        } else if(limit < 0) {
+          console.log("Spending limit must be greater than 0.");
+          return;
+        }
         if(name == "") {
           console.log("Every category must be given a name.");
           return;
@@ -105,11 +112,11 @@ export const BudgetScreen = ({ navigation, route }) => {
         }
         let newCat;
         realm.write(() => {
-          newCat = realm.create("Category", new Category({name: name, spendingLimit: 0}));  //TODO: implement spendingLimit
+          newCat = realm.create("Category", new Category({name: name, spendingLimit: limit}));
           currentBudget.categories.push(newCat);
         });
 
-        populateCategories(10);
+        //populateCategories(10);
       }
       
       function pressedSubmitNewCategory() {
@@ -198,10 +205,10 @@ export const BudgetScreen = ({ navigation, route }) => {
             </TouchableOpacity>
             
               <View style = {{paddingLeft : 10}}>
-                <View style = {{width : 0.4 * screenWidth}}>
+                <View style = {{width : 0.5 * screenWidth}}>
                   <Text style = {{fontWeight : 'bold', maxWidth: '60%'}}> {title} </Text>
                   <View style = {{flexDirection : 'row'}}>
-                    <Text style = {{ fontWeight: 'bold', color : isOverBudgetColor()}}> {"$" + amount} </Text>
+                    <Text style = {{ fontWeight: 'bold', color : isOverBudgetColor()}}> {"$" + amount.toFixed(2)} </Text>
                     <Text style = {{ paddingLeft : 0, color:'grey'}}> {"/ $" + limit} </Text>
                 </View>
                 </View>
@@ -247,16 +254,14 @@ export const BudgetScreen = ({ navigation, route }) => {
       if (currentBudget.categories.length == 0) return defaultNum;
       if (!transactionsExist()) return defaultNum;
       else {
-        currentBudget.categories.forEach( (e) => {series.push(e.transactionSum);});
-        console.log(series);
+        currentBudget.categories.forEach( (e) => {series.push(parseFloat(e.transactionSum.toFixed(2)));});
         return series;
       }
     }
 
     //Set legend category bar to red when over budget
     function setBarColor(index) {
-      console.log(currentBudget.categories.spendingLimit);    //TODO: getting 'undefined' for both spendingLimit and transactionSum, cannot do comparison
-      if (currentBudget.categories.transactionSum >= currentBudget.categories.spendingLimit) return '#FF0000'; 
+      if (currentBudget.categories[index].transactionSum >= currentBudget.categories[index].spendingLimit) return '#FF0000'; 
       else return sliceColor[index];
     }
     
