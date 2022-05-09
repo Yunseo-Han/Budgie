@@ -181,8 +181,8 @@ export const BudgetScreen = ({ navigation, route }) => {
 
     //Set bar to full if over budget
     function isOverBudgetWidth(){
-      if (amount >= limit) return 0.6*screenWidth;
-      else return (amount/limit)*(0.6*screenWidth);
+      if (amount >= limit) return 0.5*screenWidth;
+      else return (amount/limit)*(0.5*screenWidth);
     }
 
     //Set dollar amount WORD to red if over budget
@@ -194,16 +194,16 @@ export const BudgetScreen = ({ navigation, route }) => {
     return( 
       <View style = {[styles.legendBox, {alignContent: 'center'}]}>
         <TouchableOpacity style = {{flexDirection : 'row'}}  onPress={()=>pressedLegendButton(catIdString)}>
-        <View style = {[styles.bar, {backgroundColor : color}, 
-          {width : isOverBudgetWidth()}]}>
+          <View style = {[styles.bar, {backgroundColor : color}, 
+            {width : isOverBudgetWidth()}]}>
+            </View>
+          <View style = {[styles.bar, {backgroundColor : buttonGrey}, 
+            {width : (0.5*screenWidth) - isOverBudgetWidth()}]}>
           </View>
-        <View style = {[styles.bar, {backgroundColor : buttonGrey}, 
-          {width : (0.6*screenWidth) - isOverBudgetWidth()}]}>
-        </View>
         </TouchableOpacity>
-          <View style = {{paddingLeft : 10}}>
+          <View style = {{paddingLeft : 4}}>
             <View style = {{width : 0.5 * screenWidth}}>
-              <Text style = {{fontWeight : 'bold', maxWidth: '60%', color: 'black'}}> {title} </Text>
+              <Text style = {{fontWeight : 'bold', maxWidth: '75%', color: 'black'}}> {title} </Text>
               <View style = {{flexDirection : 'row'}}>
               <Text style = {{ fontWeight: 'bold', color : isOverBudgetColor()}}> {"$" + amount.toFixed(2)} </Text>
               <Text style = {{ paddingLeft : 0, color:'grey'}}> {"/ $" + limit} </Text>
@@ -345,7 +345,7 @@ export const BudgetScreen = ({ navigation, route }) => {
     },
 
     bar : {
-      height : 30,
+      height : 24,
     },
 
     roundedButton: {
@@ -362,8 +362,8 @@ export const BudgetScreen = ({ navigation, route }) => {
     legendBox: {
       flexDirection: 'row',
       alignItems: 'center',
-      paddingVertical : 6,
-      paddingHorizontal : 6,
+      paddingVertical : 5,
+      paddingHorizontal : 10,
       maxWidth : "100%",
     },
   
