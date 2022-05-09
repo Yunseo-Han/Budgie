@@ -27,9 +27,6 @@ import { ObjectId } from "bson";
 
 const screenWidth = Dimensions.get("window").width;
 
-
-
-
 export const BudgetScreen = ({ navigation, route }) => {
     
     const {idString} = route.params;
@@ -37,9 +34,7 @@ export const BudgetScreen = ({ navigation, route }) => {
     // add category modal 
 
     const [categoryModalVisible, setCategoryModalVisible] = useState(false);
-   
     const screenWidth = Dimensions.get("window").width;
-
 
     //REALM
     const { useRealm, useQuery, RealmProvider } = BudgetContext;
@@ -47,6 +42,9 @@ export const BudgetScreen = ({ navigation, route }) => {
 
     const id = ObjectId(idString);
     const currentBudget = realm.objects("Budget").filtered("_id == $0", id)[0];
+
+    // Using result for creating Legend
+    const result = useQuery("Budget").filtered("_id == $0", id)[0].categories;
 
     function transactionsExist() {
       if(currentBudget.categories.some(e => e.transactions.length > 0)) {
@@ -86,7 +84,6 @@ export const BudgetScreen = ({ navigation, route }) => {
       // category name input 
 
       const [categoryInput, setCategoryInput] = React.useState("");
-      
       const [categoryLimitInput, setCategoryLimitInput] = React.useState("");
 
       function handleAddCategory() {
@@ -176,7 +173,8 @@ export const BudgetScreen = ({ navigation, route }) => {
       function pressedLegendButton(catIdString) {
         console.log(catIdString);
         navigation.navigate('Transactions', {
-          catIdString : catIdString
+          catIdString : catIdString,
+          budIdString: idString
         })
       }
 
@@ -215,7 +213,7 @@ export const BudgetScreen = ({ navigation, route }) => {
             </View>
           </View>
           );
-        };
+      };
   
 
 
@@ -265,9 +263,7 @@ export const BudgetScreen = ({ navigation, route }) => {
       else return sliceColor[index];
     }
     
-    
-
-     // Screen
+    // Screen
     return(
         <SafeAreaView style={[styles.container]}>
         <StatusBar barStyle='dark-content'/>
@@ -291,7 +287,7 @@ export const BudgetScreen = ({ navigation, route }) => {
         <Text style = {styles.sectionText}> Budget Categories </Text>  
           <View>
             {
-                currentBudget.categories.map((item, index) => (
+                result.map((item, index) => (
                   <Legend
                     key={item._id}
                     title = {item.name}
