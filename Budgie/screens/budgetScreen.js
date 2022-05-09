@@ -112,14 +112,13 @@ export const BudgetScreen = ({ navigation, route }) => {
           newCat = realm.create("Category", new Category({name: name, spendingLimit: limit}));
           currentBudget.categories.push(newCat);
         });
-
         //populateCategories(10);
       }
       
       function pressedSubmitNewCategory() {
         handleAddCategory();
         setCategoryModalVisible(false);
-    }
+      }
 
 
       return(
@@ -170,50 +169,50 @@ export const BudgetScreen = ({ navigation, route }) => {
     };
   
     //Legend go to transactionListScreen when clicked on
-      function pressedLegendButton(catIdString) {
-        console.log(catIdString);
-        navigation.navigate('Transactions', {
-          catIdString : catIdString,
-          budIdString: idString
-        })
-      }
+    function pressedLegendButton(catIdString) {
+      console.log(catIdString);
+      navigation.navigate('Transactions', {
+        catIdString : catIdString,
+        budIdString: idString
+      })
+    }
 
-      const Legend = ({ title, amount, limit, color, index, catIdString }) => {
+    const Legend = ({ title, amount, limit, color, index, catIdString }) => {
 
-        //Set bar to full if over budget
-        function isOverBudgetWidth(){
-          if (amount >= limit) return 0.6*screenWidth;
-          else return (amount/limit)*(0.6*screenWidth);
-        }
+    //Set bar to full if over budget
+    function isOverBudgetWidth(){
+      if (amount >= limit) return 0.6*screenWidth;
+      else return (amount/limit)*(0.6*screenWidth);
+    }
 
-        //Set dollar amount WORD to red if over budget
-        function isOverBudgetColor(){
-          if (amount >= limit) return 'red';
-          else return 'green';
-        }
+    //Set dollar amount WORD to red if over budget
+    function isOverBudgetColor(){
+      if (amount >= limit) return 'red';
+      else return 'green';
+    }
 
-        return( 
-          <View style = {[styles.legendBox, {alignContent: 'center'}]}>
-            <TouchableOpacity style = {{flexDirection : 'row'}}  onPress={()=>pressedLegendButton(catIdString)}>
-            <View style = {[styles.bar, {backgroundColor : color}, 
-              {width : isOverBudgetWidth()}]}></View>
-            
-            <View style = {[styles.bar, {backgroundColor : buttonGrey}, 
-              {width : (0.6*screenWidth) - isOverBudgetWidth()}]}></View>
-            </TouchableOpacity>
-            
-              <View style = {{paddingLeft : 10}}>
-                <View style = {{width : 0.5 * screenWidth}}>
-                  <Text style = {{fontWeight : 'bold', maxWidth: '60%'}}> {title} </Text>
-                  <View style = {{flexDirection : 'row'}}>
-                    <Text style = {{ fontWeight: 'bold', color : isOverBudgetColor()}}> {"$" + amount.toFixed(2)} </Text>
-                    <Text style = {{ paddingLeft : 0, color:'grey'}}> {"/ $" + limit} </Text>
-                </View>
-                </View>
-            </View>
+    return( 
+      <View style = {[styles.legendBox, {alignContent: 'center'}]}>
+        <TouchableOpacity style = {{flexDirection : 'row'}}  onPress={()=>pressedLegendButton(catIdString)}>
+        <View style = {[styles.bar, {backgroundColor : color}, 
+          {width : isOverBudgetWidth()}]}>
           </View>
-          );
-      };
+        <View style = {[styles.bar, {backgroundColor : buttonGrey}, 
+          {width : (0.6*screenWidth) - isOverBudgetWidth()}]}>
+        </View>
+        </TouchableOpacity>
+          <View style = {{paddingLeft : 10}}>
+            <View style = {{width : 0.5 * screenWidth}}>
+              <Text style = {{fontWeight : 'bold', maxWidth: '60%', color: 'black'}}> {title} </Text>
+              <View style = {{flexDirection : 'row'}}>
+              <Text style = {{ fontWeight: 'bold', color : isOverBudgetColor()}}> {"$" + amount.toFixed(2)} </Text>
+              <Text style = {{ paddingLeft : 0, color:'grey'}}> {"/ $" + limit} </Text>
+            </View>
+            </View>
+        </View>
+      </View>
+      );
+    };
   
 
 
@@ -223,7 +222,6 @@ export const BudgetScreen = ({ navigation, route }) => {
     //Default settings: pie chart is grey when no categories or spending
     const defaultNum = [100]    
     const defaultColor = [buttonGrey]
-
 
     //These arrays is what the chart is based on
     const series = []
@@ -284,7 +282,7 @@ export const BudgetScreen = ({ navigation, route }) => {
 
       {/* BUDGET CATEGORIES */}
         <View style = {{paddingVertical : 20}}>
-        <Text style = {styles.sectionText}> Budget Categories </Text>  
+        <Text style = {styles.sectionText}>Categories </Text>  
           <View>
             {
                 result.map((item, index) => (
@@ -364,8 +362,8 @@ export const BudgetScreen = ({ navigation, route }) => {
     legendBox: {
       flexDirection: 'row',
       alignItems: 'center',
-      paddingVertical : 10,
-      paddingHorizontal : 10,
+      paddingVertical : 6,
+      paddingHorizontal : 6,
       maxWidth : "100%",
     },
   
@@ -435,6 +433,7 @@ export const BudgetScreen = ({ navigation, route }) => {
       fontWeight: 'bold',
       marginVertical : 10,
       marginHorizontal : 10,
+      color: 'black',
     },
   
     centeredView: {

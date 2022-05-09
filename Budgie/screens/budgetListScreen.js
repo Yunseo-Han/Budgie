@@ -87,8 +87,7 @@ export const BudgetListScreen = ({ navigation }) => {
 
     // Handle functions   ******* used to be outside the component
     function pressedBudgetPreviewButton(idString) {
-      console.log(idString);
-      navigation.navigate('Budget', {
+      navigation.navigate('Budget Details', {
         idString : idString
       });
     }

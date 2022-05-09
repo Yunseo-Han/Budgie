@@ -39,7 +39,7 @@ const App = () => {
           component={BudgetListScreen}
         />
         <Stack.Screen 
-          name="Budget" 
+          name="Budget Details" 
           component={BudgetScreen} 
           options={({ route }) => ({ title: route.params.startDate })}/>
       <Stack.Screen 
