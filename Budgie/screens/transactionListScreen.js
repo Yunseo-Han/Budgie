@@ -16,8 +16,8 @@ import {
     TextInput,
   } from 'react-native';
 
-  import { buttonGrey, addButtonBlue } from '../budgieColors';
-  import { Dimensions } from "react-native";
+import { buttonGrey, addButtonBlue } from '../budgieColors';
+import { Dimensions } from "react-native";
 
   //REALM
 import {useMemo} from 'react';
