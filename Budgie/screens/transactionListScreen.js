@@ -85,14 +85,12 @@ export const TransactionListScreen = ({ navigation, route }) => {
     function handleDeleteTransaction(txIdString) {
       let id = ObjectId(txIdString);
       let txToDel = realm.objects("Transaction").filtered("_id == $0", id)[0];
-      console.log("******************BEFORE***********************\n", JSON.stringify(currentCat.transactions));
       realm.write(() => {
         let diff = txToDel.amount;
         currentCat.transactionSum = currentCat.transactionSum - diff;
         currentBudget.totalSpending = currentBudget.totalSpending - diff;
         realm.delete(txToDel);
       });
-      console.log("******************AFTER***********************\n", JSON.stringify(currentBudget.transactions));
     }
 
     function handleDeleteCategory() {
@@ -178,7 +176,6 @@ export const TransactionListScreen = ({ navigation, route }) => {
                   />
                 </View>
       
-                {/* TODO: ONPRESS TO ADD TO DATABASE HERE, go to problem at addTransaction */}
                 <TouchableOpacity style={styles.addBudgetButton} onPress={addTransaction}>
                   <Text>Add Spending</Text>
                 </TouchableOpacity>
