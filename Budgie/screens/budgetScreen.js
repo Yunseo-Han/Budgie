@@ -176,7 +176,7 @@ export const BudgetScreen = ({ navigation, route }) => {
       })
     }
 
-    const Legend = ({ title, amount, limit, color, index, catIdString }) => {
+  const Legend = ({ title, amount, limit, color, index, catIdString }) => {
 
     //Set bar to full if over budget
     function isOverBudgetWidth(){
@@ -193,26 +193,29 @@ export const BudgetScreen = ({ navigation, route }) => {
     return( 
       <View style = {[styles.legendBox, {alignContent: 'center'}]}>
         <TouchableOpacity style = {{flexDirection : 'row'}}  onPress={()=>pressedLegendButton(catIdString)}>
+
+          
           <View style = {[styles.bar, {backgroundColor : color}, 
             {width : isOverBudgetWidth()}]}>
-            </View>
-          <View style = {[styles.bar, {backgroundColor : buttonGrey}, 
-            {width : (0.5*screenWidth) - isOverBudgetWidth()}]}>
           </View>
-        </TouchableOpacity>
+          
+          <View style = {[styles.bar, {backgroundColor : buttonGrey}, {width : (0.5*screenWidth) - isOverBudgetWidth()}]}/>
+        
           <View style = {{paddingLeft : 4}}>
             <View style = {{width : 0.5 * screenWidth}}>
               <Text style = {{fontWeight : 'bold', maxWidth: '75%', color: 'black'}}> {title} </Text>
               <View style = {{flexDirection : 'row'}}>
-              <Text style = {{ fontWeight: 'bold', color : isOverBudgetColor()}}> {"$" + amount.toFixed(2)} </Text>
-              <Text style = {{ paddingLeft : 0, color:'grey'}}> {"/ $" + limit} </Text>
+                <Text style = {{ fontWeight: 'bold', color : isOverBudgetColor()}}> {"$" + amount.toFixed(2)} </Text>
+                <Text style = {{ paddingLeft : 0, color:'grey'}}> {"/ $" + limit} </Text>
+              </View>
             </View>
           </View>
-        </View>
+
+        </TouchableOpacity>
       </View>
       
-      );
-    };
+    );
+  };
   
 
 
