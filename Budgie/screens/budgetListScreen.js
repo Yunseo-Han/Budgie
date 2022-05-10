@@ -74,13 +74,12 @@ export const BudgetListScreen = ({ navigation }) => {
     });
   }
 
-  function handleDeleteBudget(id) {
-    //let id = ObjectId(idString);
-    budToDel = realm.objects("Budget").filtered('"_id == $0", id', id)[0];
+  function handleDeleteBudget(idString) {
+    let id = ObjectId(idString);
+    let budToDel = realm.objects("Budget").filtered("_id == $0", id)[0];
     realm.write(() => {
-      delBud = realm.delete(budToDel);
+      realm.delete(budToDel);
     });
-    console.log(delBud);
   }
 
   function handleDeleteAll() {
@@ -101,7 +100,7 @@ export const BudgetListScreen = ({ navigation }) => {
         idString : idString
       });
     }
-    const deleteButton = <TouchableHighlight style={styles.deleteButton}><Text>Delete</Text></TouchableHighlight>
+    const deleteButton = <TouchableHighlight style={styles.deleteButton} onPress ={() => handleDeleteBudget(idString)}><Text>Delete</Text></TouchableHighlight>
 
     return (
       <Swipeable rightButtons = {[deleteButton]} rightButtonWidth = {75}>
