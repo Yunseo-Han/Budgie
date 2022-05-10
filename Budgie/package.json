@@ -24,7 +24,6 @@
     "react-native-screens": "^3.13.1",
     "react-native-svg": "^12.3.0",
     "react-native-swipeable-row": "^0.8.1",
-    "react-native-unimodules": "^0.14.10",
     "realm": "^10.16.0"
   },
   "devDependencies": {
