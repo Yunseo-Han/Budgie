@@ -17,6 +17,7 @@ import {
 
 import { buttonGrey, addButtonBlue } from '../budgieColors';
 import DatePicker from 'react-native-date-picker';
+import Swipeable from 'react-native-swipeable-row';
 
 // REALM
 import {useMemo} from 'react';
@@ -103,6 +104,7 @@ export const BudgetListScreen = ({ navigation }) => {
     const deleteButton = <TouchableHighlight style={styles.deleteButton} onPress ={() => handleDeleteBudget(idString)}><Text>Delete</Text></TouchableHighlight>
 
     return (
+      <Swipeable rightButtons={[deleteButton]}>
         <TouchableOpacity onPress={() => pressedBudgetPreviewButton(idString)} style={styles.roundedButton}>
           <Text style={styles.importantText}> {startDate.toLocaleDateString() + " - " + endDate.toLocaleDateString()} </Text>
           <View style = {{alignContent: 'flex-end', maxWidth: '60%'}}>
@@ -110,6 +112,7 @@ export const BudgetListScreen = ({ navigation }) => {
             <Text> {'Remaining: $' + saving.toFixed(2)} </Text>
           </View>
         </TouchableOpacity>
+      </Swipeable>
     );
   }
 
