@@ -9,6 +9,7 @@ import {
   Text,
   View,
   TouchableOpacity,
+  TouchableHighlight,
   TextInput,
   KeyboardAvoidingView,
   Dimensions
@@ -16,6 +17,7 @@ import {
 
 import { buttonGrey, addButtonBlue } from '../budgieColors';
 import DatePicker from 'react-native-date-picker';
+import Swipeable from 'react-native-swipeable-row';
 
 // REALM
 import {useMemo} from 'react';
@@ -91,15 +93,18 @@ export const BudgetListScreen = ({ navigation }) => {
         idString : idString
       });
     }
+    const deleteButton = <TouchableHighlight style={styles.deleteButton}><Text>Delete</Text></TouchableHighlight>
 
     return (
-      <TouchableOpacity onPress={() => pressedBudgetPreviewButton(idString)} style={styles.roundedButton}>
-        <Text style={styles.importantText}> {startDate.toLocaleDateString() + " - " + endDate.toLocaleDateString()} </Text>
-        <View style = {{alignContent: 'flex-end', maxWidth: '60%'}}>
-          <Text> {'Limit: $' + spending.toFixed(2)} </Text>
-          <Text> {'Remaining: $' + saving.toFixed(2)} </Text>
-        </View>
-      </TouchableOpacity>
+      <Swipeable rightButtons = {[deleteButton]} rightButtonWidth = {75}>
+        <TouchableOpacity onPress={() => pressedBudgetPreviewButton(idString)} style={styles.roundedButton}>
+          <Text style={styles.importantText}> {startDate.toLocaleDateString() + " - " + endDate.toLocaleDateString()} </Text>
+          <View style = {{alignContent: 'flex-end', maxWidth: '60%'}}>
+            <Text> {'Limit: $' + spending.toFixed(2)} </Text>
+            <Text> {'Remaining: $' + saving.toFixed(2)} </Text>
+          </View>
+        </TouchableOpacity>
+      </Swipeable>
     );
   }
 
@@ -383,4 +388,16 @@ const styles = StyleSheet.create({
     marginTop: 22,
   },
 
+  deleteButton: {
+    backgroundColor: '#FF6961',
+    borderRadius: 10,
+    width: 75,
+    marginRight: 10,
+    // paddingVertical: 15,
+    // paddingHorizontal: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    // marginBottom: 10,
+    // marginHorizontal: 20,
+  }
 });
