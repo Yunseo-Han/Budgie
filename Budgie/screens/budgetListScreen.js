@@ -120,7 +120,9 @@ export const BudgetListScreen = ({ navigation }) => {
     // "Are we setting starting or ending?"" flag
 
 
+    function deleteBudget() {
 
+    }
 
     function addNewBudget() {
       console.log(startingDate, endingDate, budgetLimit);
@@ -213,67 +215,6 @@ export const BudgetListScreen = ({ navigation }) => {
       </Modal>
     );
   }
-
-
-  // const SpendingContainer = () => {
-  //   const [spendingName, setSpendingName] = React.useState("");
-  //   const [spending, setSpending] = React.useState(0);
-  //   const [spendingCategory, setSpendingCategory] = React.useState("");
-
-
-  //   function pressedCancelSpendingButton() {
-  //     console.log("canceling add spending")
-  //     setSpendingContainer(null)
-  //   }
-
-    
-  //   return (
-  //     <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 400, justifyContent: 'center', alignItems: 'center'}}>
-  //       <KeyboardAvoidingView style={styles.setSpendingContainer} behavior={Platform.OS === "ios" ? "padding" : "height"}>
-  //         <View style={{flexDirection: 'row', alignSelf: 'stretch', justifyContent:'space-between', marginTop: 5}}>
-  //           <Text style={styles.titleText}>Add Spending</Text>
-  //           <TouchableOpacity style={styles.cancelButton} >
-  //             <Text>CANCEL</Text>
-  //           </TouchableOpacity>
-  //         </View>
-
-  //         <View>
-  //           <Text style={styles.textInputTitle}>Spending Name</Text>
-  //           <TextInput
-  //             style={styles.textInputBox}
-  //             onChangeText={spendingName => setSpendingName(spendingName)}
-  //           />
-  //         </View>
-
-  //         <View>
-  //           <Text style={styles.textInputTitle}>Spending Amount</Text>
-  //           <TextInput
-  //             style={styles.textInputBox}
-  //             keyboardType={'decimal-pad'}
-  //             onChangeText={newSpending => setSpending(newSpending)}
-  //           />
-  //         </View>
-
-  //         <View>
-  //           <Text style={styles.textInputTitle}>Spending Catagory</Text>
-  //           <TextInput
-  //             style={styles.textInputBox}
-  //             onChangeText={spendingCatagory => setSpendingCatagory(spendingCatagory)}
-  //           />
-  //         </View>
-          
-          
-  //         <TouchableOpacity style={styles.addBudgetButton}>
-  //           <Text>Add Spending</Text>
-  //         </TouchableOpacity>
-
-  //       </KeyboardAvoidingView>
-  //     </View>
-      
-      
-  //   );
-  // }
-
 
     
   // Screen
