@@ -160,7 +160,7 @@ export const BudgetListScreen = ({ navigation }) => {
         <View style={styles.modalView}>
           <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
             <View style={{flexDirection: 'row', alignSelf: 'stretch', justifyContent:'space-between', marginTop: 5}}>
-              <Text style={styles.titleText}>Add Budget</Text>
+              <Text style={styles.sectionTitle}>Add Budget</Text>
               <TouchableOpacity style={styles.cancelButton} onPress={()=>setBudgetModalVisible(false)}>
                 <Text>CANCEL</Text>
               </TouchableOpacity>
@@ -404,5 +404,11 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     // marginBottom: 10,
     // marginHorizontal: 20,
-  }
+  }, 
+
+  sectionTitle:{
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginVertical: 10,
+  },
 });
