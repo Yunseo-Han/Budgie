@@ -41,9 +41,7 @@ export const BudgetListScreen = ({ navigation }) => {
 
   // Use states
   const [budgetItems, setBudgetItems] = useState([]);
-  // const [budgetContainer, startBudgetContainer] = useState(BudgetContainer)
   const currentIdString = "";
-
 
   // Budget Modal
   const [budgetModalVisible, setBudgetModalVisible] = useState(false);

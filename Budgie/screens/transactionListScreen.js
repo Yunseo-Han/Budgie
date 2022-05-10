@@ -57,6 +57,10 @@ export const TransactionListScreen = ({ navigation, route }) => {
     const result = useQuery("Category").filtered("_id == $0", catID)[0].transactions;
     const reversedTxs = useMemo(() => result.sorted("date", true), [result]);
 
+    function constructor(props) {
+      this.onPress = this.onPress.bind(this);
+    }
+
     function handleAddTransaction(spendingName, date, amount) {
       let newTrans;
       let amt = parseFloat(parseFloat(amount).toFixed(2));
@@ -79,13 +83,18 @@ export const TransactionListScreen = ({ navigation, route }) => {
     function handleDeleteTransaction(txIdString) {
       let id = ObjectId(txIdString);
       let txToDel = realm.objects("Transaction").filtered("_id == $0", id)[0];
+      console.log("******************BEFORE***********************\n", JSON.stringify(currentCat.transactions));
       realm.write(() => {
+        currentCat.transactionSum = currentCat.transactionSum - txToDel.amount;
         realm.delete(txToDel);
       });
+      console.log("******************AFTER***********************\n", JSON.stringify(currentBudget.transactions));
     }
 
     function handleDeleteCategory() {
+      let currentCatSum = currentCat.transactionSum;
       realm.write(() => {
+        currentBudget.totalSpending = currentBudget.totalSpending - currentCatSum;
         realm.delete(currentCat);
       });
       navigation.goBack();
@@ -180,7 +189,7 @@ export const TransactionListScreen = ({ navigation, route }) => {
 
       <View style = {{flexDirection:'row', justifyContent:'space-between', paddingVertical: 10}}>
         <Text style = {styles.titleText}> {currentCat.name}</Text>  
-        <TouchableOpacity style={styles.deleteButton}>  
+        <TouchableOpacity style={styles.deleteButton} onPress={() => handleDeleteCategory()}>  
           <Text>Delete Category</Text>
         </TouchableOpacity>
       </View>
@@ -384,7 +393,7 @@ deleteButton: {
   shadowOffset: { height: 1, width: 1 }, // IOS
   shadowOpacity: 0.5, // IOS
   shadowRadius: 4, //IOS
-  elevation: 2, // Android
+  elevation: 2 // Android
 }
 
 });
