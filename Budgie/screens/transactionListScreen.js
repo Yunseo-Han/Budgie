@@ -178,14 +178,13 @@ export const TransactionListScreen = ({ navigation, route }) => {
       <StatusBar barStyle='dark-content'/>
       <ScrollView contentInsetAdjustmentBehavior="automatic">
 
-      
       <View style = {{flexDirection:'row', justifyContent:'space-between', paddingVertical: 10}}>
         <Text style = {styles.titleText}> {currentCat.name}</Text>  
-        <TouchableOpacity style={styles.addButton} onPress={()=>setSpendingModalVisible(true)}>
-            <Text>ADD</Text>
+        <TouchableOpacity style={styles.deleteButton}>  
+          <Text>Delete Category</Text>
         </TouchableOpacity>
       </View>
-           
+        
       <View>
           {
               reversedTxs.map((item) => (
@@ -201,9 +200,15 @@ export const TransactionListScreen = ({ navigation, route }) => {
       </View>
 
       
+      <View style={{height: 70}}/>
       
       <ModalAddSpending/>
     </ScrollView>
+
+    <TouchableOpacity style={styles.addButton} onPress={()=>setSpendingModalVisible(true)}>
+      <Text style={styles.plusSymbol}>+</Text>
+    </TouchableOpacity>
+    
   </SafeAreaView>
   );
 };
@@ -329,11 +334,21 @@ addButton: {
   backgroundColor: addButtonBlue,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 20,
+    alignSelf: 'flex-end',
+    bottom: 30,
+    right: 30,
+    borderRadius: 30,
     width: 60,
-    height: 40,
+    height: 60,
     marginTop: 10,
     marginRight: 10,
+    position: 'absolute',
+    opacity: 0.9,
+    shadowColor: 'rgba(0,0,0, .4)', // IOS
+    shadowOffset: { height: 1, width: 1 }, // IOS
+    shadowOpacity: 0.5, // IOS
+    shadowRadius: 4, //IOS
+    elevation: 2, // Android
 },
 
 centerAddSymbol: {
@@ -344,7 +359,7 @@ centerAddSymbol: {
 
 plusSymbol:{
   fontSize: 30,
-  color: 'grey',
+  color: 'white',
   // fontWeight: 'bold',
   // paddingVertical: 10,
 },
@@ -355,5 +370,21 @@ titleText: {
   marginVertical: 10,
   marginHorizontal: 10,
 },
+
+deleteButton: {
+  backgroundColor: 'tomato',
+  justifyContent: 'center',
+  alignItems: 'center',
+  borderRadius: 30,
+  paddingVertical: 10,
+  paddingHorizontal: 10,
+  marginVertical: 10,
+  marginHorizontal: 10,
+  shadowColor: 'rgba(0,0,0, .4)', // IOS
+  shadowOffset: { height: 1, width: 1 }, // IOS
+  shadowOpacity: 0.5, // IOS
+  shadowRadius: 4, //IOS
+  elevation: 2, // Android
+}
 
 });

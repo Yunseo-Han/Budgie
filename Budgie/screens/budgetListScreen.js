@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 
 import {
   SafeAreaView,
@@ -34,7 +34,6 @@ var isEndingDate = false;
 
 
 export const BudgetListScreen = ({ navigation }) => {
-
   const { useRealm, useQuery, RealmProvider } = BudgetContext;
   const realm = useRealm();
   const result = useQuery("Budget");
@@ -101,7 +100,7 @@ export const BudgetListScreen = ({ navigation }) => {
       });
     }
 
-    const deleteButton = <TouchableHighlight style={styles.deleteButton} onPress ={() => handleDeleteBudget(idString)}><Text>Delete</Text></TouchableHighlight>
+    const deleteButton = <TouchableHighlight style={styles.deleteButton} onPress ={() => handleDeleteBudget(idString)}><Text style={{paddingLeft: 20}}>Delete</Text></TouchableHighlight>
 
     return (
       <Swipeable rightButtons={[deleteButton]}>
@@ -394,13 +393,15 @@ const styles = StyleSheet.create({
 
   deleteButton: {
     backgroundColor: '#FF6961',
-    borderRadius: 10,
-    width: 75,
+    borderBottomLeftRadius: 10,
+    borderTopLeftRadius: 10, 
+    width: 200,
     marginRight: 10,
+    height: 60,
     // paddingVertical: 15,
     // paddingHorizontal: 20,
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     // marginBottom: 10,
     // marginHorizontal: 20,
   }
