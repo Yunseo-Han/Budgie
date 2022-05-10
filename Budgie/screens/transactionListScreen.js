@@ -13,11 +13,13 @@ import {
     TouchableOpacity,
     Button,
     KeyboardAvoidingView,
+    TouchableHighlight,
     TextInput,
   } from 'react-native';
 
 import { buttonGrey, addButtonBlue } from '../budgieColors';
 import { Dimensions } from "react-native";
+import Swipeable from 'react-native-swipeable-row';
 
   //REALM
 import {useMemo} from 'react';
@@ -108,19 +110,24 @@ export const TransactionListScreen = ({ navigation, route }) => {
     }
 
     const Spending = ({ title, amount, date }) => {
-      return( 
-          <View style = {styles.roundedButton}>
-            <View style = {{alignContent: 'flex-start', maxWidth: '70%'}}>
-              <Text style = {{fontWeight: 'bold'}}> {title} </Text>
-              <Text> {date.toLocaleDateString()} </Text>
-            </View>
 
-            <View style = {{alignContent: 'flex-end', maxWidth: '30%'}}>
-              <Text style = {styles.spendingAmount}> ${amount} </Text>
+      const deleteButton = <TouchableHighlight style={styles.deleteButton2} onPress ={() => handleDeleteBudget(idString)}><Text style={{paddingLeft: 20}}>Delete</Text></TouchableHighlight>
+
+      return( 
+          <Swipeable rightButtons={[deleteButton]}>
+            <View style = {styles.roundedButton}>
+              <View style = {{alignContent: 'flex-start', maxWidth: '70%'}}>
+                <Text style = {{fontWeight: 'bold'}}> {title} </Text>
+                <Text> {date.toLocaleDateString()} </Text>
+              </View>
+
+              <View style = {{alignContent: 'flex-end', maxWidth: '30%'}}>
+                <Text style = {styles.spendingAmount}> ${amount} </Text>
+              </View>
             </View>
-          </View>
+          </Swipeable>
         );
-    };
+      };
 
     const ModalAddSpending = () => {
       const [spendingName, setSpendingName] = React.useState("");
@@ -394,6 +401,20 @@ deleteButton: {
   shadowOpacity: 0.5, // IOS
   shadowRadius: 4, //IOS
   elevation: 2 // Android
-}
+},
 
+deleteButton2: {
+  backgroundColor: 'tomato',
+  borderBottomLeftRadius: 10,
+  borderTopLeftRadius: 10, 
+  width: 200,
+  marginRight: 10,
+  height: 60,
+  // paddingVertical: 15,
+  // paddingHorizontal: 20,
+  justifyContent: 'center',
+  alignItems: 'flex-start',
+  // marginBottom: 10,
+  // marginHorizontal: 20,
+}, 
 });
