@@ -22,6 +22,10 @@ import { BudgetListScreen } from '../Budgie/screens/budgetListScreen';
 import { BudgetScreen } from './screens/budgetScreen'
 import { TransactionListScreen } from './screens/transactionListScreen'
 
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+LogBox.ignoreAllLogs();//Ignore all log notifications
+
 
 //REALM
 import BudgetContext from "./models/Budget";

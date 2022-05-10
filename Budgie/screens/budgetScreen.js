@@ -286,7 +286,7 @@ export const BudgetScreen = ({ navigation, route }) => {
             sliceColor = {setSliceColor()} //setSliceColor()
             doughnut={true}
             coverRadius={0.45}
-            coverFill={'#FFF'}
+            coverFill={'#F2F2F2'}
           />
         </View>
 
