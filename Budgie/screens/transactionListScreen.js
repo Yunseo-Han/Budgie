@@ -59,7 +59,6 @@ export const TransactionListScreen = ({ navigation, route }) => {
     const result = useQuery("Category").filtered("_id == $0", catID)[0].transactions;
     const reversedTxs = useMemo(() => result.sorted("date", true), [result]);
 
-    //TODO: Add Transaction to currentCat.transactions list (based on budgetListScreen)
     function handleAddTransaction(spendingName, date, amount) {
       let newTrans;
       let amt = parseFloat(parseFloat(amount).toFixed(2));
@@ -79,6 +78,20 @@ export const TransactionListScreen = ({ navigation, route }) => {
       });
     }
 
+    function handleDeleteTransaction(txIdString) {
+      let id = ObjectId(txIdString);
+      let txToDel = realm.objects("Transaction").filtered("_id == $0", id)[0];
+      realm.write(() => {
+        realm.delete(txToDel);
+      });
+    }
+
+    function handleDeleteCategory() {
+      realm.write(() => {
+        realm.delete(currentCat);
+      });
+      navigation.goBack();
+    }
 
     function transactionsExist() {
       if(currentCat.transactions.length > 0) {
@@ -107,67 +120,64 @@ export const TransactionListScreen = ({ navigation, route }) => {
         );
       };
 
-
-      const ModalAddSpending = () => {
-        const [spendingName, setSpendingName] = React.useState("");
-        const [spending, setSpending] = React.useState(0);
-        const [date, setDate] = React.useState(new Date());
-        // const [amount, setAmount] = React.useState(0);
-        
-        
-
-        //TODO: Add Transaction to currentCat.transactions list (based on BudgetListScreen)
-        function addTransaction(){
-          handleAddTransaction(spendingName, date, spending);
-          setSpendingName("");
-          setDate("");
-          setSpending(0);
-          setSpendingModalVisible(false);
-        }
-
-        return (
-          <Modal
-          animationType="slide"
-          transparent={true}
-          visible={spendingModalVisible}
-          >
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                  <View style={{flexDirection: 'row', alignSelf: 'stretch', justifyContent:'space-between', marginTop: 5}}>
-                    <Text style={styles.sectionTitle}>New Spending</Text>
-                    <TouchableOpacity style={styles.cancelButton} onPress={() =>setSpendingModalVisible(false)}>
-                      <Text>CANCEL</Text>
-                    </TouchableOpacity>
-                  </View>
-        
-                  <View>
-                    <Text style={styles.textInputTitle}>Spending Name</Text>
-                    <TextInput
-                      style={styles.textInputBox}
-                      onChangeText={spendingName => setSpendingName(spendingName)}
-                    />
-                  </View>
-        
-                  <View>
-                    <Text style={styles.textInputTitle}>Spending Amount</Text>
-                    <TextInput
-                      style={styles.textInputBox}
-                      keyboardType={'decimal-pad'}
-                      onChangeText={newSpending => setSpending(newSpending)}
-                    />
-                  </View>
-        
-                  {/* TODO: ONPRESS TO ADD TO DATABASE HERE, go to problem at addTransaction */}
-                  <TouchableOpacity style={styles.addBudgetButton} onPress={addTransaction}>
-                    <Text>Add Spending</Text>
-                  </TouchableOpacity>
-        
-              </View>
-            </View>
-          </Modal>
-
-        );
+    const ModalAddSpending = () => {
+      const [spendingName, setSpendingName] = React.useState("");
+      const [spending, setSpending] = React.useState(0);
+      const [date, setDate] = React.useState(new Date());
+      // const [amount, setAmount] = React.useState(0);
+      
+      
+      function addTransaction(){
+        handleAddTransaction(spendingName, date, spending);
+        setSpendingName("");
+        setDate("");
+        setSpending(0);
+        setSpendingModalVisible(false);
       }
+
+      return (
+        <Modal
+        animationType="slide"
+        transparent={true}
+        visible={spendingModalVisible}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+                <View style={{flexDirection: 'row', alignSelf: 'stretch', justifyContent:'space-between', marginTop: 5}}>
+                  <Text style={styles.sectionTitle}>New Spending</Text>
+                  <TouchableOpacity style={styles.cancelButton} onPress={() =>setSpendingModalVisible(false)}>
+                    <Text>CANCEL</Text>
+                  </TouchableOpacity>
+                </View>
+      
+                <View>
+                  <Text style={styles.textInputTitle}>Spending Name</Text>
+                  <TextInput
+                    style={styles.textInputBox}
+                    onChangeText={spendingName => setSpendingName(spendingName)}
+                  />
+                </View>
+      
+                <View>
+                  <Text style={styles.textInputTitle}>Spending Amount</Text>
+                  <TextInput
+                    style={styles.textInputBox}
+                    keyboardType={'decimal-pad'}
+                    onChangeText={newSpending => setSpending(newSpending)}
+                  />
+                </View>
+      
+                {/* TODO: ONPRESS TO ADD TO DATABASE HERE, go to problem at addTransaction */}
+                <TouchableOpacity style={styles.addBudgetButton} onPress={addTransaction}>
+                  <Text>Add Spending</Text>
+                </TouchableOpacity>
+      
+            </View>
+          </View>
+        </Modal>
+
+      );
+    }
 
 
     return(
@@ -175,17 +185,13 @@ export const TransactionListScreen = ({ navigation, route }) => {
       <StatusBar barStyle='dark-content'/>
       <ScrollView contentInsetAdjustmentBehavior="automatic">
 
-      
-      
-        <View style = {{flexDirection:'row', justifyContent:'space-between', paddingVertical: 10}}>
-          <Text style = {styles.titleText}> {currentCat.name}</Text>  
-          <TouchableOpacity style={styles.deleteButton}>  
-            <Text>Delete Category</Text>
-          </TouchableOpacity>
-        </View>
+      <View style = {{flexDirection:'row', justifyContent:'space-between', paddingVertical: 10}}>
+        <Text style = {styles.titleText}> {currentCat.name}</Text>  
+        <TouchableOpacity style={styles.deleteButton}>  
+          <Text>Delete Category</Text>
+        </TouchableOpacity>
+      </View>
         
-        
-      
       <View>
           {
               reversedTxs.map((item) => (
@@ -194,10 +200,11 @@ export const TransactionListScreen = ({ navigation, route }) => {
                   title = {item.name}
                   date = {item.date}   
                   amount = {item.amount.toFixed(2)}
+                  txIdString = {item._id.toString()}
                 />
               ))
           }
-        </View>
+      </View>
 
       
       <View style={{height: 70}}/>
