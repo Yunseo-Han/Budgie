@@ -17,7 +17,6 @@ import {
 
 import { buttonGrey, addButtonBlue } from '../budgieColors';
 import DatePicker from 'react-native-date-picker';
-import SwipeRow from '@nghinv/react-native-swipe-row';
 
 // REALM
 import {useMemo} from 'react';
