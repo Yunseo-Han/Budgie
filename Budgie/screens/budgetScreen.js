@@ -157,9 +157,9 @@ export const BudgetScreen = ({ navigation, route }) => {
               />
 
               <TouchableOpacity
-                style={styles.addCategoryButton}
+                style={styles.submitButton}
                 onPress={pressedSubmitNewCategory}>
-                <Text style={styles.buttonText}>Submit</Text>
+                <Text>Submit</Text>
               </TouchableOpacity>
 
             </View>
@@ -170,19 +170,18 @@ export const BudgetScreen = ({ navigation, route }) => {
   
     //Legend go to transactionListScreen when clicked on
     function pressedLegendButton(catIdString) {
-      console.log(catIdString);
       navigation.navigate('Transactions', {
         catIdString : catIdString,
         budIdString: idString
       })
     }
 
-    const Legend = ({ title, amount, limit, color, index, catIdString }) => {
+  const Legend = ({ title, amount, limit, color, index, catIdString }) => {
 
     //Set bar to full if over budget
     function isOverBudgetWidth(){
-      if (amount >= limit) return 0.5*screenWidth;
-      else return (amount/limit)*(0.5*screenWidth);
+      if (amount >= limit) return 0.6*screenWidth;
+      else return (amount/limit)*(0.6*screenWidth);
     }
 
     //Set dollar amount WORD to red if over budget
@@ -192,27 +191,38 @@ export const BudgetScreen = ({ navigation, route }) => {
     }
 
     return( 
+      <View>
       <View style = {[styles.legendBox, {alignContent: 'center'}]}>
-        <TouchableOpacity style = {{flexDirection : 'row'}}  onPress={()=>pressedLegendButton(catIdString)}>
+        <TouchableOpacity onPress={()=>pressedLegendButton(catIdString)}>
+
+        
+
+        <View style={{flexDirection: 'row'}}>
+          
           <View style = {[styles.bar, {backgroundColor : color}, 
             {width : isOverBudgetWidth()}]}>
-            </View>
-          <View style = {[styles.bar, {backgroundColor : buttonGrey}, 
-            {width : (0.5*screenWidth) - isOverBudgetWidth()}]}>
           </View>
-        </TouchableOpacity>
-          <View style = {{paddingLeft : 4}}>
-            <View style = {{width : 0.5 * screenWidth}}>
-              <Text style = {{fontWeight : 'bold', maxWidth: '75%', color: 'black'}}> {title} </Text>
-              <View style = {{flexDirection : 'row'}}>
+          
+          <View style = {[styles.bar, {backgroundColor : buttonGrey}, {width : (0.6*screenWidth) - isOverBudgetWidth()}]}/>
+        
+          <View style = {{paddingLeft : 4, width : 0.6 * screenWidth}}>
+          <Text style = {{fontWeight : 'bold', maxWidth: '75%', color: 'black', paddingBottom:7}}> {title} </Text>
+            <View style = {{flexDirection : 'row'}}>
               <Text style = {{ fontWeight: 'bold', color : isOverBudgetColor()}}> {"$" + amount.toFixed(2)} </Text>
               <Text style = {{ paddingLeft : 0, color:'grey'}}> {"/ $" + limit} </Text>
             </View>
-            </View>
+          </View>
+
         </View>
+
+        </TouchableOpacity>
+        
       </View>
-      );
-    };
+      <View style={{ borderBottomColor: 'grey', borderBottomWidth: 1, margin: 10, borderBottomWidth: 2, opacity: 0.1}} />
+      </View>
+      
+    );
+  };
   
 
 
@@ -283,27 +293,28 @@ export const BudgetScreen = ({ navigation, route }) => {
       {/* BUDGET CATEGORIES */}
         <View style = {{paddingVertical : 20}}>
         <Text style = {styles.sectionText}>Categories </Text>  
-          <View>
-            {
-                result.map((item, index) => (
-                  <Legend
-                    key={item._id}
-                    title = {item.name}
-                    amount = {item.transactionSum}    //item.transactionSum
-                    limit = {item.spendingLimit}     //item.spendingLimit 
-                    color = {setBarColor(index)}    //TODO: fix setBarColor->'undefined' error
-                    index = {index}
-                    catIdString = {item._id.toString()}
-                  />
-                ))
-            }
-          </View>
+
+        <View style={{ borderBottomColor: 'grey', borderBottomWidth: 1, margin: 10, borderBottomWidth: 2, opacity: 0.1}} />
+
+        <View>
+          {
+              result.map((item, index) => (
+                <Legend
+                  key={item._id}
+                  title = {item.name}
+                  amount = {item.transactionSum}    //item.transactionSum
+                  limit = {item.spendingLimit}     //item.spendingLimit 
+                  color = {setBarColor(index)}    //TODO: fix setBarColor->'undefined' error
+                  index = {index}
+                  catIdString = {item._id.toString()}
+                />
+              ))
+          }
+        </View>
 
           {/* NEW CATEGORY BUTTON */}
-          <TouchableOpacity style = {styles.addCategoryButton}>
-            <Text onPress={() => {setCategoryModalVisible(true)}} 
-              style = {styles.buttonText}
-            >New Category</Text>
+          <TouchableOpacity style = {styles.addCategoryButton} onPress={() => {setCategoryModalVisible(true)}}>
+            <Text>New Category</Text>
           </TouchableOpacity>
         </View>
 
@@ -345,7 +356,9 @@ export const BudgetScreen = ({ navigation, route }) => {
     },
 
     bar : {
-      height : 24,
+      height : 40,  // 24 before
+      // borderBottomRightRadius: 20, 
+      // borderTopRightRadius: 20
     },
 
     roundedButton: {
@@ -536,6 +549,22 @@ export const BudgetScreen = ({ navigation, route }) => {
       },
 
       addCategoryButton: {
+        backgroundColor: addButtonBlue,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 30,
+        paddingVertical: 10,
+        paddingHorizontal: 30,
+        marginVertical: 20,
+        marginHorizontal: 50,
+        shadowColor: 'rgba(0,0,0, .4)', // IOS
+        shadowOffset: { height: 1, width: 1 }, // IOS
+        shadowOpacity: 0.5, // IOS
+        shadowRadius: 4, //IOS
+        elevation: 2, // Android
+      },
+
+      submitButton: {
         backgroundColor: addButtonBlue,
         justifyContent: 'center',
         alignItems: 'center',

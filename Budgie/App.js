@@ -23,7 +23,6 @@ import { BudgetScreen } from './screens/budgetScreen'
 import { TransactionListScreen } from './screens/transactionListScreen'
 
 
-
 //REALM
 import BudgetContext from "./models/Budget";
 const { useRealm, useQuery, RealmProvider } = BudgetContext;

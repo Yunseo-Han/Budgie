@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 
 import {
   SafeAreaView,
@@ -9,6 +9,7 @@ import {
   Text,
   View,
   TouchableOpacity,
+  TouchableHighlight,
   TextInput,
   KeyboardAvoidingView,
   Dimensions
@@ -16,11 +17,11 @@ import {
 
 import { buttonGrey, addButtonBlue } from '../budgieColors';
 import DatePicker from 'react-native-date-picker';
+import Swipeable from 'react-native-swipeable-row';
 
 // REALM
 import {useMemo} from 'react';
 import BudgetContext, { Budget } from "../models/Budget";
-// import {BSON} from "realm-web";
 import { ObjectId } from "bson";
 
 
@@ -33,7 +34,6 @@ var isEndingDate = false;
 
 
 export const BudgetListScreen = ({ navigation }) => {
-
   const { useRealm, useQuery, RealmProvider } = BudgetContext;
   const realm = useRealm();
   const result = useQuery("Budget");
@@ -41,9 +41,7 @@ export const BudgetListScreen = ({ navigation }) => {
 
   // Use states
   const [budgetItems, setBudgetItems] = useState([]);
-  // const [budgetContainer, startBudgetContainer] = useState(BudgetContainer)
   const currentIdString = "";
-
 
   // Budget Modal
   const [budgetModalVisible, setBudgetModalVisible] = useState(false);
@@ -73,6 +71,14 @@ export const BudgetListScreen = ({ navigation }) => {
     });
   }
 
+  function handleDeleteBudget(idString) {
+    let id = ObjectId(idString);
+    let budToDel = realm.objects("Budget").filtered("_id == $0", id)[0];
+    realm.write(() => {
+      realm.delete(budToDel);
+    });
+  }
+
   function handleDeleteAll() {
     realm.write(() => {
       // Delete all objects from the realm.
@@ -92,14 +98,18 @@ export const BudgetListScreen = ({ navigation }) => {
       });
     }
 
+    const deleteButton = <TouchableHighlight style={styles.deleteButton} onPress ={() => handleDeleteBudget(idString)}><Text style={{paddingLeft: 20}}>Delete</Text></TouchableHighlight>
+
     return (
-      <TouchableOpacity onPress={() => pressedBudgetPreviewButton(idString)} style={styles.roundedButton}>
-        <Text style={styles.importantText}> {startDate.toLocaleDateString() + " - " + endDate.toLocaleDateString()} </Text>
-        <View style = {{alignContent: 'flex-end', maxWidth: '60%'}}>
-          <Text> {'Limit: $' + spending.toFixed(2)} </Text>
-          <Text> {'Remaining: $' + saving.toFixed(2)} </Text>
-        </View>
-      </TouchableOpacity>
+      <Swipeable rightButtons={[deleteButton]}>
+        <TouchableOpacity onPress={() => pressedBudgetPreviewButton(idString)} style={styles.roundedButton}>
+          <Text style={styles.importantText}> {startDate.toLocaleDateString() + " - " + endDate.toLocaleDateString()} </Text>
+          <View style = {{alignContent: 'flex-end', maxWidth: '60%'}}>
+            <Text> {'Limit: $' + spending.toFixed(2)} </Text>
+            <Text> {'Remaining: $' + saving.toFixed(2)} </Text>
+          </View>
+        </TouchableOpacity>
+      </Swipeable>
     );
   }
 
@@ -118,8 +128,6 @@ export const BudgetListScreen = ({ navigation }) => {
     // Open date picker
     const [open, setOpen] = useState(false)
     // "Are we setting starting or ending?"" flag
-
-
 
 
     function addNewBudget() {
@@ -150,7 +158,7 @@ export const BudgetListScreen = ({ navigation }) => {
         <View style={styles.modalView}>
           <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
             <View style={{flexDirection: 'row', alignSelf: 'stretch', justifyContent:'space-between', marginTop: 5}}>
-              <Text style={styles.titleText}>Add Budget</Text>
+              <Text style={styles.sectionTitle}>Add Budget</Text>
               <TouchableOpacity style={styles.cancelButton} onPress={()=>setBudgetModalVisible(false)}>
                 <Text>CANCEL</Text>
               </TouchableOpacity>
@@ -213,67 +221,6 @@ export const BudgetListScreen = ({ navigation }) => {
       </Modal>
     );
   }
-
-
-  // const SpendingContainer = () => {
-  //   const [spendingName, setSpendingName] = React.useState("");
-  //   const [spending, setSpending] = React.useState(0);
-  //   const [spendingCategory, setSpendingCategory] = React.useState("");
-
-
-  //   function pressedCancelSpendingButton() {
-  //     console.log("canceling add spending")
-  //     setSpendingContainer(null)
-  //   }
-
-    
-  //   return (
-  //     <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 400, justifyContent: 'center', alignItems: 'center'}}>
-  //       <KeyboardAvoidingView style={styles.setSpendingContainer} behavior={Platform.OS === "ios" ? "padding" : "height"}>
-  //         <View style={{flexDirection: 'row', alignSelf: 'stretch', justifyContent:'space-between', marginTop: 5}}>
-  //           <Text style={styles.titleText}>Add Spending</Text>
-  //           <TouchableOpacity style={styles.cancelButton} >
-  //             <Text>CANCEL</Text>
-  //           </TouchableOpacity>
-  //         </View>
-
-  //         <View>
-  //           <Text style={styles.textInputTitle}>Spending Name</Text>
-  //           <TextInput
-  //             style={styles.textInputBox}
-  //             onChangeText={spendingName => setSpendingName(spendingName)}
-  //           />
-  //         </View>
-
-  //         <View>
-  //           <Text style={styles.textInputTitle}>Spending Amount</Text>
-  //           <TextInput
-  //             style={styles.textInputBox}
-  //             keyboardType={'decimal-pad'}
-  //             onChangeText={newSpending => setSpending(newSpending)}
-  //           />
-  //         </View>
-
-  //         <View>
-  //           <Text style={styles.textInputTitle}>Spending Catagory</Text>
-  //           <TextInput
-  //             style={styles.textInputBox}
-  //             onChangeText={spendingCatagory => setSpendingCatagory(spendingCatagory)}
-  //           />
-  //         </View>
-          
-          
-  //         <TouchableOpacity style={styles.addBudgetButton}>
-  //           <Text>Add Spending</Text>
-  //         </TouchableOpacity>
-
-  //       </KeyboardAvoidingView>
-  //     </View>
-      
-      
-  //   );
-  // }
-
 
     
   // Screen
@@ -442,4 +389,24 @@ const styles = StyleSheet.create({
     marginTop: 22,
   },
 
+  deleteButton: {
+    backgroundColor: '#FF6961',
+    borderBottomLeftRadius: 10,
+    borderTopLeftRadius: 10, 
+    width: 200,
+    marginRight: 10,
+    height: 60,
+    // paddingVertical: 15,
+    // paddingHorizontal: 20,
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    // marginBottom: 10,
+    // marginHorizontal: 20,
+  }, 
+
+  sectionTitle:{
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginVertical: 10,
+  },
 });

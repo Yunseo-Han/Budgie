@@ -8,7 +8,7 @@ export class Budget {
     this.endDate = endDate;
     this.totalSpending = 0;
     this.targetSpending = targetSpending;
-    this.categories = new Array();
+    this.categories = [];
   }
   
   static schema = {

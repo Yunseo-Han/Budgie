@@ -9,7 +9,7 @@ const budgets = useMemo(() => result.sorted("startDate"), [result]);
 const categories = useMemo(() => result.sorted("startDate"), [result]);
 const transactions = useMemo(() => result.sorted("startDate"), [result]);
 
-export default function testDb() {
+export function testDb() {
 	QueryBudgets();
 	QueryCategories();
 	QueryTransactions();
@@ -24,7 +24,7 @@ export default function testDb() {
 }
 
 // Budget Insertions Test
-export default function QueryBudgets() {
+export function QueryBudgets() {
 	let i = 1;
 	budgets.forEach(element => {
 	  console.log("Budget " + i);
@@ -38,7 +38,7 @@ export default function QueryBudgets() {
 }
 
 // Category Insertions Test
-export default function QueryCategories() {
+export function QueryCategories() {
 	let i = 1;
 	categories.forEach(element => {
 	  console.log("Category " + i);
@@ -49,7 +49,7 @@ export default function QueryCategories() {
 }
 
 // Transactions Insertions Test
-export default function QueryTransactions() {
+export function QueryTransactions() {
 	let i = 1;
 	transactions.forEach(element => {
 	  console.log("Transaction " + i);
@@ -60,7 +60,7 @@ export default function QueryTransactions() {
 }
 
 // Budget Deletions Test
-export default function QueryBudgetsDeletions() {
+export function QueryBudgetsDeletions() {
 	let i = 1;
 	budgets.forEach(element => {
 	  console.log("Budget Deleted " + i);
@@ -70,7 +70,7 @@ export default function QueryBudgetsDeletions() {
 }
 
 // Category Deletions Test
-export default function QueryCategoriesDeletions() {
+export function QueryCategoriesDeletions() {
 	let i = 1;
 	categories.forEach(element => {
 	  console.log("Category Deleted " + i);
@@ -80,7 +80,7 @@ export default function QueryCategoriesDeletions() {
 }
 
 // Transactions Deletions Test
-export default function QueryTransactionsDeletions() {
+export function QueryTransactionsDeletions() {
 	let i = 1;
 	transactions.forEach(element => {
 	  console.log("Transactions Deleted " + i);
@@ -91,7 +91,7 @@ export default function QueryTransactionsDeletions() {
 
 // Sprint 2 //
 // Budget Updates Test
-export default function QueryBudgetsUpdates() {
+export function QueryBudgetsUpdates() {
 	let i = 1;
 	budgets.forEach(element => {
 	  console.log("Budgets Updated " + i);
@@ -101,7 +101,7 @@ export default function QueryBudgetsUpdates() {
 }
 
 // Budget Rollbacks Test
-export default function QueryBudgetsRollbacks() {
+export function QueryBudgetsRollbacks() {
 	let i = 1;
 	budgets.forEach(element => {
 	  console.log("Budgets Rollbacked " + i);
@@ -111,7 +111,7 @@ export default function QueryBudgetsRollbacks() {
 }
 
 // Transaction Rollbacks Test
-export default function QueryTransactionsRollbacks() {
+export function QueryTransactionsRollbacks() {
 	let i = 1;
 	transactions.forEach(element => {
 	  console.log("Transactions Rollbacked " + i);
@@ -121,7 +121,7 @@ export default function QueryTransactionsRollbacks() {
 }
 
 // Category Updates Test
-export default function QueryCategoriesUpdates() {
+export function QueryCategoriesUpdates() {
 	let i = 1;
 	categories.forEach(element => {
 	  console.log("Categories Updated " + i);
@@ -131,7 +131,7 @@ export default function QueryCategoriesUpdates() {
 }
 
 // Category Rollbacks Test
-export default function QueryCategoriesRollbacks() {
+export function QueryCategoriesRollbacks() {
 	let i = 1;
 	categories.forEach(element => {
 	  console.log("Categories Rollbacked " + i);
