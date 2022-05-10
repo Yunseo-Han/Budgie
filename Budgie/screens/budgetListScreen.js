@@ -87,8 +87,7 @@ export const BudgetListScreen = ({ navigation }) => {
 
     // Handle functions   ******* used to be outside the component
     function pressedBudgetPreviewButton(idString) {
-      console.log(idString);
-      navigation.navigate('Budget', {
+      navigation.navigate('Budget Details', {
         idString : idString
       });
     }
@@ -96,9 +95,9 @@ export const BudgetListScreen = ({ navigation }) => {
     return (
       <TouchableOpacity onPress={() => pressedBudgetPreviewButton(idString)} style={styles.roundedButton}>
         <Text style={styles.importantText}> {startDate.toLocaleDateString() + " - " + endDate.toLocaleDateString()} </Text>
-        <View style = {{alignContent: 'flex-end', maxWidth: '30%'}}>
-          <Text> {'$' + spending} </Text>
-          <Text> {'$' + saving} </Text>
+        <View style = {{alignContent: 'flex-end', maxWidth: '60%'}}>
+          <Text> {'Limit: $' + spending.toFixed(2)} </Text>
+          <Text> {'Remaining: $' + saving.toFixed(2)} </Text>
         </View>
       </TouchableOpacity>
     );
@@ -141,7 +140,6 @@ export const BudgetListScreen = ({ navigation }) => {
       setOpen(true)
       isEndingDate = true
     }
-
 
     return (
       <Modal

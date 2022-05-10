@@ -34,7 +34,8 @@ export const TransactionListScreen = ({ navigation, route }) => {
     // const [spendingContainer, setSpendingContainer] = useState(SpendingContainer)
     const [spendingItems, setSpendingItems] = useState([]);
     
-    const {catIdString} = route.params;
+
+    const {catIdString, budIdString} = route.params;
 
     // add spending modal 
     const [spendingModalVisible, setSpendingModalVisible] = useState(false);
@@ -45,6 +46,9 @@ export const TransactionListScreen = ({ navigation, route }) => {
     //REALM
     const { useRealm, useQuery, RealmProvider } = BudgetContext;
     const realm = useRealm();
+
+    const budId = ObjectId(budIdString);
+    const currentBudget = realm.objects("Budget").filtered("_id == $0", budId)[0];
 
     const catID = ObjectId(catIdString);
     const currentCat = realm.objects("Category").filtered("_id == $0", catID)[0];
@@ -69,6 +73,7 @@ export const TransactionListScreen = ({ navigation, route }) => {
         newTrans = realm.create("Transaction", new Transaction({name: spendingName, date: date, amount: amt}));
         currentCat.transactions.push(newTrans);
         currentCat.transactionSum += amt;
+        currentBudget.totalSpending += currentCat.transactionSum;
       });
     }
 
@@ -179,7 +184,7 @@ export const TransactionListScreen = ({ navigation, route }) => {
                   key = {item._id}
                   title = {item.name}
                   date = {item.date}   
-                  amount = {item.amount}
+                  amount = {item.amount.toFixed(2)}
                 />
               ))
           }
