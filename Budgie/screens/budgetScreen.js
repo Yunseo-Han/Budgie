@@ -170,7 +170,6 @@ export const BudgetScreen = ({ navigation, route }) => {
   
     //Legend go to transactionListScreen when clicked on
     function pressedLegendButton(catIdString) {
-      console.log(catIdString);
       navigation.navigate('Transactions', {
         catIdString : catIdString,
         budIdString: idString

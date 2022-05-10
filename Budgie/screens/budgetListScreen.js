@@ -20,7 +20,6 @@ import DatePicker from 'react-native-date-picker';
 // REALM
 import {useMemo} from 'react';
 import BudgetContext, { Budget } from "../models/Budget";
-// import {BSON} from "realm-web";
 import { ObjectId } from "bson";
 
 
@@ -73,6 +72,15 @@ export const BudgetListScreen = ({ navigation }) => {
     });
   }
 
+  function handleDeleteBudget(id) {
+    //let id = ObjectId(idString);
+    budToDel = realm.objects("Budget").filtered('"_id == $0", id', id)[0];
+    realm.write(() => {
+      delBud = realm.delete(budToDel);
+    });
+    console.log(delBud);
+  }
+
   function handleDeleteAll() {
     realm.write(() => {
       // Delete all objects from the realm.
@@ -119,10 +127,6 @@ export const BudgetListScreen = ({ navigation }) => {
     const [open, setOpen] = useState(false)
     // "Are we setting starting or ending?"" flag
 
-
-    function deleteBudget() {
-
-    }
 
     function addNewBudget() {
       console.log(startingDate, endingDate, budgetLimit);
