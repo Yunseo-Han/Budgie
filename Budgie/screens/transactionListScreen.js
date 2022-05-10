@@ -87,7 +87,9 @@ export const TransactionListScreen = ({ navigation, route }) => {
       let txToDel = realm.objects("Transaction").filtered("_id == $0", id)[0];
       console.log("******************BEFORE***********************\n", JSON.stringify(currentCat.transactions));
       realm.write(() => {
-        currentCat.transactionSum = currentCat.transactionSum - txToDel.amount;
+        let diff = txToDel.amount;
+        currentCat.transactionSum = currentCat.transactionSum - diff;
+        currentBudget.totalSpending = currentBudget.totalSpending - diff;
         realm.delete(txToDel);
       });
       console.log("******************AFTER***********************\n", JSON.stringify(currentBudget.transactions));
@@ -109,9 +111,9 @@ export const TransactionListScreen = ({ navigation, route }) => {
       return false;
     }
 
-    const Spending = ({ title, amount, date }) => {
+    const Spending = ({ title, amount, date, txIdString }) => {
 
-      const deleteButton = <TouchableHighlight style={styles.deleteButton2} onPress ={() => handleDeleteBudget(idString)}><Text style={{paddingLeft: 20}}>Delete</Text></TouchableHighlight>
+      const deleteButton = <TouchableHighlight style={styles.deleteButton2} onPress ={() => handleDeleteTransaction(txIdString)}><Text style={{paddingLeft: 20}}>Delete</Text></TouchableHighlight>
 
       return( 
           <Swipeable rightButtons={[deleteButton]}>
@@ -127,7 +129,7 @@ export const TransactionListScreen = ({ navigation, route }) => {
             </View>
           </Swipeable>
         );
-      };
+    };
 
     const ModalAddSpending = () => {
       const [spendingName, setSpendingName] = React.useState("");
