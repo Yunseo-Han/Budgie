@@ -145,6 +145,7 @@ export const BudgetScreen = ({ navigation, route }) => {
                 style={styles.textInputBox}
                 onChangeText={setCategoryLimitInput}
                 value={categoryLimitInput}
+                keyboardType={'decimal-pad'}
               />
 
               <TouchableOpacity
@@ -276,6 +277,9 @@ export const BudgetScreen = ({ navigation, route }) => {
         <ScrollView
           contentInsetAdjustmentBehavior="automatic">
         
+        <Text style={styles.endDateText}>{currentBudget.startDate.toLocaleDateString('en-us',{month:'short', day: 'numeric', year:'numeric'})} -</Text>
+        <Text style={styles.startDateText}> {currentBudget.endDate.toLocaleDateString('en-us',{month:'short', day: 'numeric', year:'numeric'})}</Text>
+
         {/* PIE CHART */}
         <View style = {{alignItems : 'center', paddingVertical : 10}}>
           <PieChart
@@ -586,5 +590,16 @@ export const BudgetScreen = ({ navigation, route }) => {
         borderBottomLeftRadius: 10, 
         borderTopLeftRadius: 10,
       }, 
+
+      endDateText: {
+        paddingLeft: 18,
+      },
+
+      startDateText: {
+        fontSize: 30,
+        fontWeight: 'bold',
+        paddingLeft: 10,
+        paddingBottom: 10,
+      },
       
   });

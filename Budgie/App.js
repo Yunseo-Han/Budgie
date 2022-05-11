@@ -38,11 +38,11 @@ const App = () => {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen
-          name="Home"
+          name="ඞ ඞ ඞ ඞ"
           component={BudgetListScreen}
         />
         <Stack.Screen 
-          name="Budget Details" 
+          name="  " 
           component={BudgetScreen} 
           options={({ route }) => ({ title: route.params.startDate })}/>
       <Stack.Screen 

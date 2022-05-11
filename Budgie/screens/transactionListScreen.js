@@ -188,11 +188,12 @@ export const TransactionListScreen = ({ navigation, route }) => {
       <StatusBar barStyle='dark-content'/>
       <ScrollView contentInsetAdjustmentBehavior="automatic">
 
+
       <View style = {{flexDirection:'row', justifyContent:'space-between', paddingVertical: 10}}>
         <Text style = {styles.titleText}> {currentCat.name}</Text>  
-        <TouchableOpacity style={styles.deleteButton} onPress={() => handleDeleteCategory()}>  
+        {/* <TouchableOpacity style={styles.deleteButton} onPress={() => handleDeleteCategory()}>  
           <Text>Delete Category</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
         
       <View>

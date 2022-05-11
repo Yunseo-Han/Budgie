@@ -32,6 +32,7 @@ const deviceWidth = Dimensions.get('window').width;
 var isStartingDate = false;
 var isEndingDate = false;
 
+var currentlySelectedBudgetId = "DEFAULT_ID_STRING";
 
 export const BudgetListScreen = ({ navigation }) => {
   const { useRealm, useQuery, RealmProvider } = BudgetContext;
@@ -45,6 +46,8 @@ export const BudgetListScreen = ({ navigation }) => {
 
   // Budget Modal
   const [budgetModalVisible, setBudgetModalVisible] = useState(false);
+  // Edit Budget Modal
+  const [editBudgetModalVisible, setEditBudgetModalVisible] = useState(false);
 
   
   function constructor(props) {
@@ -82,17 +85,7 @@ export const BudgetListScreen = ({ navigation }) => {
     });
   }
 
-  function handleEditBudget(idString, startDate, endDate, targetSpending) {
-    let id = ObjectId(idString);
-    let budToEdit = realm.objects("Budget").filtered("_id == $0", id)[0];
-    realm.write(() => {
-        budToEdit.startDate = startDate;
-        budToEdit.endDate = endDate;
-      if(targetSpending != "") {
-        budToEdit.targetSpending = targetSpending;
-      }
-    });
-  }
+  
 
   function handleDeleteAll() {
     realm.write(() => {
@@ -108,20 +101,28 @@ export const BudgetListScreen = ({ navigation }) => {
 
     // Handle functions   ******* used to be outside the component
     function pressedBudgetPreviewButton(idString) {
-      navigation.navigate('Budget Details', {
+      navigation.navigate('  ', {
         idString : idString
       });
     }
 
+    function pressedEditButton() {
+      currentlySelectedBudgetId = idString;
+      setEditBudgetModalVisible(true)
+    }
+
     const deleteButton = <TouchableHighlight style={styles.deleteButton} onPress ={() => handleDeleteBudget(idString)}><Text style={{paddingLeft: 20}}>Delete</Text></TouchableHighlight>
+    const editButton = <TouchableHighlight style={styles.editButton} onPress={pressedEditButton}><Text style={{paddingLeft: 20}}>Edit</Text></TouchableHighlight>
 
     function getRemainder(saving) {
       if(saving >= 0) return 'Remaining: $' + saving.toFixed(2);
-      else return 'Deficit: $' + (-saving).toFixed(2);
+      else return 'Deficit: $' + (saving).toFixed(2);
     }
 
+    
+
     return (
-      <Swipeable rightButtons={[deleteButton]}>
+      <Swipeable rightButtons={[editButton, deleteButton]}>
         <TouchableOpacity onPress={() => pressedBudgetPreviewButton(idString)} style={styles.roundedButton}>
           <Text style={styles.importantText}> {startDate.toLocaleDateString() + " - " + endDate.toLocaleDateString()} </Text>
           <View style = {{alignContent: 'flex-end', maxWidth: '60%'}}>
@@ -144,6 +145,7 @@ export const BudgetListScreen = ({ navigation }) => {
     const [endingDate, setEndingDate] = React.useState(new Date())
     const [budgetLimit, setBudgetLimit] = React.useState(0);
     const [idString, setIdString] = React.useState("DEFAULT_ID_STRING");
+    
 
     // Date picker data
     const [date, setDate] = useState(new Date())
@@ -152,9 +154,13 @@ export const BudgetListScreen = ({ navigation }) => {
     // "Are we setting starting or ending?"" flag
 
 
+
+
     function addNewBudget() {
-      console.log(startingDate, endingDate, budgetLimit);
+      
       handleAddBudget(startingDate, endingDate, budgetLimit);
+      
+
       setStartingDate("");
       setEndingDate("");
       setBudgetLimit("");
@@ -170,6 +176,7 @@ export const BudgetListScreen = ({ navigation }) => {
       setOpen(true)
       isEndingDate = true
     }
+
 
     return (
       <Modal
@@ -244,6 +251,119 @@ export const BudgetListScreen = ({ navigation }) => {
     );
   }
 
+  const EditBudgetModal = () => {
+    
+    const [startDate, setStartingDate] = React.useState(new Date());
+    const [endDate, setEndingDate] = React.useState(new Date())
+    const [budgetLimit, setBudgetLimit] = React.useState(0);
+    const [idString, setIdString] = React.useState("DEFAULT_ID_STRING");
+
+    // const budId = ObjectId(currentlySelectedBudgetId); // react has a problem with this code?? maybe it doesnt pass in string?
+    // const budToEdit = realm.objects("Budget").filtered("_id == $0",budId)[0];
+
+    // Date picker data
+    const [date, setDate] = useState(new Date())
+    // Open date picker
+    const [open, setOpen] = useState(false)
+    // "Are we setting starting or ending?"" flag
+
+
+    function handleEditBudget() {
+      // realm.write(() => {
+      //     budToEdit.startDate = startDate;
+      //     budToEdit.endDate = endDate;
+      //   if(targetSpending != "") {
+      //     budToEdit.targetSpending = targetSpending;
+      //   }
+      // });
+    }
+
+
+    function addStartingDate() {
+      setOpen(true)
+      isStartingDate = true
+    }
+
+    function addEndingDate() {
+      setOpen(true)
+      isEndingDate = true
+    }
+
+    return (
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={editBudgetModalVisible}> 
+        <View style={styles.centeredView}>
+        <View style={styles.modalView}>
+          <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
+            <View style={{flexDirection: 'row', alignSelf: 'stretch', justifyContent:'space-between', marginTop: 5}}>
+              <Text style={styles.sectionTitle}>Edit Budget</Text>
+              <TouchableOpacity style={styles.cancelButton} onPress={()=>setEditBudgetModalVisible(false)}>
+                <Text>CANCEL</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View>
+              <Text style={styles.textInputTitle}>Budget Limit</Text>
+              <TextInput
+                style={styles.textInputBox}
+                keyboardType={'decimal-pad'}
+                onChangeText={newLimit => setBudgetLimit(newLimit)}
+                // defaultValue={budToEdit.targetSpending}
+              />
+            </View>
+
+            <View>
+              <Text style={styles.textInputTitle} >Starting Date</Text>
+              <TouchableOpacity style={styles.textInputBox} onPress={addStartingDate}>
+                {/* <Text>{budToEdit.startDate}</Text> */}
+              </TouchableOpacity>
+            </View>
+            
+            <View>
+              <Text style={styles.textInputTitle} >Ending Date</Text>
+              <TouchableOpacity style={styles.textInputBox} onPress={addEndingDate}>
+                {/* <Text>{budToEdit.endDate}</Text> */}
+              </TouchableOpacity>
+            </View>
+            
+            
+            <TouchableOpacity style={styles.addBudgetButton} onPress={handleEditBudget} >
+              <Text>Submit</Text>
+            </TouchableOpacity>
+
+          </KeyboardAvoidingView>
+          <DatePicker
+            modal
+            open={open}
+            date={date}
+            mode={"date"}
+            textColor={addButtonBlue}
+            onConfirm={(date) => {
+              if (isStartingDate) {
+                setStartingDate(date)
+                isStartingDate = false
+              } else if (isEndingDate) {
+                setEndingDate(date)
+                isEndingDate = false
+              } 
+              setOpen(false)
+              
+            }}
+            onCancel={() => {
+              setOpen(false)
+              isStartingDate = false
+              isEndingDate = false
+            }}
+          />
+        </View>
+        </View>
+      </Modal>
+    );
+  }
+  
+
     
   // Screen
   return (
@@ -260,6 +380,8 @@ export const BudgetListScreen = ({ navigation }) => {
           </View>
 
           <AddNewBudgetModal/>
+          <EditBudgetModal/>
+          
 
           <View>
             {
@@ -419,6 +541,21 @@ const styles = StyleSheet.create({
 
   deleteButton: {
     backgroundColor: 'tomato',
+    // borderBottomLeftRadius: 10,
+    // borderTopLeftRadius: 10, 
+    width: 200,
+    marginRight: 10,
+    height: 60,
+    // paddingVertical: 15,
+    // paddingHorizontal: 20,
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    // marginBottom: 10,
+    // marginHorizontal: 20,
+  }, 
+
+  editButton: {
+    backgroundColor: 'orange',
     borderBottomLeftRadius: 10,
     borderTopLeftRadius: 10, 
     width: 200,
