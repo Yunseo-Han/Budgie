@@ -189,7 +189,7 @@ export const TransactionListScreen = ({ navigation, route }) => {
 
 
     return(
-      <SafeAreaView style={[styles.container]}>
+      <SafeAreaView style={[styles.container, {backgroundColor: 'white'}]}>
       <StatusBar barStyle='dark-content'/>
       <ScrollView contentInsetAdjustmentBehavior="automatic">
 

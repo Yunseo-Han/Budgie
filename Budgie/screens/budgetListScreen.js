@@ -247,7 +247,7 @@ export const BudgetListScreen = ({ navigation }) => {
     
   // Screen
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{backgroundColor: 'white'}}>
       <View style={{width: deviceWidth, height: deviceHeight}}>
       <StatusBar barStyle={'dark-content'}/>
         <ScrollView contentInsetAdjustmentBehavior="automatic">
@@ -330,7 +330,12 @@ const styles = StyleSheet.create({
     height: 40,
     marginTop: 10,
     marginRight: 10,
-  },
+    shadowColor: 'rgba(0,0,0, .4)', // IOS
+    shadowOffset: { height: 1, width: 1 }, // IOS
+    shadowOpacity: 0.5, // IOS
+    shadowRadius: 4, //IOS
+    elevation: 2 // Android
+    },
 
   setBudgetContainer: {
     justifyContent: 'center',
@@ -374,6 +379,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     marginVertical: 20,
     marginHorizontal: 30,
+    
   },
 
 
