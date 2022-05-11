@@ -392,7 +392,7 @@ const styles = StyleSheet.create({
   },
 
   deleteButton: {
-    backgroundColor: '#FF6961',
+    backgroundColor: 'tomato',
     borderBottomLeftRadius: 10,
     borderTopLeftRadius: 10, 
     width: 200,
