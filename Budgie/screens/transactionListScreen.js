@@ -174,9 +174,9 @@ export const TransactionListScreen = ({ navigation, route }) => {
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
                 <View style={{flexDirection: 'row', alignSelf: 'stretch', justifyContent:'space-between', marginTop: 5}}>
-                  <Text style={styles.sectionTitle}>New Spending</Text>
+                  <Text style={styles.sectionTitle}>New Transaction</Text>
                   <TouchableOpacity style={styles.cancelButton} onPress={() =>setSpendingModalVisible(false)}>
-                    <Text>CANCEL</Text>
+                    <Text>Cancel</Text>
                   </TouchableOpacity>
                 </View>
       
@@ -198,7 +198,7 @@ export const TransactionListScreen = ({ navigation, route }) => {
                 </View>
       
                 <TouchableOpacity style={styles.addBudgetButton} onPress={addTransaction}>
-                  <Text>Add Spending</Text>
+                  <Text>Submit</Text>
                 </TouchableOpacity>
       
             </View>

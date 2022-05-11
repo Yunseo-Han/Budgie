@@ -18,6 +18,7 @@ import {
 import { buttonGrey, addButtonBlue } from '../budgieColors';
 import DatePicker from 'react-native-date-picker';
 import Swipeable from 'react-native-swipeable-row';
+import ProgressCircle from 'react-native-progress-circle'
 
 // REALM
 import {useMemo} from 'react';
@@ -123,7 +124,10 @@ export const BudgetListScreen = ({ navigation }) => {
       else return 'Deficit: $' + (saving).toFixed(2);
     }
 
-    
+    function ProgressCirclePercent() {
+      if(saving >= 0) return saving/spending*100;
+      else return 0;
+    }
 
     return (
       <Swipeable rightButtons={[editButton, deleteButton]}>
@@ -132,9 +136,17 @@ export const BudgetListScreen = ({ navigation }) => {
           <View style = {{alignContent: 'flex-end', maxWidth: '60%'}}>
             <View style={{alignItems: 'flex-end'}}>
               <Text> {'Limit: $' + spending.toFixed(2)} </Text>
-              <Text> { '' + getRemainder(parseFloat(saving))} </Text>
+              {/* <Text> { '' + getRemainder(parseFloat(saving))} </Text> */}
             </View>
           </View>
+          <ProgressCircle 
+            percent={ProgressCirclePercent()}
+            radius={15}
+            borderWidth={8}
+            color="blue"
+            shadowColor="tomato"
+            bgColor={buttonGrey}
+          ></ProgressCircle>
         </TouchableOpacity>
       </Swipeable>
     );
@@ -150,6 +162,7 @@ export const BudgetListScreen = ({ navigation }) => {
     const [budgetLimit, setBudgetLimit] = React.useState(0);
     const [idString, setIdString] = React.useState("DEFAULT_ID_STRING");
     
+    const [showWarning, setShowWarning] = React.useState(false);
 
     // Date picker data
     const [date, setDate] = useState(new Date())
@@ -191,11 +204,13 @@ export const BudgetListScreen = ({ navigation }) => {
         <View style={styles.modalView}>
           <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
             <View style={{flexDirection: 'row', alignSelf: 'stretch', justifyContent:'space-between', marginTop: 5}}>
-              <Text style={styles.sectionTitle}>Add Budget</Text>
+              <Text style={styles.sectionTitle}>New Budget</Text>
               <TouchableOpacity style={styles.cancelButton} onPress={()=>setBudgetModalVisible(false)}>
-                <Text>CANCEL</Text>
+                <Text>Cancel</Text>
               </TouchableOpacity>
             </View>
+
+            {showWarning? <Text style={{color: 'tomato'}}>Wrong Input. Try again.</Text>: null}
 
             <View>
               <Text style={styles.textInputTitle}>Budget Limit</Text>
@@ -222,7 +237,7 @@ export const BudgetListScreen = ({ navigation }) => {
             
             
             <TouchableOpacity style={styles.addBudgetButton} onPress={addNewBudget} >
-              <Text>Add Budget</Text>
+              <Text>Submit</Text>
             </TouchableOpacity>
 
           </KeyboardAvoidingView>
@@ -304,7 +319,7 @@ export const BudgetListScreen = ({ navigation }) => {
             <View style={{flexDirection: 'row', alignSelf: 'stretch', justifyContent:'space-between', marginTop: 5}}>
               <Text style={styles.sectionTitle}>Edit Budget</Text>
               <TouchableOpacity style={styles.cancelButton} onPress={()=>setEditBudgetModalVisible(false)}>
-                <Text>CANCEL</Text>
+                <Text>Cancel</Text>
               </TouchableOpacity>
             </View>
 

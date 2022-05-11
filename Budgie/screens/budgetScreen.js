@@ -135,7 +135,7 @@ export const BudgetScreen = ({ navigation, route }) => {
                 <Text style={styles.sectionTitle}>New Category</Text>
                 <TouchableOpacity style={styles.cancelButton} onPress={() =>setCategoryModalVisible(false)}>
                   <View>
-                    <Text>CLOSE</Text>
+                    <Text>Cancel</Text>
                   </View>
                 </TouchableOpacity>
 
