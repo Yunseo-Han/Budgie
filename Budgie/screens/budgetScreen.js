@@ -11,6 +11,7 @@ import {
     Modal,
     Pressable,
     TouchableOpacity,
+    TouchableHighlight,
     Button,
     KeyboardAvoidingView,
     TextInput,
@@ -19,6 +20,8 @@ import {
 import PieChart from 'react-native-pie-chart';
 import { buttonGrey, addButtonBlue } from '../budgieColors';
 import { Dimensions } from "react-native";
+import Swipeable from 'react-native-swipeable-row';
+
 
 //REALM
 import {useMemo} from 'react';
@@ -169,8 +172,12 @@ export const BudgetScreen = ({ navigation, route }) => {
       else return 'green';
     }
 
+    const deleteButton = <TouchableHighlight style={styles.deleteButton} onPress ={() => handleDeleteBudget(idString)}><Text style={{paddingLeft: 20, color: 'white'}}>Delete</Text></TouchableHighlight>
+
+
     return( 
-      <View>
+      <View >
+      <Swipeable rightButtons={[deleteButton]}> 
       <View style = {[styles.legendBox, {alignContent: 'center'}]}>
         <TouchableOpacity onPress={()=>pressedLegendButton(catIdString)}>
 
@@ -199,6 +206,7 @@ export const BudgetScreen = ({ navigation, route }) => {
         </TouchableOpacity>
         
       </View>
+      </Swipeable>
       <View style={{ borderBottomColor: 'grey', borderBottomWidth: 1, margin: 10, borderBottomWidth: 2, opacity: 0.1}} />
       </View>
       
@@ -555,5 +563,19 @@ export const BudgetScreen = ({ navigation, route }) => {
         marginVertical: 20,
         marginHorizontal: 50,
       },
+
+      deleteButton: {
+        backgroundColor: 'tomato',
+        width: 200,
+        marginRight: 10,
+        paddingBottom: 5,
+        height: 50,
+        
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+        
+        borderBottomLeftRadius: 10, 
+        borderTopLeftRadius: 10,
+      }, 
       
   });
