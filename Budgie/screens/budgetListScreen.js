@@ -55,6 +55,9 @@ export const BudgetListScreen = ({ navigation }) => {
   function handleAddBudget(startDate, endDate, targetSpending) {
     targetSpending = parseFloat(targetSpending);
     let newBudget;
+    if(targetSpending == "") {
+      return;
+    }
     realm.write(() => {
       newBudget = realm.create("Budget", new Budget({startDate, endDate, targetSpending}));
     });
@@ -79,6 +82,18 @@ export const BudgetListScreen = ({ navigation }) => {
     });
   }
 
+  function handleEditBudget(idString, startDate, endDate, targetSpending) {
+    let id = ObjectId(idString);
+    let budToEdit = realm.objects("Budget").filtered("_id == $0", id)[0];
+    realm.write(() => {
+        budToEdit.startDate = startDate;
+        budToEdit.endDate = endDate;
+      if(targetSpending !== null) {
+        budToEdit.targetSpending = targetSpending;
+      }
+    });
+  }
+
   function handleDeleteAll() {
     realm.write(() => {
       // Delete all objects from the realm.
@@ -100,6 +115,11 @@ export const BudgetListScreen = ({ navigation }) => {
 
     const deleteButton = <TouchableHighlight style={styles.deleteButton} onPress ={() => handleDeleteBudget(idString)}><Text style={{paddingLeft: 20}}>Delete</Text></TouchableHighlight>
 
+    function getRemainder(saving) {
+      if(saving >= 0) return 'Remaining: $' + saving.toFixed(2);
+      else return 'Deficit: $' + (-saving).toFixed(2);
+    }
+
     return (
       <Swipeable rightButtons={[deleteButton]}>
         <TouchableOpacity onPress={() => pressedBudgetPreviewButton(idString)} style={styles.roundedButton}>
@@ -107,7 +127,7 @@ export const BudgetListScreen = ({ navigation }) => {
           <View style = {{alignContent: 'flex-end', maxWidth: '60%'}}>
             <View style={{alignItems: 'flex-end'}}>
               <Text> {'Limit: $' + spending.toFixed(2)} </Text>
-              <Text> {'Remaining: $' + saving.toFixed(2)} </Text>
+              <Text> { '' + getRemainder(parseFloat(saving))} </Text>
             </View>
           </View>
         </TouchableOpacity>

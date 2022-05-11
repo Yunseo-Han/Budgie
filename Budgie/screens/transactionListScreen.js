@@ -160,7 +160,7 @@ export const TransactionListScreen = ({ navigation, route }) => {
                 </View>
       
                 <View>
-                  <Text style={styles.textInputTitle}>Spending Name</Text>
+                  <Text style={styles.textInputTitle}>Transaction Name</Text>
                   <TextInput
                     style={styles.textInputBox}
                     onChangeText={spendingName => setSpendingName(spendingName)}
@@ -168,7 +168,7 @@ export const TransactionListScreen = ({ navigation, route }) => {
                 </View>
       
                 <View>
-                  <Text style={styles.textInputTitle}>Spending Amount</Text>
+                  <Text style={styles.textInputTitle}>Amount</Text>
                   <TextInput
                     style={styles.textInputBox}
                     keyboardType={'decimal-pad'}
