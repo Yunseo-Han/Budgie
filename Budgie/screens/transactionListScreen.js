@@ -82,7 +82,7 @@ export const TransactionListScreen = ({ navigation, route }) => {
         currentCat.transactions.push(newTrans);
         currentCat.transactionSum = currentCat.transactionSum + amt;
         currentCat.txCounter += 1;
-        currentBudget.totalSpending = currentBudget.totalSpending + currentCat.transactionSum;
+        currentBudget.totalSpending = currentBudget.totalSpending + amt;
       });
     }
 
