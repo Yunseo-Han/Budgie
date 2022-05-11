@@ -177,20 +177,22 @@ export const BudgetScreen = ({ navigation, route }) => {
         
 
         <View style={{flexDirection: 'row'}}>
-          
+
+          <View style = {{paddingLeft: 4, width : 0.32 * screenWidth}}>
+            <Text style = {{fontWeight : 'bold', maxWidth: '75%', color: 'black', paddingBottom:7}}> {title} </Text>
+            <View style = {{flexDirection : 'row'}}>
+              <Text style = {{ fontWeight: 'bold', color : isOverBudgetColor()}}> {"$" + amount.toFixed(2)} </Text>
+              <Text style = {{ paddingLeft : 0, color:'grey'}}> {"/ $" + limit} </Text>
+            </View>
+          </View>
+
           <View style = {[styles.bar, {backgroundColor : color}, 
             {width : isOverBudgetWidth()}]}>
           </View>
           
           <View style = {[styles.bar, {backgroundColor : buttonGrey}, {width : (0.6*screenWidth) - isOverBudgetWidth()}]}/>
         
-          <View style = {{paddingLeft : 4, width : 0.6 * screenWidth}}>
-          <Text style = {{fontWeight : 'bold', maxWidth: '75%', color: 'black', paddingBottom:7}}> {title} </Text>
-            <View style = {{flexDirection : 'row'}}>
-              <Text style = {{ fontWeight: 'bold', color : isOverBudgetColor()}}> {"$" + amount.toFixed(2)} </Text>
-              <Text style = {{ paddingLeft : 0, color:'grey'}}> {"/ $" + limit} </Text>
-            </View>
-          </View>
+
 
         </View>
 
