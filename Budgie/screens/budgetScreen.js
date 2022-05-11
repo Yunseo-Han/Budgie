@@ -57,25 +57,31 @@ export const BudgetScreen = ({ navigation, route }) => {
       this.onPress = this.onPress.bind(this);
     }
 
-    //TODO: Sometimes transactionSum gives really long decimal places (fix it to 2)
-    function populateCategories(numTxs) {
-      console.log("\n", JSON.stringify(currentBudget.categories), "\n");
-      currentBudget.categories.forEach((e) => {
-        let total = 0;
-        realm.write(() => {
-          for(let i = 0; i < numTxs; i++) {
-            let ranamt = parseFloat((Math.random() * 100.00).toFixed(2));
-            e.transactions.push(realm.create("Transaction", new Transaction({
-              name: "test", 
-              date: new Date(), 
-              amount: ranamt
-            })));
-            total += ranamt;
-          }
-        });
-        realm.write(() => {
-          e.transactionSum = total;
-        });
+    function handleAddCategory(nameInput, limitInput) {
+      setCategoryModalVisible(false);
+      let name = nameInput.trim();
+      let limit = parseFloat(parseFloat(limitInput).toFixed(2));
+      // Don't think it'll reach the error checking if parseFloat fails, 
+      // but whatever, I'm leaving it here anyway
+      if(isNaN(limit)) {
+        console.log("Spending limit is not a number");
+        return;
+      } else if(limit < 0) {
+        console.log("Spending limit must be greater than 0.");
+        return;
+      }
+      if(name == "") {
+        console.log("Every category must be given a name.");
+        return;
+      }
+      if(currentBudget.categories.some(e => e.name === name)) {
+        console.log("A category using with that name already exists.");
+        return;
+      }
+      let newCat;
+      realm.write(() => {
+        newCat = realm.create("Category", new Category({name: name, spendingLimit: limit}));
+        currentBudget.categories.push(newCat);
       });
     }
 
@@ -85,38 +91,11 @@ export const BudgetScreen = ({ navigation, route }) => {
 
       const [categoryInput, setCategoryInput] = React.useState("");
       const [categoryLimitInput, setCategoryLimitInput] = React.useState("");
-
-      function handleAddCategory() {
-        setCategoryModalVisible(false);
-        let name = categoryInput.trim();
-        let limit = parseFloat(parseFloat(categoryLimitInput).toFixed(2));
-        // Don't think it'll reach the error checking if parseFloat fails, 
-        // but whatever, I'm leaving it here anyway
-        if(isNaN(limit)) {
-          console.log("Spending limit is not a number");
-          return;
-        } else if(limit < 0) {
-          console.log("Spending limit must be greater than 0.");
-          return;
-        }
-        if(name == "") {
-          console.log("Every category must be given a name.");
-          return;
-        }
-        if(currentBudget.categories.some(e => e.name === name)) {
-          console.log("A category using with that name already exists.");
-          return;
-        }
-        let newCat;
-        realm.write(() => {
-          newCat = realm.create("Category", new Category({name: name, spendingLimit: limit}));
-          currentBudget.categories.push(newCat);
-        });
-        //populateCategories(10);
-      }
       
       function pressedSubmitNewCategory() {
-        handleAddCategory();
+        handleAddCategory(categoryInput, categoryLimitInput);
+        setCategoryInput("");
+        setCategoryLimitInput("");
         setCategoryModalVisible(false);
       }
 

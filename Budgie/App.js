@@ -24,7 +24,7 @@ import { TransactionListScreen } from './screens/transactionListScreen'
 
 import { LogBox } from 'react-native';
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
-LogBox.ignoreAllLogs();//Ignore all log notifications
+LogBox.ignoreAllLogs(); //Ignore all log notifications
 
 
 //REALM
