@@ -124,10 +124,18 @@ export const TransactionListScreen = ({ navigation, route }) => {
 
     const Spending = ({ title, amount, date, txIdString }) => {
 
-      const deleteButton = <TouchableHighlight style={styles.deleteButton2} onPress ={() => handleDeleteTransaction(txIdString)}><Text style={{paddingLeft: 20}}>Delete</Text></TouchableHighlight>
+      const deleteButton = <TouchableHighlight style={styles.deleteButton} onPress ={() => handleDeleteTransaction(txIdString)}>
+                              <Text style={{paddingLeft: 20, color: 'white'}}>Delete</Text>
+                            </TouchableHighlight>
+
+      // ADD ONPRESS LATER*****************
+    const editButton = <TouchableHighlight style={styles.editButton}>
+                        <Text style={{paddingLeft: 25, color: 'white'}}>Edit</Text>
+                      </TouchableHighlight>    
+
 
       return( 
-          <Swipeable rightButtons={[deleteButton]}>
+          <Swipeable rightButtons={[editButton, deleteButton]}>
             <View style = {styles.roundedButton}>
               <View style = {{alignContent: 'flex-start', maxWidth: '70%'}}>
                 <Text style = {{fontWeight: 'bold'}}> {title} </Text>
@@ -369,11 +377,9 @@ addButton: {
     borderRadius: 30,
     width: 60,
     height: 60,
-    marginTop: 10,
-    marginRight: 10,
     position: 'absolute',
-    opacity: 0.9,
-    shadowColor: 'rgba(0,0,0, .4)', // IOS
+    opacity: 0.92,
+    shadowColor: 'rgba(0,0,0, .8)', // IOS
     shadowOffset: { height: 1, width: 1 }, // IOS
     shadowOpacity: 0.5, // IOS
     shadowRadius: 4, //IOS
@@ -402,32 +408,30 @@ titleText: {
 
 deleteButton: {
   backgroundColor: 'tomato',
+  width: 300,
+  height: 60,
   justifyContent: 'center',
-  alignItems: 'center',
-  borderRadius: 30,
-  paddingVertical: 10,
-  paddingHorizontal: 10,
-  marginVertical: 10,
-  marginHorizontal: 10,
+  alignItems: 'flex-start',
   shadowColor: 'rgba(0,0,0, .4)', // IOS
   shadowOffset: { height: 1, width: 1 }, // IOS
   shadowOpacity: 0.5, // IOS
   shadowRadius: 4, //IOS
   elevation: 2 // Android
-},
+}, 
 
-deleteButton2: {
-  backgroundColor: 'tomato',
+editButton: {
+  backgroundColor: 'orange',
   borderBottomLeftRadius: 10,
   borderTopLeftRadius: 10, 
   width: 200,
-  marginRight: 10,
   height: 60,
-  // paddingVertical: 15,
-  // paddingHorizontal: 20,
   justifyContent: 'center',
   alignItems: 'flex-start',
-  // marginBottom: 10,
-  // marginHorizontal: 20,
+
+  shadowColor: 'rgba(0,0,0, .4)', // IOS
+      shadowOffset: { height: 1, width: 1 }, // IOS
+      shadowOpacity: 0.5, // IOS
+      shadowRadius: 4, //IOS
+      elevation: 2, // Android
 }, 
 });

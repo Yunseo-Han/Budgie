@@ -101,7 +101,7 @@ export const BudgetListScreen = ({ navigation }) => {
 
     // Handle functions   ******* used to be outside the component
     function pressedBudgetPreviewButton(idString) {
-      navigation.navigate('  ', {
+      navigation.navigate(' ', {
         idString : idString
       });
     }
@@ -111,8 +111,12 @@ export const BudgetListScreen = ({ navigation }) => {
       setEditBudgetModalVisible(true)
     }
 
-    const deleteButton = <TouchableHighlight style={styles.deleteButton} onPress ={() => handleDeleteBudget(idString)}><Text style={{paddingLeft: 20}}>Delete</Text></TouchableHighlight>
-    const editButton = <TouchableHighlight style={styles.editButton} onPress={pressedEditButton}><Text style={{paddingLeft: 20}}>Edit</Text></TouchableHighlight>
+    const deleteButton = <TouchableHighlight style={styles.deleteButton} onPress ={() => handleDeleteBudget(idString)}>
+                          <Text style={{paddingLeft: 20, color: 'white'}}>Delete</Text>
+                        </TouchableHighlight>
+    const editButton = <TouchableHighlight style={styles.editButton} onPress={pressedEditButton}>
+                          <Text style={{paddingLeft: 25, color: 'white'}}>Edit</Text>
+                        </TouchableHighlight>
 
     function getRemainder(saving) {
       if(saving >= 0) return 'Remaining: $' + saving.toFixed(2);
@@ -203,7 +207,7 @@ export const BudgetListScreen = ({ navigation }) => {
             </View>
 
             <View>
-              <Text style={styles.textInputTitle} >Starting Date</Text>
+              <Text style={styles.textInputTitle } >Starting Date</Text>
               <TouchableOpacity style={styles.textInputBox} onPress={addStartingDate}>
                 <Text>{startingDate.toLocaleDateString()}</Text>
               </TouchableOpacity>
@@ -227,7 +231,7 @@ export const BudgetListScreen = ({ navigation }) => {
             open={open}
             date={date}
             mode={"date"}
-            textColor={addButtonBlue}
+            textColor={'#6495ED'}
             onConfirm={(date) => {
               if (isStartingDate) {
                 setStartingDate(date)
@@ -367,16 +371,13 @@ export const BudgetListScreen = ({ navigation }) => {
     
   // Screen
   return (
-    <SafeAreaView style={{backgroundColor: 'white'}}>
-      <View style={{width: deviceWidth, height: deviceHeight}}>
+    <SafeAreaView style={[styles.container, {backgroundColor: 'white'}]}>
       <StatusBar barStyle={'dark-content'}/>
         <ScrollView contentInsetAdjustmentBehavior="automatic">
 
           <View style={{flexDirection:'row', justifyContent:'space-between', paddingVertical: 10}}>
             <Text style={styles.titleText}> Budgets </Text>
-            <TouchableOpacity style={styles.addButton} onPress={()=>setBudgetModalVisible(true)}>
-              <Text>ADD</Text>
-            </TouchableOpacity>
+            
           </View>
 
           <AddNewBudgetModal/>
@@ -398,13 +399,15 @@ export const BudgetListScreen = ({ navigation }) => {
             }
           </View>
 
-        <TouchableOpacity style={styles.addButton} onPress={()=> handleDeleteAll()}>
+        <TouchableOpacity style={{backgroundColor: 'gray', opacity: 0.4, paddingVertical: 10, marginTop: 100}} onPress={()=> handleDeleteAll()}>
             <Text>NUKE</Text>
         </TouchableOpacity>
 
           
         </ScrollView>
-      </View>
+        <TouchableOpacity style={styles.addButton} onPress={()=>setBudgetModalVisible(true)}>
+          <Text style={{fontSize: 30, color: 'white'}}>+</Text>
+        </TouchableOpacity>
     </SafeAreaView>
   );
 };
@@ -445,19 +448,22 @@ const styles = StyleSheet.create({
 
   addButton: {
     backgroundColor: addButtonBlue,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 20,
-    width: 60,
-    height: 40,
-    marginTop: 10,
-    marginRight: 10,
-    shadowColor: 'rgba(0,0,0, .4)', // IOS
-    shadowOffset: { height: 1, width: 1 }, // IOS
-    shadowOpacity: 0.5, // IOS
-    shadowRadius: 4, //IOS
-    elevation: 2 // Android
-    },
+      justifyContent: 'center',
+      alignItems: 'center',
+      alignSelf: 'flex-end',
+      bottom: 30,
+      right: 30,
+      borderRadius: 30,
+      width: 60,
+      height: 60,
+      position: 'absolute',
+      opacity: 0.92,
+      shadowColor: 'rgba(0,0,0, .8)', // IOS
+      shadowOffset: { height: 1, width: 1 }, // IOS
+      shadowOpacity: 0.5, // IOS
+      shadowRadius: 4, //IOS
+      elevation: 2, // Android
+  },
 
   setBudgetContainer: {
     justifyContent: 'center',
@@ -472,6 +478,12 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     zIndex: 3,
     elevation: 3,
+  },
+
+  container: {
+    height: "100%",
+    paddingHorizontal : 10,
+    paddingVertical : 20,
   },
 
   textInputTitle: {
@@ -541,17 +553,15 @@ const styles = StyleSheet.create({
 
   deleteButton: {
     backgroundColor: 'tomato',
-    // borderBottomLeftRadius: 10,
-    // borderTopLeftRadius: 10, 
     width: 200,
-    marginRight: 10,
     height: 60,
-    // paddingVertical: 15,
-    // paddingHorizontal: 20,
     justifyContent: 'center',
     alignItems: 'flex-start',
-    // marginBottom: 10,
-    // marginHorizontal: 20,
+    shadowColor: 'rgba(0,0,0, .4)', // IOS
+        shadowOffset: { height: 1, width: 1 }, // IOS
+        shadowOpacity: 0.5, // IOS
+        shadowRadius: 4, //IOS
+        elevation: 2, // Android
   }, 
 
   editButton: {
@@ -559,14 +569,15 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 10,
     borderTopLeftRadius: 10, 
     width: 200,
-    marginRight: 10,
     height: 60,
-    // paddingVertical: 15,
-    // paddingHorizontal: 20,
     justifyContent: 'center',
     alignItems: 'flex-start',
-    // marginBottom: 10,
-    // marginHorizontal: 20,
+
+    shadowColor: 'rgba(0,0,0, .4)', // IOS
+        shadowOffset: { height: 1, width: 1 }, // IOS
+        shadowOpacity: 0.5, // IOS
+        shadowRadius: 4, //IOS
+        elevation: 2, // Android
   }, 
 
   sectionTitle:{

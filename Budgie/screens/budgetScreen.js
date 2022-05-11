@@ -181,8 +181,8 @@ export const BudgetScreen = ({ navigation, route }) => {
 
     //Set bar to full if over budget
     function isOverBudgetWidth(){
-      if (amount >= limit) return 0.6*screenWidth;
-      else return (amount/limit)*(0.6*screenWidth);
+      if (amount >= limit) return 0.5*screenWidth;
+      else return (amount/limit)*(0.5*screenWidth);
     }
 
     //Set dollar amount WORD to red if over budget
@@ -191,36 +191,40 @@ export const BudgetScreen = ({ navigation, route }) => {
       else return 'green';
     }
 
-    const deleteButton = <TouchableHighlight style={styles.deleteButton} onPress ={() => handleDeleteCategory(catIdString)}><Text style={{paddingLeft: 20, color: 'white'}}>Delete</Text></TouchableHighlight>
+    const deleteButton = <TouchableHighlight style={styles.deleteButton} onPress ={() => handleDeleteCategory(catIdString)}>
+                            <Text style={{paddingLeft: 23, color: 'white'}}>Delete</Text>
+                          </TouchableHighlight>
 
+    // ADD ONPRESS LATER*****************
+    const editButton = <TouchableHighlight style={styles.editButton}>
+                      <Text style={{paddingLeft: 25, color: 'white'}}>Edit</Text>
+                    </TouchableHighlight>    
 
     return( 
       <View >
-      <Swipeable rightButtons={[deleteButton]}> 
-      <View style = {[styles.legendBox, {alignContent: 'center'}]}>
-        <TouchableOpacity onPress={()=>pressedLegendButton(catIdString)}>
+      <Swipeable rightButtons={[editButton, deleteButton]}> 
+      <View style = {[styles.legendBox]}>
+        <TouchableOpacity style={{flexDirection: 'row', justifyContent:'space-between'}} onPress={()=>pressedLegendButton(catIdString)}>
 
         
 
-        <View style={{flexDirection: 'row'}}>
+        {/* <View style={{flexDirection: 'row', alignContent:'space-between'}}> */}
 
-          <View style = {{paddingLeft: 4, width : 0.32 * screenWidth}}>
-            <Text style = {{fontWeight : 'bold', maxWidth: '75%', color: 'black', paddingBottom:7}}> {title} </Text>
+          <View style = {{paddingLeft: 4}}>
+            <Text style = {{fontWeight : 'bold', color: 'black', paddingBottom:7}}> {title} </Text>
             <View style = {{flexDirection : 'row'}}>
-              <Text style = {{ fontWeight: 'bold', color : isOverBudgetColor()}}> {"$" + amount.toFixed(2)} </Text>
-              <Text style = {{ paddingLeft : 0, color:'grey'}}> {"/ $" + limit} </Text>
+              <Text style = {{ fontWeight: 'bold', color : isOverBudgetColor()}}>{"$" + amount.toFixed(2)} </Text>
+              <Text style = {{ color:'grey'}}>{"/ $" + limit}</Text>
             </View>
           </View>
 
-          <View style = {[styles.bar, {backgroundColor : color}, 
-            {width : isOverBudgetWidth()}]}>
+          <View style={{flexDirection: 'row', marginRight: 10}}>
+            <View style = {[styles.bar, {backgroundColor : color}, {width : isOverBudgetWidth()}]} />
+            <View style = {[styles.bar, {backgroundColor : buttonGrey}, {width : (0.5*screenWidth) - isOverBudgetWidth()}]}/>
           </View>
-          
-          <View style = {[styles.bar, {backgroundColor : buttonGrey}, {width : (0.6*screenWidth) - isOverBudgetWidth()}]}/>
-        
 
 
-        </View>
+        {/* </View> */}
 
         </TouchableOpacity>
         
@@ -278,6 +282,14 @@ export const BudgetScreen = ({ navigation, route }) => {
       if (currentBudget.categories[index].transactionSum >= currentBudget.categories[index].spendingLimit) return '#FF0000'; 
       else return sliceColor[index];
     }
+
+    function getTotalSpendingColor() {
+      if (currentBudget.targetSpending-currentBudget.totalSpending>0) {
+        return 'grey'
+      } else {
+        return 'red'
+      }
+    }
     
     // Screen
     return(
@@ -286,8 +298,17 @@ export const BudgetScreen = ({ navigation, route }) => {
         <ScrollView
           contentInsetAdjustmentBehavior="automatic">
         
-        <Text style={styles.endDateText}>{currentBudget.startDate.toLocaleDateString('en-us',{month:'short', day: 'numeric', year:'numeric'})} -</Text>
-        <Text style={styles.startDateText}> {currentBudget.endDate.toLocaleDateString('en-us',{month:'short', day: 'numeric', year:'numeric'})}</Text>
+        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+          <View>
+            <Text style={styles.startDateText}>{currentBudget.startDate.toLocaleDateString('en-us',{month:'short', day: 'numeric', year:'numeric'})} -</Text>
+            <Text style={styles.endDateText}> {currentBudget.endDate.toLocaleDateString('en-us',{month:'short', day: 'numeric', year:'numeric'})}</Text>
+          </View>
+
+          <View>
+            <Text style={{alignSelf: 'flex-end', marginRight: 20, color: getTotalSpendingColor()}}>{'$' + currentBudget.totalSpending + ' /'}</Text>
+            <Text style={[styles.budgetText, {marginRight: 10, alignSelf: 'flex-start'}]}>{'$' + currentBudget.targetSpending}</Text>
+          </View>
+        </View>
 
         {/* PIE CHART */}
         <View style = {{alignItems : 'center', paddingVertical : 10}}>
@@ -297,7 +318,7 @@ export const BudgetScreen = ({ navigation, route }) => {
             sliceColor = {setSliceColor()} //setSliceColor()
             doughnut={true}
             coverRadius={0.45}
-            coverFill={'#F2F2F2'}
+            coverFill='white'
           />
         </View>
 
@@ -384,11 +405,11 @@ export const BudgetScreen = ({ navigation, route }) => {
     },
 
     legendBox: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      paddingVertical : 5,
+      // flexDirection: 'row',
+      // alignItems: 'space-between',
+      paddingVertical : 4,
       paddingHorizontal : 10,
-      maxWidth : "100%",
+      // maxWidth : "100%"
     },
   
      addButton: {
@@ -588,27 +609,54 @@ export const BudgetScreen = ({ navigation, route }) => {
 
       deleteButton: {
         backgroundColor: 'tomato',
-        width: 200,
-        marginRight: 10,
-        paddingBottom: 5,
+        width: 300,
         height: 50,
         
         justifyContent: 'center',
         alignItems: 'flex-start',
         
-        borderBottomLeftRadius: 10, 
-        borderTopLeftRadius: 10,
+
+        shadowColor: 'rgba(0,0,0, .4)', // IOS
+        shadowOffset: { height: 1, width: 1 }, // IOS
+        shadowOpacity: 0.5, // IOS
+        shadowRadius: 4, //IOS
+        elevation: 2, // Android
+      }, 
+
+      editButton: {
+        backgroundColor: 'orange',
+        borderBottomLeftRadius: 10,
+        borderTopLeftRadius: 10, 
+        width: 200,
+        height: 50,
+        
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+        
+        shadowColor: 'rgba(0,0,0, .4)', // IOS
+            shadowOffset: { height: 1, width: 1 }, // IOS
+            shadowOpacity: 0.5, // IOS
+            shadowRadius: 4, //IOS
+            elevation: 2, // Android
       }, 
 
       endDateText: {
-        paddingLeft: 18,
+        fontSize: 30,
+        fontWeight: 'bold',
+        marginLeft: 10,
+        marginBottom: 20,
       },
 
       startDateText: {
-        fontSize: 30,
+        paddingLeft: 18,
+      },
+
+      budgetText: {
+        fontSize: 20,
         fontWeight: 'bold',
-        paddingLeft: 10,
-        paddingBottom: 10,
+        // marginVertical : 10,
+        // marginHorizontal : 10,
+        color: 'black',
       },
       
   });
