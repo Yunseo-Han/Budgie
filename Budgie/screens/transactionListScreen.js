@@ -74,10 +74,14 @@ export const TransactionListScreen = ({ navigation, route }) => {
         console.log("Amount entered must be greater than 0.");
         return;
       }
+      if(spendingName == "") {
+        spendingName = 'Transaction #' + (currentCat.txCounter+1);
+      }
       realm.write(() => {
         newTrans = realm.create("Transaction", new Transaction({name: spendingName, date: date, amount: amt}));
         currentCat.transactions.push(newTrans);
         currentCat.transactionSum += amt;
+        currentCat.txCounter += 1;
         currentBudget.totalSpending += currentCat.transactionSum;
       });
     }
