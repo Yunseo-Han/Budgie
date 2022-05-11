@@ -32,6 +32,7 @@ export class Category {
     this.transactionSum = 0;
     this.spendingLimit = spendingLimit;
     this.transactions = [];
+    this.txCounter = 0;
   }
 
   static schema = {
@@ -42,7 +43,8 @@ export class Category {
       'name' : 'string',
       'transactionSum' : 'double',
       'spendingLimit' : 'double',
-      'transactions' : { type: 'list', objectType: 'Transaction' }
+      'transactions' : { type: 'list', objectType: 'Transaction' },
+      'txCounter' : 'int'
     }
   };
 }

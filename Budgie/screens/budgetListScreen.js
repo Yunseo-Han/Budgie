@@ -88,7 +88,7 @@ export const BudgetListScreen = ({ navigation }) => {
     realm.write(() => {
         budToEdit.startDate = startDate;
         budToEdit.endDate = endDate;
-      if(targetSpending !== null) {
+      if(targetSpending != "") {
         budToEdit.targetSpending = targetSpending;
       }
     });

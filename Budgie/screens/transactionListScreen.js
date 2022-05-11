@@ -74,10 +74,14 @@ export const TransactionListScreen = ({ navigation, route }) => {
         console.log("Amount entered must be greater than 0.");
         return;
       }
+      if(spendingName == "") {
+        spendingName = 'Transaction #' + (currentCat.txCounter+1);
+      }
       realm.write(() => {
         newTrans = realm.create("Transaction", new Transaction({name: spendingName, date: date, amount: amt}));
         currentCat.transactions.push(newTrans);
         currentCat.transactionSum += amt;
+        currentCat.txCounter += 1;
         currentBudget.totalSpending += currentCat.transactionSum;
       });
     }
@@ -91,15 +95,6 @@ export const TransactionListScreen = ({ navigation, route }) => {
         currentBudget.totalSpending = currentBudget.totalSpending - diff;
         realm.delete(txToDel);
       });
-    }
-
-    function handleDeleteCategory() {
-      let currentCatSum = currentCat.transactionSum;
-      realm.write(() => {
-        currentBudget.totalSpending = currentBudget.totalSpending - currentCatSum;
-        realm.delete(currentCat);
-      });
-      navigation.goBack();
     }
 
     function transactionsExist() {
