@@ -97,15 +97,6 @@ export const TransactionListScreen = ({ navigation, route }) => {
       });
     }
 
-    function handleDeleteCategory() {
-      let currentCatSum = currentCat.transactionSum;
-      realm.write(() => {
-        currentBudget.totalSpending = currentBudget.totalSpending - currentCatSum;
-        realm.delete(currentCat);
-      });
-      navigation.goBack();
-    }
-
     function transactionsExist() {
       if(currentCat.transactions.length > 0) {
         return true;

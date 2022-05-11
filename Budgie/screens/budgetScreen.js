@@ -88,6 +88,15 @@ export const BudgetScreen = ({ navigation, route }) => {
       });
     }
 
+    function handleDeleteCategory(catIdString) {
+      let id = ObjectId(catIdString);
+      let catToDel = realm.objects("Category").filtered("_id == $0", id)[0];
+      let currentCatSum = catToDel.transactionSum;
+      realm.write(() => {
+        currentBudget.totalSpending = currentBudget.totalSpending - currentCatSum;
+        realm.delete(catToDel);
+      });
+    }
 
     const ModalAddCategory = () => {
       // category name input 
@@ -172,7 +181,7 @@ export const BudgetScreen = ({ navigation, route }) => {
       else return 'green';
     }
 
-    const deleteButton = <TouchableHighlight style={styles.deleteButton} onPress ={() => handleDeleteBudget(idString)}><Text style={{paddingLeft: 20, color: 'white'}}>Delete</Text></TouchableHighlight>
+    const deleteButton = <TouchableHighlight style={styles.deleteButton} onPress ={() => handleDeleteCategory(catIdString)}><Text style={{paddingLeft: 20, color: 'white'}}>Delete</Text></TouchableHighlight>
 
 
     return( 
