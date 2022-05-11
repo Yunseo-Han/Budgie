@@ -80,9 +80,9 @@ export const TransactionListScreen = ({ navigation, route }) => {
       realm.write(() => {
         newTrans = realm.create("Transaction", new Transaction({name: spendingName, date: date, amount: amt}));
         currentCat.transactions.push(newTrans);
-        currentCat.transactionSum += amt;
+        currentCat.transactionSum = currentCat.transactionSum + amt;
         currentCat.txCounter += 1;
-        currentBudget.totalSpending += currentCat.transactionSum;
+        currentBudget.totalSpending = currentBudget.totalSpending + currentCat.transactionSum;
       });
     }
 
