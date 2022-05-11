@@ -88,6 +88,15 @@ export const BudgetScreen = ({ navigation, route }) => {
       });
     }
 
+    function handleEditCategory(catIdString, newName, newLimit) {
+      let id = ObjectId(catIdString);
+      let catToEdit = realm.objects("Category").filtered("_id == $0", id)[0];
+      realm.write(() => {
+        catToEdit.name = newName;
+        catToEdit.spendingLimit = newLimit;
+      });
+    }
+
     function handleDeleteCategory(catIdString) {
       let id = ObjectId(catIdString);
       let catToDel = realm.objects("Category").filtered("_id == $0", id)[0];

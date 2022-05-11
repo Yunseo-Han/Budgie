@@ -86,6 +86,24 @@ export const TransactionListScreen = ({ navigation, route }) => {
       });
     }
 
+    function handleEditTransaction(txIdString, newName, newAmount) {
+      let id = ObjectId(txIdString);
+      let txToEdit = realm.objects("Transaction").filtered("_id == $0", id)[0];
+      let oldAmount = txToEdit.amount;
+      realm.write(() => {
+        if(newName.trim() != "" && newName != txToEdit.name) {
+          txToEdit.name = newName;
+        }
+        if(newAmount != txToEdit.amount && newAmount >= 0) {
+          txToEdit.amount = newAmount;
+        }
+        currentCat.transactionSum = currentCat.transactionSum - oldAmount;
+        currentCat.transactionSum = currentCat.transactionSum + newAmount;
+        currentBudget.totalSpending = currentBudget.totalSpending - oldAmount;
+        currentBudget.totalSpending = currentBudget.totalSpending + newAmount;
+      });
+    }
+
     function handleDeleteTransaction(txIdString) {
       let id = ObjectId(txIdString);
       let txToDel = realm.objects("Transaction").filtered("_id == $0", id)[0];
