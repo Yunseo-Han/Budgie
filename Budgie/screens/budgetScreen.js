@@ -35,8 +35,14 @@ export const BudgetScreen = ({ navigation, route }) => {
     const {idString} = route.params;
 
     // add category modal 
-
     const [categoryModalVisible, setCategoryModalVisible] = useState(false);
+    // edit category modal
+    const [editCategoryModalVisible, setEditCategoryModalVisible] = useState(false);
+    const [idStringModal, setIdStringModal] = useState("DEFAULT");
+    // edit budget modal previous values
+    const [prevCategoryLimit, setPrevCategoryLimit] = useState(0);
+    const [prevCategoryName, setPrevCategoryName] = useState("");
+
     const screenWidth = Dimensions.get("window").width;
 
     //REALM
@@ -88,14 +94,35 @@ export const BudgetScreen = ({ navigation, route }) => {
       });
     }
 
-    function handleEditCategory(catIdString, newName, newLimit) {
-      let id = ObjectId(catIdString);
-      let catToEdit = realm.objects("Category").filtered("_id == $0", id)[0];
-      realm.write(() => {
-        catToEdit.name = newName;
-        catToEdit.spendingLimit = newLimit;
-      });
+    function pressedEditCategoryButton(idString) {
+      let id = ObjectId(idString);
+      let catToEdit = realm.objects("Category").filtered("_id == $0",id)[0];
+
+      setPrevCategoryLimit(catToEdit.spendingLimit)
+      setPrevCategoryName(catToEdit.name)
+  
+      setIdStringModal(idString);
+      setEditCategoryModalVisible(true);
     }
+  
+    function handleEditCategory(newName, newLimit) {
+      let id = ObjectId(idStringModal);
+      let catToEdit = realm.objects("Category").filtered("_id == $0", id)[0];
+      let nameInput = newName.trim();
+      let limit = parseFloat(newLimit)
+      realm.write(() => {
+        if(nameInput != "") {
+          catToEdit.name = nameInput;
+        }
+        if(limit >= 0) {
+          catToEdit.spendingLimit = limit;
+        }
+      });
+      setIdStringModal("RESET");
+      setEditCategoryModalVisible(false);
+    }
+
+    
 
     function handleDeleteCategory(catIdString) {
       let id = ObjectId(catIdString);
@@ -119,7 +146,6 @@ export const BudgetScreen = ({ navigation, route }) => {
         setCategoryLimitInput("");
         setCategoryModalVisible(false);
       }
-
 
       return(
         <Modal
@@ -168,7 +194,69 @@ export const BudgetScreen = ({ navigation, route }) => {
         </Modal>
       );
     };
-  
+
+    const ModalEditCategory = () => {
+      // category name input 
+
+      const [categoryInput, setCategoryInput] = React.useState(prevCategoryName);
+      const [categoryLimitInput, setCategoryLimitInput] = React.useState(prevCategoryLimit);
+      
+      function pressedSubmitEditCategory() {
+        handleEditCategory(categoryInput, categoryLimitInput);
+        setCategoryInput("");
+        setCategoryLimitInput("");
+      }
+
+
+      return(
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={editCategoryModalVisible}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+
+              <View flexDirection = 'row' justifyContent = 'space-between' alignContent = 'center'>
+
+                <Text style={styles.sectionTitle}>Edit Category</Text>
+                <TouchableOpacity style={styles.cancelButton} onPress={() =>setEditCategoryModalVisible(false)}>
+                  <View>
+                    <Text>Cancel</Text>
+                  </View>
+                </TouchableOpacity>
+
+              </View>
+
+
+              <Text style={styles.textInputTitle}>Category Name</Text>
+              <TextInput 
+                style={styles.textInputBox}
+                onChangeText={(input) => setCategoryInput(input)}
+                value={categoryInput}
+              />
+
+              <Text style={styles.textInputTitle}>Category Spending Limit</Text>
+              <TextInput 
+                style={styles.textInputBox}
+                onChangeText={(input) => setCategoryLimitInput(input)}
+                value={categoryLimitInput.toString()}
+                keyboardType={'decimal-pad'}
+              />
+
+              <TouchableOpacity
+                style={styles.submitButton}
+                onPress={pressedSubmitEditCategory}>
+                <Text>Submit</Text>
+              </TouchableOpacity>
+
+            </View>
+          </View>
+        </Modal>
+      );
+    };
+
+
     //Legend go to transactionListScreen when clicked on
     function pressedLegendButton(catIdString) {
       navigation.navigate('Transactions', {
@@ -196,7 +284,7 @@ export const BudgetScreen = ({ navigation, route }) => {
                           </TouchableHighlight>
 
     // ADD ONPRESS LATER*****************
-    const editButton = <TouchableHighlight style={styles.editButton}>
+    const editButton = <TouchableHighlight style={styles.editButton} onPress={()=> pressedEditCategoryButton(catIdString)}>
                       <Text style={{paddingLeft: 25, color: 'white'}}>Edit</Text>
                     </TouchableHighlight>    
 
@@ -279,8 +367,7 @@ export const BudgetScreen = ({ navigation, route }) => {
 
     //Set legend category bar to red when over budget
     function setBarColor(index) {
-      if (currentBudget.categories[index].transactionSum >= currentBudget.categories[index].spendingLimit) return '#FF0000'; 
-      else return sliceColor[index];
+      return sliceColor[index];
     }
 
     function getTotalSpendingColor() {
@@ -361,6 +448,7 @@ export const BudgetScreen = ({ navigation, route }) => {
         </View> */}
 
         <ModalAddCategory/>
+        <ModalEditCategory/>
       </ScrollView>
     </SafeAreaView>
     );
