@@ -41,6 +41,13 @@ export const TransactionListScreen = ({ navigation, route }) => {
 
     // add spending modal 
     const [spendingModalVisible, setSpendingModalVisible] = useState(false);
+
+    // edit spending modal
+    const [editSpendingModalVisible, setEditSpendingModalVisible] = useState(false);
+    const [idStringModal, setIdStringModal] = useState("DEFAULT");
+    // edit spending modal previous values
+    const [prevSpendingLimit, setPrevSpendingAmount] = useState(0);
+    const [prevSpendingName, setPrevSpendingName] = useState("");
    
     const screenWidth = Dimensions.get("window").width;
 
@@ -86,10 +93,11 @@ export const TransactionListScreen = ({ navigation, route }) => {
       });
     }
 
-    function handleEditTransaction(txIdString, newName, newAmount) {
-      let id = ObjectId(txIdString);
+    function handleEditTransaction(newName, newAmount) {
+      let id = ObjectId(idStringModal);
       let txToEdit = realm.objects("Transaction").filtered("_id == $0", id)[0];
       let oldAmount = txToEdit.amount;
+      newAmount = parseFloat(newAmount);
       realm.write(() => {
         if(newName.trim() != "" && newName != txToEdit.name) {
           txToEdit.name = newName;
@@ -102,7 +110,22 @@ export const TransactionListScreen = ({ navigation, route }) => {
         currentBudget.totalSpending = currentBudget.totalSpending - oldAmount;
         currentBudget.totalSpending = currentBudget.totalSpending + newAmount;
       });
+
+      setIdStringModal("RESET");
+      setEditSpendingModalVisible(false);
     }
+
+    function pressedEditTransactionButton(idString) {
+      let id = ObjectId(idString);
+      let transToEdit = realm.objects("Transaction").filtered("_id == $0",id)[0];
+
+      setPrevSpendingAmount(transToEdit.amount)
+      setPrevSpendingName(transToEdit.name)
+  
+      setIdStringModal(idString);
+      setEditSpendingModalVisible(true);
+    }
+  
 
     function handleDeleteTransaction(txIdString) {
       let id = ObjectId(txIdString);
@@ -129,7 +152,7 @@ export const TransactionListScreen = ({ navigation, route }) => {
                             </TouchableHighlight>
 
       // ADD ONPRESS LATER*****************
-    const editButton = <TouchableHighlight style={styles.editButton}>
+    const editButton = <TouchableHighlight style={styles.editButton} onPress = {() => pressedEditTransactionButton(txIdString)}>
                         <Text style={{paddingLeft: 25, color: 'white'}}>Edit</Text>
                       </TouchableHighlight>    
 
@@ -208,6 +231,66 @@ export const TransactionListScreen = ({ navigation, route }) => {
       );
     }
 
+    const ModalEditSpending = () => {
+      const [spendingName, setSpendingName] = React.useState(prevSpendingName);
+      const [spending, setSpending] = React.useState(prevSpendingLimit);
+      const [date, setDate] = React.useState(new Date());
+      // const [amount, setAmount] = React.useState(0);
+      
+      
+      function pressedSubmitEditTransaction(){
+        handleEditTransaction(spendingName, spending);
+        setSpendingName("");
+        setDate("");
+        setSpending(0);
+        setSpendingModalVisible(false);
+      }
+
+      return (
+        <Modal
+        animationType="slide"
+        transparent={true}
+        visible={editSpendingModalVisible}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+                <View style={{flexDirection: 'row', alignSelf: 'stretch', justifyContent:'space-between', marginTop: 5}}>
+                  <Text style={styles.sectionTitle}>Edit Transaction</Text>
+                  <TouchableOpacity style={styles.cancelButton} onPress={() =>setEditSpendingModalVisible(false)}>
+                    <Text>Cancel</Text>
+                  </TouchableOpacity>
+                </View>
+      
+                <View>
+                  <Text style={styles.textInputTitle}>Transaction Name</Text>
+                  <TextInput
+                    style={styles.textInputBox}
+                    onChangeText={input => setSpendingName(input)}
+                    value={spendingName}
+                  />
+                </View>
+      
+                <View>
+                  <Text style={styles.textInputTitle}>Amount</Text>
+                  <TextInput
+                    style={styles.textInputBox}
+                    keyboardType={'decimal-pad'}
+                    onChangeText={input => setSpending(input)}
+                    value = {spending.toString()}
+                  />
+                </View>
+      
+                <TouchableOpacity style={styles.addBudgetButton} onPress={pressedSubmitEditTransaction}>
+                  <Text>Submit</Text>
+                </TouchableOpacity>
+      
+            </View>
+          </View>
+        </Modal>
+
+      );
+    }
+
 
     return(
       <SafeAreaView style={[styles.container, {backgroundColor: 'white'}]}>
@@ -240,6 +323,7 @@ export const TransactionListScreen = ({ navigation, route }) => {
       <View style={{height: 70}}/>
       
       <ModalAddSpending/>
+      <ModalEditSpending/>
     </ScrollView>
 
     <TouchableOpacity style={styles.addButton} onPress={()=>setSpendingModalVisible(true)}>

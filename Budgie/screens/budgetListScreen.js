@@ -33,7 +33,7 @@ const deviceWidth = Dimensions.get('window').width;
 var isStartingDate = false;
 var isEndingDate = false;
 
-var currentlySelectedBudgetId = "DEFAULT_ID_STRING";
+//var currentlySelectedBudgetId = "DEFAULT_ID_STRING";
 
 export const BudgetListScreen = ({ navigation }) => {
   const { useRealm, useQuery, RealmProvider } = BudgetContext;
@@ -49,6 +49,12 @@ export const BudgetListScreen = ({ navigation }) => {
   const [budgetModalVisible, setBudgetModalVisible] = useState(false);
   // Edit Budget Modal
   const [editBudgetModalVisible, setEditBudgetModalVisible] = useState(false);
+  const [idStringModal, setIdStringModal] = useState("DEFAULT");
+
+  // edit budget modal previous values
+  const [prevBudgetLimit, setPrevBudgetLimit] = useState(0);
+  const [prevBudgetStartDate, setPrevBudgetStartDate] = useState(new Date());
+  const [prevBudgetEndDate, setPrevBudgetEndDate] = useState(new Date());
 
   
   function constructor(props) {
@@ -86,6 +92,34 @@ export const BudgetListScreen = ({ navigation }) => {
     });
   }
 
+  function pressedEditBudgetButton(idString) {
+    let id = ObjectId(idString);
+    let budToEdit = realm.objects("Budget").filtered("_id == $0",id)[0];
+
+    setPrevBudgetLimit(budToEdit.targetSpending)
+    setPrevBudgetStartDate(budToEdit.startDate)
+    setPrevBudgetEndDate(budToEdit.endDate)
+
+    setIdStringModal(idString);
+    console.log(idString);
+    setEditBudgetModalVisible(true);
+  }
+
+  function handleEditBudget(startDate, endDate, targetSpending) {
+    let id = ObjectId(idStringModal);
+    let budToEdit = realm.objects("Budget").filtered("_id == $0",id)[0];
+
+    realm.write(() => {
+      budToEdit.startDate = startDate;
+      budToEdit.endDate = endDate;
+      let newLimit = parseFloat(targetSpending);
+      if(newLimit >= 0 ) {
+        budToEdit.targetSpending = newLimit;
+      }
+    });
+    setIdStringModal("RESET");
+    setEditBudgetModalVisible(false);
+  }
   
 
   function handleDeleteAll() {
@@ -107,15 +141,12 @@ export const BudgetListScreen = ({ navigation }) => {
       });
     }
 
-    function pressedEditButton() {
-      currentlySelectedBudgetId = idString;
-      setEditBudgetModalVisible(true)
-    }
+    
 
     const deleteButton = <TouchableHighlight style={styles.deleteButton} onPress ={() => handleDeleteBudget(idString)}>
                           <Text style={{paddingLeft: 20, color: 'white'}}>Delete</Text>
                         </TouchableHighlight>
-    const editButton = <TouchableHighlight style={styles.editButton} onPress={pressedEditButton}>
+    const editButton = <TouchableHighlight style={styles.editButton} onPress={() => pressedEditBudgetButton(idString)}>
                           <Text style={{paddingLeft: 25, color: 'white'}}>Edit</Text>
                         </TouchableHighlight>
 
@@ -125,28 +156,30 @@ export const BudgetListScreen = ({ navigation }) => {
     }
 
     function ProgressCirclePercent() {
-      if(saving >= 0) return saving/spending*100;
+      if(saving >= 0) return (spending-saving)/spending*100;
       else return 0;
     }
 
     return (
       <Swipeable rightButtons={[editButton, deleteButton]}>
         <TouchableOpacity onPress={() => pressedBudgetPreviewButton(idString)} style={styles.roundedButton}>
-          <Text style={styles.importantText}> {startDate.toLocaleDateString() + " - " + endDate.toLocaleDateString()} </Text>
-          <View style = {{alignContent: 'flex-end', maxWidth: '60%'}}>
-            <View style={{alignItems: 'flex-end'}}>
-              <Text> {'Limit: $' + spending.toFixed(2)} </Text>
-              {/* <Text> { '' + getRemainder(parseFloat(saving))} </Text> */}
-            </View>
+          <View style={{flexDirection: 'row'}}>
+            <ProgressCircle 
+              percent={ProgressCirclePercent()}
+              radius={15}
+              borderWidth={8}
+              color="tomato"
+              shadowColor="gray"
+              bgColor={buttonGrey}
+            ></ProgressCircle>
+            <Text style={[styles.importantText, {paddingLeft: 10, alignSelf: 'center'}]}> {startDate.toLocaleDateString() + " - " + endDate.toLocaleDateString()} </Text>
           </View>
-          <ProgressCircle 
-            percent={ProgressCirclePercent()}
-            radius={15}
-            borderWidth={8}
-            color="blue"
-            shadowColor="tomato"
-            bgColor={buttonGrey}
-          ></ProgressCircle>
+
+          <View style={{alignItems: 'flex-end'}}>
+            <Text> {'$' + spending.toFixed(2)} </Text>
+            {/* <Text> { '' + getRemainder(parseFloat(saving))} </Text> */}
+          </View>
+          
         </TouchableOpacity>
       </Swipeable>
     );
@@ -180,7 +213,7 @@ export const BudgetListScreen = ({ navigation }) => {
 
       setStartingDate("");
       setEndingDate("");
-      setBudgetLimit("");
+      setBudgetLimit(0);
       setBudgetModalVisible(false);
     }
 
@@ -270,14 +303,15 @@ export const BudgetListScreen = ({ navigation }) => {
     );
   }
 
+  
+
   const EditBudgetModal = () => {
     
-    const [startDate, setStartingDate] = React.useState(new Date());
-    const [endDate, setEndingDate] = React.useState(new Date())
-    const [budgetLimit, setBudgetLimit] = React.useState(0);
-    const [idString, setIdString] = React.useState("DEFAULT_ID_STRING");
+    const [startDate, setStartingDate] = React.useState(prevBudgetStartDate);
+    const [endDate, setEndingDate] = React.useState(prevBudgetEndDate)
+    const [editBudgetLimit, setEditBudgetLimit] = React.useState(prevBudgetLimit);
 
-    // const budId = ObjectId(currentlySelectedBudgetId); // react has a problem with this code?? maybe it doesnt pass in string?
+    // const budId = ObjectId(idStringModal); // react has a problem with this code?? maybe it doesnt pass in string?
     // const budToEdit = realm.objects("Budget").filtered("_id == $0",budId)[0];
 
     // Date picker data
@@ -287,14 +321,11 @@ export const BudgetListScreen = ({ navigation }) => {
     // "Are we setting starting or ending?"" flag
 
 
-    function handleEditBudget() {
-      // realm.write(() => {
-      //     budToEdit.startDate = startDate;
-      //     budToEdit.endDate = endDate;
-      //   if(targetSpending != "") {
-      //     budToEdit.targetSpending = targetSpending;
-      //   }
-      // });
+    function pressedSubmitEditBudget() {
+      handleEditBudget(startDate, endDate, editBudgetLimit);
+      setStartingDate("");
+      setEndingDate("");
+      setEditBudgetLimit(0);
     }
 
 
@@ -308,6 +339,7 @@ export const BudgetListScreen = ({ navigation }) => {
       isEndingDate = true
     }
 
+
     return (
       <Modal
         animationType="slide"
@@ -319,7 +351,7 @@ export const BudgetListScreen = ({ navigation }) => {
             <View style={{flexDirection: 'row', alignSelf: 'stretch', justifyContent:'space-between', marginTop: 5}}>
               <Text style={styles.sectionTitle}>Edit Budget</Text>
               <TouchableOpacity style={styles.cancelButton} onPress={()=>setEditBudgetModalVisible(false)}>
-                <Text>Cancel</Text>
+                <Text>Cancl</Text>
               </TouchableOpacity>
             </View>
 
@@ -328,27 +360,27 @@ export const BudgetListScreen = ({ navigation }) => {
               <TextInput
                 style={styles.textInputBox}
                 keyboardType={'decimal-pad'}
-                onChangeText={newLimit => setBudgetLimit(newLimit)}
-                // defaultValue={budToEdit.targetSpending}
+                onChangeText={newLimit => setEditBudgetLimit(newLimit)}
+                value={editBudgetLimit.toString()}
               />
             </View>
 
             <View>
               <Text style={styles.textInputTitle} >Starting Date</Text>
               <TouchableOpacity style={styles.textInputBox} onPress={addStartingDate}>
-                {/* <Text>{budToEdit.startDate}</Text> */}
+                <Text>{startDate.toLocaleDateString()}</Text>
               </TouchableOpacity>
             </View>
             
             <View>
               <Text style={styles.textInputTitle} >Ending Date</Text>
               <TouchableOpacity style={styles.textInputBox} onPress={addEndingDate}>
-                {/* <Text>{budToEdit.endDate}</Text> */}
+                <Text>{endDate.toLocaleDateString()}</Text>
               </TouchableOpacity>
             </View>
             
             
-            <TouchableOpacity style={styles.addBudgetButton} onPress={handleEditBudget} >
+            <TouchableOpacity style={styles.addBudgetButton} onPress={pressedSubmitEditBudget} >
               <Text>Submit</Text>
             </TouchableOpacity>
 
@@ -451,7 +483,7 @@ const styles = StyleSheet.create({
   
   importantText: {
     fontWeight: 'bold',
-    maxWidth: '70%',
+    // maxWidth: '70%',
   },
 
   budgetInput: {
