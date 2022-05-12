@@ -17,10 +17,11 @@ import {
   Button,
 } from 'react-native';
 
-
+import { LogInScreen } from './screens/logInScreen'
 import { BudgetListScreen } from '../Budgie/screens/budgetListScreen';
 import { BudgetScreen } from './screens/budgetScreen'
 import { TransactionListScreen } from './screens/transactionListScreen'
+
 
 import { LogBox } from 'react-native';
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
@@ -37,6 +38,9 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+      <Stack.Screen 
+          name="Welcome to Budgie" 
+          component={LogInScreen} /> 
         <Stack.Screen
           name="ඞ ඞ ඞ ඞ"
           component={BudgetListScreen}
@@ -49,6 +53,7 @@ const App = () => {
           name="Transactions" 
           component={TransactionListScreen} 
           options={({ route }) => ({ title: route.params.categoryID})}/>
+       
       </Stack.Navigator>
     </NavigationContainer>
   );
