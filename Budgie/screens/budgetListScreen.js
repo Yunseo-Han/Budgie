@@ -446,6 +446,9 @@ export const BudgetListScreen = ({ navigation }) => {
             }
           </View>
 
+
+        <View style={{paddingVertical:300}}></View>
+
         <TouchableOpacity style={{backgroundColor: 'gray', opacity: 0.4, paddingVertical: 10, marginTop: 100}} onPress={()=> handleDeleteAll()}>
             <Text>NUKE</Text>
         </TouchableOpacity>
