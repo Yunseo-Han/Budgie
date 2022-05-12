@@ -41,6 +41,13 @@ export const TransactionListScreen = ({ navigation, route }) => {
 
     // add spending modal 
     const [spendingModalVisible, setSpendingModalVisible] = useState(false);
+
+    // edit spending modal
+    const [editSpendingModalVisible, setEditSpendingModalVisible] = useState(false);
+    const [idStringModal, setIdStringModal] = useState("DEFAULT");
+    // edit spending modal previous values
+    const [prevSpendingLimit, setPrevSpendingAmount] = useState(0);
+    const [prevSpendingName, setPrevSpendingName] = useState("");
    
     const screenWidth = Dimensions.get("window").width;
 
@@ -74,13 +81,51 @@ export const TransactionListScreen = ({ navigation, route }) => {
         console.log("Amount entered must be greater than 0.");
         return;
       }
+      if(spendingName == "") {
+        spendingName = 'Transaction #' + (currentCat.txCounter+1);
+      }
       realm.write(() => {
         newTrans = realm.create("Transaction", new Transaction({name: spendingName, date: date, amount: amt}));
         currentCat.transactions.push(newTrans);
-        currentCat.transactionSum += amt;
-        currentBudget.totalSpending += currentCat.transactionSum;
+        currentCat.transactionSum = currentCat.transactionSum + amt;
+        currentCat.txCounter += 1;
+        currentBudget.totalSpending = currentBudget.totalSpending + amt;
       });
     }
+
+    function handleEditTransaction(newName, newAmount) {
+      let id = ObjectId(idStringModal);
+      let txToEdit = realm.objects("Transaction").filtered("_id == $0", id)[0];
+      let oldAmount = txToEdit.amount;
+      newAmount = parseFloat(newAmount);
+      realm.write(() => {
+        if(newName.trim() != "" && newName != txToEdit.name) {
+          txToEdit.name = newName;
+        }
+        if(newAmount != txToEdit.amount && newAmount >= 0) {
+          txToEdit.amount = newAmount;
+        }
+        currentCat.transactionSum = currentCat.transactionSum - oldAmount;
+        currentCat.transactionSum = currentCat.transactionSum + newAmount;
+        currentBudget.totalSpending = currentBudget.totalSpending - oldAmount;
+        currentBudget.totalSpending = currentBudget.totalSpending + newAmount;
+      });
+
+      setIdStringModal("RESET");
+      setEditSpendingModalVisible(false);
+    }
+
+    function pressedEditTransactionButton(idString) {
+      let id = ObjectId(idString);
+      let transToEdit = realm.objects("Transaction").filtered("_id == $0",id)[0];
+
+      setPrevSpendingAmount(transToEdit.amount)
+      setPrevSpendingName(transToEdit.name)
+  
+      setIdStringModal(idString);
+      setEditSpendingModalVisible(true);
+    }
+  
 
     function handleDeleteTransaction(txIdString) {
       let id = ObjectId(txIdString);
@@ -93,15 +138,6 @@ export const TransactionListScreen = ({ navigation, route }) => {
       });
     }
 
-    function handleDeleteCategory() {
-      let currentCatSum = currentCat.transactionSum;
-      realm.write(() => {
-        currentBudget.totalSpending = currentBudget.totalSpending - currentCatSum;
-        realm.delete(currentCat);
-      });
-      navigation.goBack();
-    }
-
     function transactionsExist() {
       if(currentCat.transactions.length > 0) {
         return true;
@@ -111,10 +147,18 @@ export const TransactionListScreen = ({ navigation, route }) => {
 
     const Spending = ({ title, amount, date, txIdString }) => {
 
-      const deleteButton = <TouchableHighlight style={styles.deleteButton2} onPress ={() => handleDeleteTransaction(txIdString)}><Text style={{paddingLeft: 20}}>Delete</Text></TouchableHighlight>
+      const deleteButton = <TouchableHighlight style={styles.deleteButton} onPress ={() => handleDeleteTransaction(txIdString)}>
+                              <Text style={{paddingLeft: 20, color: 'white'}}>Delete</Text>
+                            </TouchableHighlight>
+
+      // ADD ONPRESS LATER*****************
+    const editButton = <TouchableHighlight style={styles.editButton} onPress = {() => pressedEditTransactionButton(txIdString)}>
+                        <Text style={{paddingLeft: 25, color: 'white'}}>Edit</Text>
+                      </TouchableHighlight>    
+
 
       return( 
-          <Swipeable rightButtons={[deleteButton]}>
+          <Swipeable rightButtons={[editButton, deleteButton]}>
             <View style = {styles.roundedButton}>
               <View style = {{alignContent: 'flex-start', maxWidth: '70%'}}>
                 <Text style = {{fontWeight: 'bold'}}> {title} </Text>
@@ -153,14 +197,14 @@ export const TransactionListScreen = ({ navigation, route }) => {
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
                 <View style={{flexDirection: 'row', alignSelf: 'stretch', justifyContent:'space-between', marginTop: 5}}>
-                  <Text style={styles.sectionTitle}>New Spending</Text>
+                  <Text style={styles.sectionTitle}>New Transaction</Text>
                   <TouchableOpacity style={styles.cancelButton} onPress={() =>setSpendingModalVisible(false)}>
-                    <Text>CANCEL</Text>
+                    <Text>Cancel</Text>
                   </TouchableOpacity>
                 </View>
       
                 <View>
-                  <Text style={styles.textInputTitle}>Spending Name</Text>
+                  <Text style={styles.textInputTitle}>Transaction Name</Text>
                   <TextInput
                     style={styles.textInputBox}
                     onChangeText={spendingName => setSpendingName(spendingName)}
@@ -168,7 +212,7 @@ export const TransactionListScreen = ({ navigation, route }) => {
                 </View>
       
                 <View>
-                  <Text style={styles.textInputTitle}>Spending Amount</Text>
+                  <Text style={styles.textInputTitle}>Amount</Text>
                   <TextInput
                     style={styles.textInputBox}
                     keyboardType={'decimal-pad'}
@@ -177,7 +221,67 @@ export const TransactionListScreen = ({ navigation, route }) => {
                 </View>
       
                 <TouchableOpacity style={styles.addBudgetButton} onPress={addTransaction}>
-                  <Text>Add Spending</Text>
+                  <Text>Submit</Text>
+                </TouchableOpacity>
+      
+            </View>
+          </View>
+        </Modal>
+
+      );
+    }
+
+    const ModalEditSpending = () => {
+      const [spendingName, setSpendingName] = React.useState(prevSpendingName);
+      const [spending, setSpending] = React.useState(prevSpendingLimit);
+      const [date, setDate] = React.useState(new Date());
+      // const [amount, setAmount] = React.useState(0);
+      
+      
+      function pressedSubmitEditTransaction(){
+        handleEditTransaction(spendingName, spending);
+        setSpendingName("");
+        setDate("");
+        setSpending(0);
+        setSpendingModalVisible(false);
+      }
+
+      return (
+        <Modal
+        animationType="slide"
+        transparent={true}
+        visible={editSpendingModalVisible}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+                <View style={{flexDirection: 'row', alignSelf: 'stretch', justifyContent:'space-between', marginTop: 5}}>
+                  <Text style={styles.sectionTitle}>Edit Transaction</Text>
+                  <TouchableOpacity style={styles.cancelButton} onPress={() =>setEditSpendingModalVisible(false)}>
+                    <Text>Cancel</Text>
+                  </TouchableOpacity>
+                </View>
+      
+                <View>
+                  <Text style={styles.textInputTitle}>Transaction Name</Text>
+                  <TextInput
+                    style={styles.textInputBox}
+                    onChangeText={input => setSpendingName(input)}
+                    value={spendingName}
+                  />
+                </View>
+      
+                <View>
+                  <Text style={styles.textInputTitle}>Amount</Text>
+                  <TextInput
+                    style={styles.textInputBox}
+                    keyboardType={'decimal-pad'}
+                    onChangeText={input => setSpending(input)}
+                    value = {spending.toString()}
+                  />
+                </View>
+      
+                <TouchableOpacity style={styles.addBudgetButton} onPress={pressedSubmitEditTransaction}>
+                  <Text>Submit</Text>
                 </TouchableOpacity>
       
             </View>
@@ -189,15 +293,16 @@ export const TransactionListScreen = ({ navigation, route }) => {
 
 
     return(
-      <SafeAreaView style={[styles.container]}>
+      <SafeAreaView style={[styles.container, {backgroundColor: 'white'}]}>
       <StatusBar barStyle='dark-content'/>
       <ScrollView contentInsetAdjustmentBehavior="automatic">
 
+
       <View style = {{flexDirection:'row', justifyContent:'space-between', paddingVertical: 10}}>
         <Text style = {styles.titleText}> {currentCat.name}</Text>  
-        <TouchableOpacity style={styles.deleteButton} onPress={() => handleDeleteCategory()}>  
+        {/* <TouchableOpacity style={styles.deleteButton} onPress={() => handleDeleteCategory()}>  
           <Text>Delete Category</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
         
       <View>
@@ -218,6 +323,7 @@ export const TransactionListScreen = ({ navigation, route }) => {
       <View style={{height: 70}}/>
       
       <ModalAddSpending/>
+      <ModalEditSpending/>
     </ScrollView>
 
     <TouchableOpacity style={styles.addButton} onPress={()=>setSpendingModalVisible(true)}>
@@ -355,11 +461,9 @@ addButton: {
     borderRadius: 30,
     width: 60,
     height: 60,
-    marginTop: 10,
-    marginRight: 10,
     position: 'absolute',
-    opacity: 0.9,
-    shadowColor: 'rgba(0,0,0, .4)', // IOS
+    opacity: 0.92,
+    shadowColor: 'rgba(0,0,0, .8)', // IOS
     shadowOffset: { height: 1, width: 1 }, // IOS
     shadowOpacity: 0.5, // IOS
     shadowRadius: 4, //IOS
@@ -388,32 +492,30 @@ titleText: {
 
 deleteButton: {
   backgroundColor: 'tomato',
+  width: 300,
+  height: 60,
   justifyContent: 'center',
-  alignItems: 'center',
-  borderRadius: 30,
-  paddingVertical: 10,
-  paddingHorizontal: 10,
-  marginVertical: 10,
-  marginHorizontal: 10,
+  alignItems: 'flex-start',
   shadowColor: 'rgba(0,0,0, .4)', // IOS
   shadowOffset: { height: 1, width: 1 }, // IOS
   shadowOpacity: 0.5, // IOS
   shadowRadius: 4, //IOS
   elevation: 2 // Android
-},
+}, 
 
-deleteButton2: {
-  backgroundColor: 'tomato',
+editButton: {
+  backgroundColor: 'orange',
   borderBottomLeftRadius: 10,
   borderTopLeftRadius: 10, 
   width: 200,
-  marginRight: 10,
   height: 60,
-  // paddingVertical: 15,
-  // paddingHorizontal: 20,
   justifyContent: 'center',
   alignItems: 'flex-start',
-  // marginBottom: 10,
-  // marginHorizontal: 20,
+
+  shadowColor: 'rgba(0,0,0, .4)', // IOS
+      shadowOffset: { height: 1, width: 1 }, // IOS
+      shadowOpacity: 0.5, // IOS
+      shadowRadius: 4, //IOS
+      elevation: 2, // Android
 }, 
 });

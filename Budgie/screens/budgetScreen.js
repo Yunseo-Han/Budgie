@@ -11,6 +11,7 @@ import {
     Modal,
     Pressable,
     TouchableOpacity,
+    TouchableHighlight,
     Button,
     KeyboardAvoidingView,
     TextInput,
@@ -19,6 +20,8 @@ import {
 import PieChart from 'react-native-pie-chart';
 import { buttonGrey, addButtonBlue } from '../budgieColors';
 import { Dimensions } from "react-native";
+import Swipeable from 'react-native-swipeable-row';
+
 
 //REALM
 import {useMemo} from 'react';
@@ -32,8 +35,14 @@ export const BudgetScreen = ({ navigation, route }) => {
     const {idString} = route.params;
 
     // add category modal 
-
     const [categoryModalVisible, setCategoryModalVisible] = useState(false);
+    // edit category modal
+    const [editCategoryModalVisible, setEditCategoryModalVisible] = useState(false);
+    const [idStringModal, setIdStringModal] = useState("DEFAULT");
+    // edit budget modal previous values
+    const [prevCategoryLimit, setPrevCategoryLimit] = useState(0);
+    const [prevCategoryName, setPrevCategoryName] = useState("");
+
     const screenWidth = Dimensions.get("window").width;
 
     //REALM
@@ -57,69 +66,86 @@ export const BudgetScreen = ({ navigation, route }) => {
       this.onPress = this.onPress.bind(this);
     }
 
-    //TODO: Sometimes transactionSum gives really long decimal places (fix it to 2)
-    function populateCategories(numTxs) {
-      console.log("\n", JSON.stringify(currentBudget.categories), "\n");
-      currentBudget.categories.forEach((e) => {
-        let total = 0;
-        realm.write(() => {
-          for(let i = 0; i < numTxs; i++) {
-            let ranamt = parseFloat((Math.random() * 100.00).toFixed(2));
-            e.transactions.push(realm.create("Transaction", new Transaction({
-              name: "test", 
-              date: new Date(), 
-              amount: ranamt
-            })));
-            total += ranamt;
-          }
-        });
-        realm.write(() => {
-          e.transactionSum = total;
-        });
+    function handleAddCategory(nameInput, limitInput) {
+      setCategoryModalVisible(false);
+      let name = nameInput.trim();
+      let limit = parseFloat(parseFloat(limitInput).toFixed(2));
+      // Don't think it'll reach the error checking if parseFloat fails, 
+      // but whatever, I'm leaving it here anyway
+      if(isNaN(limit)) {
+        console.log("Spending limit is not a number");
+        return;
+      } else if(limit < 0) {
+        console.log("Spending limit must be greater than 0.");
+        return;
+      }
+      if(name == "") {
+        console.log("Every category must be given a name.");
+        return;
+      }
+      if(currentBudget.categories.some(e => e.name === name)) {
+        console.log("A category using with that name already exists.");
+        return;
+      }
+      let newCat;
+      realm.write(() => {
+        newCat = realm.create("Category", new Category({name: name, spendingLimit: limit}));
+        currentBudget.categories.push(newCat);
       });
     }
 
+    function pressedEditCategoryButton(idString) {
+      let id = ObjectId(idString);
+      let catToEdit = realm.objects("Category").filtered("_id == $0",id)[0];
+
+      setPrevCategoryLimit(catToEdit.spendingLimit)
+      setPrevCategoryName(catToEdit.name)
+  
+      setIdStringModal(idString);
+      setEditCategoryModalVisible(true);
+    }
+  
+    function handleEditCategory(newName, newLimit) {
+      let id = ObjectId(idStringModal);
+      let catToEdit = realm.objects("Category").filtered("_id == $0", id)[0];
+      let nameInput = newName.trim();
+      let limit = parseFloat(newLimit)
+      realm.write(() => {
+        if(nameInput != "") {
+          catToEdit.name = nameInput;
+        }
+        if(limit >= 0) {
+          catToEdit.spendingLimit = limit;
+        }
+      });
+      setIdStringModal("RESET");
+      setEditCategoryModalVisible(false);
+    }
+
+    
+
+    function handleDeleteCategory(catIdString) {
+      let id = ObjectId(catIdString);
+      let catToDel = realm.objects("Category").filtered("_id == $0", id)[0];
+      let currentCatSum = catToDel.transactionSum;
+      realm.write(() => {
+        currentBudget.totalSpending = currentBudget.totalSpending - currentCatSum;
+        realm.delete(catToDel);
+      });
+    }
 
     const ModalAddCategory = () => {
       // category name input 
 
       const [categoryInput, setCategoryInput] = React.useState("");
       const [categoryLimitInput, setCategoryLimitInput] = React.useState("");
-
-      function handleAddCategory() {
-        setCategoryModalVisible(false);
-        let name = categoryInput.trim();
-        let limit = parseFloat(parseFloat(categoryLimitInput).toFixed(2));
-        // Don't think it'll reach the error checking if parseFloat fails, 
-        // but whatever, I'm leaving it here anyway
-        if(isNaN(limit)) {
-          console.log("Spending limit is not a number");
-          return;
-        } else if(limit < 0) {
-          console.log("Spending limit must be greater than 0.");
-          return;
-        }
-        if(name == "") {
-          console.log("Every category must be given a name.");
-          return;
-        }
-        if(currentBudget.categories.some(e => e.name === name)) {
-          console.log("A category using with that name already exists.");
-          return;
-        }
-        let newCat;
-        realm.write(() => {
-          newCat = realm.create("Category", new Category({name: name, spendingLimit: limit}));
-          currentBudget.categories.push(newCat);
-        });
-        //populateCategories(10);
-      }
       
       function pressedSubmitNewCategory() {
-        handleAddCategory();
+        handleAddCategory(categoryInput, categoryLimitInput);
+        setCategoryInput("");
+        setCategoryLimitInput("");
         setCategoryModalVisible(false);
       }
-
 
       return(
         <Modal
@@ -135,7 +161,7 @@ export const BudgetScreen = ({ navigation, route }) => {
                 <Text style={styles.sectionTitle}>New Category</Text>
                 <TouchableOpacity style={styles.cancelButton} onPress={() =>setCategoryModalVisible(false)}>
                   <View>
-                    <Text>CLOSE</Text>
+                    <Text>Cancel</Text>
                   </View>
                 </TouchableOpacity>
 
@@ -154,6 +180,7 @@ export const BudgetScreen = ({ navigation, route }) => {
                 style={styles.textInputBox}
                 onChangeText={setCategoryLimitInput}
                 value={categoryLimitInput}
+                keyboardType={'decimal-pad'}
               />
 
               <TouchableOpacity
@@ -167,7 +194,69 @@ export const BudgetScreen = ({ navigation, route }) => {
         </Modal>
       );
     };
-  
+
+    const ModalEditCategory = () => {
+      // category name input 
+
+      const [categoryInput, setCategoryInput] = React.useState(prevCategoryName);
+      const [categoryLimitInput, setCategoryLimitInput] = React.useState(prevCategoryLimit);
+      
+      function pressedSubmitEditCategory() {
+        handleEditCategory(categoryInput, categoryLimitInput);
+        setCategoryInput("");
+        setCategoryLimitInput("");
+      }
+
+
+      return(
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={editCategoryModalVisible}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+
+              <View flexDirection = 'row' justifyContent = 'space-between' alignContent = 'center'>
+
+                <Text style={styles.sectionTitle}>Edit Category</Text>
+                <TouchableOpacity style={styles.cancelButton} onPress={() =>setEditCategoryModalVisible(false)}>
+                  <View>
+                    <Text>Cancel</Text>
+                  </View>
+                </TouchableOpacity>
+
+              </View>
+
+
+              <Text style={styles.textInputTitle}>Category Name</Text>
+              <TextInput 
+                style={styles.textInputBox}
+                onChangeText={(input) => setCategoryInput(input)}
+                value={categoryInput}
+              />
+
+              <Text style={styles.textInputTitle}>Category Spending Limit</Text>
+              <TextInput 
+                style={styles.textInputBox}
+                onChangeText={(input) => setCategoryLimitInput(input)}
+                value={categoryLimitInput.toString()}
+                keyboardType={'decimal-pad'}
+              />
+
+              <TouchableOpacity
+                style={styles.submitButton}
+                onPress={pressedSubmitEditCategory}>
+                <Text>Submit</Text>
+              </TouchableOpacity>
+
+            </View>
+          </View>
+        </Modal>
+      );
+    };
+
+
     //Legend go to transactionListScreen when clicked on
     function pressedLegendButton(catIdString) {
       navigation.navigate('Transactions', {
@@ -180,8 +269,8 @@ export const BudgetScreen = ({ navigation, route }) => {
 
     //Set bar to full if over budget
     function isOverBudgetWidth(){
-      if (amount >= limit) return 0.6*screenWidth;
-      else return (amount/limit)*(0.6*screenWidth);
+      if (amount >= limit) return 0.5*screenWidth;
+      else return (amount/limit)*(0.5*screenWidth);
     }
 
     //Set dollar amount WORD to red if over budget
@@ -190,34 +279,45 @@ export const BudgetScreen = ({ navigation, route }) => {
       else return 'green';
     }
 
+    const deleteButton = <TouchableHighlight style={styles.deleteButton} onPress ={() => handleDeleteCategory(catIdString)}>
+                            <Text style={{paddingLeft: 23, color: 'white'}}>Delete</Text>
+                          </TouchableHighlight>
+
+    // ADD ONPRESS LATER*****************
+    const editButton = <TouchableHighlight style={styles.editButton} onPress={()=> pressedEditCategoryButton(catIdString)}>
+                      <Text style={{paddingLeft: 25, color: 'white'}}>Edit</Text>
+                    </TouchableHighlight>    
+
     return( 
-      <View>
-      <View style = {[styles.legendBox, {alignContent: 'center'}]}>
-        <TouchableOpacity onPress={()=>pressedLegendButton(catIdString)}>
+      <View >
+      <Swipeable rightButtons={[editButton, deleteButton]}> 
+      <View style = {[styles.legendBox]}>
+        <TouchableOpacity style={{flexDirection: 'row', justifyContent:'space-between'}} onPress={()=>pressedLegendButton(catIdString)}>
 
         
 
-        <View style={{flexDirection: 'row'}}>
-          
-          <View style = {[styles.bar, {backgroundColor : color}, 
-            {width : isOverBudgetWidth()}]}>
-          </View>
-          
-          <View style = {[styles.bar, {backgroundColor : buttonGrey}, {width : (0.6*screenWidth) - isOverBudgetWidth()}]}/>
-        
-          <View style = {{paddingLeft : 4, width : 0.6 * screenWidth}}>
-          <Text style = {{fontWeight : 'bold', maxWidth: '75%', color: 'black', paddingBottom:7}}> {title} </Text>
+        {/* <View style={{flexDirection: 'row', alignContent:'space-between'}}> */}
+
+          <View style = {{paddingLeft: 4}}>
+            <Text style = {{fontWeight : 'bold', color: 'black', paddingBottom:7}}> {title} </Text>
             <View style = {{flexDirection : 'row'}}>
-              <Text style = {{ fontWeight: 'bold', color : isOverBudgetColor()}}> {"$" + amount.toFixed(2)} </Text>
-              <Text style = {{ paddingLeft : 0, color:'grey'}}> {"/ $" + limit} </Text>
+              <Text style = {{ fontWeight: 'bold', color : isOverBudgetColor()}}>{"$" + amount.toFixed(2)} </Text>
+              <Text style = {{ color:'grey'}}>{"/ $" + limit}</Text>
             </View>
           </View>
 
-        </View>
+          <View style={{flexDirection: 'row', marginRight: 10}}>
+            <View style = {[styles.bar, {backgroundColor : color}, {width : isOverBudgetWidth()}]} />
+            <View style = {[styles.bar, {backgroundColor : buttonGrey}, {width : (0.5*screenWidth) - isOverBudgetWidth()}]}/>
+          </View>
+
+
+        {/* </View> */}
 
         </TouchableOpacity>
         
       </View>
+      </Swipeable>
       <View style={{ borderBottomColor: 'grey', borderBottomWidth: 1, margin: 10, borderBottomWidth: 2, opacity: 0.1}} />
       </View>
       
@@ -267,17 +367,36 @@ export const BudgetScreen = ({ navigation, route }) => {
 
     //Set legend category bar to red when over budget
     function setBarColor(index) {
-      if (currentBudget.categories[index].transactionSum >= currentBudget.categories[index].spendingLimit) return '#FF0000'; 
-      else return sliceColor[index];
+      return sliceColor[index];
+    }
+
+    function getTotalSpendingColor() {
+      if (currentBudget.targetSpending-currentBudget.totalSpending>0) {
+        return 'grey'
+      } else {
+        return 'red'
+      }
     }
     
     // Screen
     return(
-        <SafeAreaView style={[styles.container]}>
+        <SafeAreaView style={[styles.container, {backgroundColor: 'white'}]}>
         <StatusBar barStyle='dark-content'/>
         <ScrollView
           contentInsetAdjustmentBehavior="automatic">
         
+        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+          <View>
+            <Text style={styles.startDateText}>{currentBudget.startDate.toLocaleDateString('en-us',{month:'short', day: 'numeric', year:'numeric'})} -</Text>
+            <Text style={styles.endDateText}> {currentBudget.endDate.toLocaleDateString('en-us',{month:'short', day: 'numeric', year:'numeric'})}</Text>
+          </View>
+
+          <View>
+            <Text style={{alignSelf: 'flex-end', marginRight: 20, color: getTotalSpendingColor()}}>{'$' + currentBudget.totalSpending + ' /'}</Text>
+            <Text style={[styles.budgetText, {marginRight: 10, alignSelf: 'flex-start'}]}>{'$' + currentBudget.targetSpending}</Text>
+          </View>
+        </View>
+
         {/* PIE CHART */}
         <View style = {{alignItems : 'center', paddingVertical : 10}}>
           <PieChart
@@ -286,7 +405,7 @@ export const BudgetScreen = ({ navigation, route }) => {
             sliceColor = {setSliceColor()} //setSliceColor()
             doughnut={true}
             coverRadius={0.45}
-            coverFill={'#FFF'}
+            coverFill='white'
           />
         </View>
 
@@ -330,6 +449,7 @@ export const BudgetScreen = ({ navigation, route }) => {
         </View> */}
 
         <ModalAddCategory/>
+        <ModalEditCategory/>
       </ScrollView>
     </SafeAreaView>
     );
@@ -373,11 +493,11 @@ export const BudgetScreen = ({ navigation, route }) => {
     },
 
     legendBox: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      paddingVertical : 5,
+      // flexDirection: 'row',
+      // alignItems: 'space-between',
+      paddingVertical : 4,
       paddingHorizontal : 10,
-      maxWidth : "100%",
+      // maxWidth : "100%"
     },
   
      addButton: {
@@ -573,6 +693,58 @@ export const BudgetScreen = ({ navigation, route }) => {
         paddingHorizontal: 30,
         marginVertical: 20,
         marginHorizontal: 50,
+      },
+
+      deleteButton: {
+        backgroundColor: 'tomato',
+        width: 300,
+        height: 50,
+        
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+        
+
+        shadowColor: 'rgba(0,0,0, .4)', // IOS
+        shadowOffset: { height: 1, width: 1 }, // IOS
+        shadowOpacity: 0.5, // IOS
+        shadowRadius: 4, //IOS
+        elevation: 2, // Android
+      }, 
+
+      editButton: {
+        backgroundColor: 'orange',
+        borderBottomLeftRadius: 10,
+        borderTopLeftRadius: 10, 
+        width: 200,
+        height: 50,
+        
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+        
+        shadowColor: 'rgba(0,0,0, .4)', // IOS
+            shadowOffset: { height: 1, width: 1 }, // IOS
+            shadowOpacity: 0.5, // IOS
+            shadowRadius: 4, //IOS
+            elevation: 2, // Android
+      }, 
+
+      endDateText: {
+        fontSize: 30,
+        fontWeight: 'bold',
+        marginLeft: 10,
+        marginBottom: 20,
+      },
+
+      startDateText: {
+        paddingLeft: 18,
+      },
+
+      budgetText: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        // marginVertical : 10,
+        // marginHorizontal : 10,
+        color: 'black',
       },
       
   });
