@@ -387,7 +387,6 @@ export const BudgetListScreen = ({ navigation }) => {
   // Screen
   return (
     <SafeAreaView style={[styles.container, {backgroundColor: 'white'}]}>
-      <StatusBar barStyle={'dark-content'}/>
         <ScrollView contentInsetAdjustmentBehavior="automatic">
 
           <View style={{flexDirection:'row', justifyContent:'space-between', paddingVertical: 10}}>

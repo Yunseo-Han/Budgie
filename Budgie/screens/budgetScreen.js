@@ -294,7 +294,6 @@ export const BudgetScreen = ({ navigation, route }) => {
     // Screen
     return(
         <SafeAreaView style={[styles.container, {backgroundColor: 'white'}]}>
-        <StatusBar barStyle='dark-content'/>
         <ScrollView
           contentInsetAdjustmentBehavior="automatic">
         
