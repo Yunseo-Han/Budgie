@@ -36,7 +36,7 @@ export const LogInScreen = ({ navigation, route }) => {
                 />
                 <Text style={[styles.textInputTitle, {alignSelf: 'flex-start', paddingTop: 10, paddingLeft: 50}]}>Password</Text>
                 <TextInput secureTextEntry={true} style={styles.textInputBox}/>
-                <TouchableOpacity style = {{paddingTop: 10}} onPress={() => navigation.navigate('ඞ ඞ ඞ ඞ')}>
+                <TouchableOpacity style = {{paddingTop: 10}} onPress={() => navigation.navigate('Home')}>
                     <View style = {styles.rowButton}>
                         <Text style = {{fontWeight: 'bold', fontSize: 15}}>LOG IN</Text>
                     </View>

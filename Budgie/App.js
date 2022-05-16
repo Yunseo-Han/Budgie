@@ -42,7 +42,7 @@ const App = () => {
           name="Welcome to Budgie" 
           component={LogInScreen} /> 
         <Stack.Screen
-          name="ඞ ඞ ඞ ඞ"
+          name="Home"
           component={BudgetListScreen}
         />
         <Stack.Screen 

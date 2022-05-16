@@ -157,6 +157,7 @@ export const BudgetListScreen = ({ navigation }) => {
 
     function ProgressCirclePercent() {
       if(saving >= 0) return (spending-saving)/spending*100;
+      else if (saving<0) return 100; 
       else return 0;
     }
 
