@@ -157,6 +157,7 @@ export const BudgetListScreen = ({ navigation }) => {
 
     function ProgressCirclePercent() {
       if(saving >= 0) return (spending-saving)/spending*100;
+      else if (saving<0) return 100; 
       else return 0;
     }
 
@@ -444,6 +445,9 @@ export const BudgetListScreen = ({ navigation }) => {
               ))
             }
           </View>
+
+
+        <View style={{paddingVertical:300}}></View>
 
         <TouchableOpacity style={{backgroundColor: 'gray', opacity: 0.4, paddingVertical: 10, marginTop: 100}} onPress={()=> handleDeleteAll()}>
             <Text>NUKE</Text>
