@@ -5,7 +5,7 @@ RUNNING INSTRUCTIONS
 1. Follow React Native setup instructions for React Native CLI QuickStart (NOT Expo CLI QuickStart). Stop at "Creating a new application".
 https://reactnative.dev/docs/environment-setup
 
-2. Install the following libraries into the Budgie project folder (Bugeting-App-MERN/Budgie)
+2. Install the following libraries into the Budgie project folder (Repo/Budgie)
 - https://reactnative.dev/docs/navigation
 - https://github.com/realm/realm-js/tree/master/packages/realm-react#readme
 - https://github.com/henninghall/react-native-date-picker#example-1-modal
@@ -27,4 +27,10 @@ npx react-native start
 - Start Application
 npx react-native run-android
 
+
+iOS INSTRUCTIONS
+- cd ios
+- pod install
+- cd ../
+- npx react-native run-ios
 
