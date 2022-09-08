@@ -4,6 +4,7 @@ RUNNING INSTRUCTIONS
 
 1. Follow React Native setup instructions for React Native CLI QuickStart (NOT Expo CLI QuickStart). Stop at "Creating a new application".
 https://reactnative.dev/docs/environment-setup
+** skip this step if you already have react native CLI installed
 
 2. Install the following libraries into the Budgie project folder (Repo/Budgie)
 - https://reactnative.dev/docs/navigation
@@ -29,8 +30,14 @@ npx react-native run-android
 
 
 iOS INSTRUCTIONS
+(in the application folder)
+- npm install
+- npx react-native start
+
 - cd ios
-- pod install
+- pod install 
+    - (installs dependencies in XCode)
 - cd ../
+
 - npx react-native run-ios
 
