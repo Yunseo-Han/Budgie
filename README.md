@@ -1,5 +1,7 @@
 # Budgeting-React-Native-app
 
+https://user-images.githubusercontent.com/57244943/190319857-8498233b-e660-4ad9-94ef-88bdaea047b9.mp4
+
 RUNNING INSTRUCTIONS
 
 1. Follow React Native setup instructions for React Native CLI QuickStart (NOT Expo CLI QuickStart). Stop at "Creating a new application".
